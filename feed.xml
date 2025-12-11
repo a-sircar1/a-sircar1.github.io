@@ -3,10 +3,10 @@
   <generator uri="http://jekyllrb.com" version="4.3.4">Jekyll</generator>
   
   
-  <link href="https://a-sircar1.github.io/home/feed.xml" rel="self" type="application/atom+xml" />
-  <link href="https://a-sircar1.github.io/home/" rel="alternate" type="text/html" hreflang="en" />
-  <updated>2025-12-11T14:02:55+00:00</updated>
-  <id>https://a-sircar1.github.io/home/</id>
+  <link href="https://a-sircar1.github.io/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://a-sircar1.github.io/" rel="alternate" type="text/html" hreflang="en" />
+  <updated>2025-12-11T14:12:35+00:00</updated>
+  <id>https://a-sircar1.github.io/</id>
 
   
     <title type="html">Arnab Sircar</title>
@@ -31,12 +31,12 @@
       <title type="html">Catastrophe Bond Pricing and Risk</title>
       
       
-      <link href="https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds/" rel="alternate" type="text/html" title="Catastrophe Bond Pricing and Risk" />
+      <link href="https://a-sircar1.github.io/2025/07/14/25-Cat-Bonds/" rel="alternate" type="text/html" title="Catastrophe Bond Pricing and Risk" />
       
       <published>2025-07-14T06:10:56+00:00</published>
       <updated>2025-07-14T06:10:56+00:00</updated>
-      <id>https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds</id>
-      <content type="html" xml:base="https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds/">&lt;p&gt;This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market.&lt;/p&gt;
+      <id>https://a-sircar1.github.io/2025/07/14/25-Cat-Bonds</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/2025/07/14/25-Cat-Bonds/">&lt;p&gt;This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market.&lt;/p&gt;
 
 &lt;p&gt;In credit markets, spreads are often representative of probabilities of default, default intensity, and assumptions on the recovery of the debt. For catastrophe bonds (or cat bonds), the idea remains, but the same abstraction has such a different flavor that I decided to think through it a little more carefully. I detail my findings in this post.&lt;/p&gt;
 
@@ -67,7 +67,7 @@
 &lt;p&gt;If you want exactly one diagram in this post, just take a look at the Chicago Fed’s:&lt;/p&gt;
 
 &lt;figure class=&quot;img-center&quot;&gt;
-  &lt;img src=&quot;/home/assets/img/chicago_fed_catbond_structure.png&quot; alt=&quot;Cat bond structure diagram (Chicago Fed)&quot; /&gt;
+  &lt;img src=&quot;/assets/img/chicago_fed_catbond_structure.png&quot; alt=&quot;Cat bond structure diagram (Chicago Fed)&quot; /&gt;
   &lt;figcaption&gt;Catastrophe Bond Structure (Federal Reserve Bank of Chicago)&lt;/figcaption&gt;
 &lt;/figure&gt;
 
@@ -312,12 +312,12 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
       <title type="html">Regimes of Return Smoothing</title>
       
       
-      <link href="https://a-sircar1.github.io/home/2024/12/30/24-IHMS-SETARMA/" rel="alternate" type="text/html" title="Regimes of Return Smoothing" />
+      <link href="https://a-sircar1.github.io/2024/12/30/24-IHMS-SETARMA/" rel="alternate" type="text/html" title="Regimes of Return Smoothing" />
       
       <published>2024-12-30T06:10:56+00:00</published>
       <updated>2024-12-30T06:10:56+00:00</updated>
-      <id>https://a-sircar1.github.io/home/2024/12/30/24-IHMS-SETARMA</id>
-      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/12/30/24-IHMS-SETARMA/">&lt;p&gt;I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real estate and hedge funds– move through different “smoothing regimes” over time. I introduce an Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model that lets the data uncover both the number and structure of these regimes, with regime-specific lag orders and autocorrelation patterns. The core idea is that reported returns reflect not just true economic performance, but evolving reporting and valuation practices that may react to market conditions. Using industry indices, I document how the intensity and shape of smoothing shift around major market events, and propose summary measures– like the sum of MA coefficients and a Herfindahl-style concentration index– to compare regimes. My hope is that this framework becomes a starting point for a more systematic, regime-based view of return smoothing and risk management in illiquid markets.&lt;/p&gt;
+      <id>https://a-sircar1.github.io/2024/12/30/24-IHMS-SETARMA</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/2024/12/30/24-IHMS-SETARMA/">&lt;p&gt;I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real estate and hedge funds– move through different “smoothing regimes” over time. I introduce an Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model that lets the data uncover both the number and structure of these regimes, with regime-specific lag orders and autocorrelation patterns. The core idea is that reported returns reflect not just true economic performance, but evolving reporting and valuation practices that may react to market conditions. Using industry indices, I document how the intensity and shape of smoothing shift around major market events, and propose summary measures– like the sum of MA coefficients and a Herfindahl-style concentration index– to compare regimes. My hope is that this framework becomes a starting point for a more systematic, regime-based view of return smoothing and risk management in illiquid markets.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;&lt;/p&gt;
 
@@ -360,14 +360,14 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
       <title type="html">The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem</title>
       
       
-      <link href="https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2/" rel="alternate" type="text/html" title="The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem" />
+      <link href="https://a-sircar1.github.io/2024/07/25/24-RL-optimizers-part2/" rel="alternate" type="text/html" title="The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem" />
       
       <published>2024-07-25T06:10:56+00:00</published>
       <updated>2024-07-25T06:10:56+00:00</updated>
-      <id>https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2</id>
-      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2/">&lt;p&gt;&lt;em&gt;If you haven’t taken a look at Part I yet, please take a look at it &lt;a href=&quot;/home/2024/06/06/24-RL-optimizers/&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+      <id>https://a-sircar1.github.io/2024/07/25/24-RL-optimizers-part2</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/2024/07/25/24-RL-optimizers-part2/">&lt;p&gt;&lt;em&gt;If you haven’t taken a look at Part I yet, please take a look at it &lt;a href=&quot;/2024/06/06/24-RL-optimizers/&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;As soon as I finished fleshing out the single period mean-variance model from &lt;a href=&quot;/home/2024/06/06/24-RL-optimizers/&quot;&gt;Part I&lt;/a&gt;, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample.&lt;/p&gt;
+&lt;p&gt;As soon as I finished fleshing out the single period mean-variance model from &lt;a href=&quot;/2024/06/06/24-RL-optimizers/&quot;&gt;Part I&lt;/a&gt;, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample.&lt;/p&gt;
 
 &lt;p&gt;Recently, the hedge funds and investors have flocked toward the Turkish Lira due to the higher interest rate environment in Turkey (as high as 50% at the time of writing this piece!), largely a result of a change in course toward conventional economic approaches in the nation and a relative curtailing of inflation.&lt;sup id=&quot;fnref:ft-try&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ft-try&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; Investors are taking advantage of the classic carry trade, in which money is borrowed for a trade in currency with lower interest rates to maximize gain on a currency in a high interest rate setting while betting that any shifts in the exchange rate do not upset the strategy. As FX in emerging markets is clearly quite a risky asset, and market regimes shift all the time, I decided it might be interesting to model a trading desk’s dynamic optimization problem to reflect this setting.&lt;/p&gt;
 
@@ -653,12 +653,12 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
       <title type="html">The Sample Complexity of RL-based Optimizers for Financial Applications (Part I)</title>
       
       
-      <link href="https://a-sircar1.github.io/home/2024/06/06/24-RL-optimizers/" rel="alternate" type="text/html" title="The Sample Complexity of RL-based Optimizers for Financial Applications (Part I)" />
+      <link href="https://a-sircar1.github.io/2024/06/06/24-RL-optimizers/" rel="alternate" type="text/html" title="The Sample Complexity of RL-based Optimizers for Financial Applications (Part I)" />
       
       <published>2024-06-06T06:10:56+00:00</published>
       <updated>2024-06-06T06:10:56+00:00</updated>
-      <id>https://a-sircar1.github.io/home/2024/06/06/24-RL-optimizers</id>
-      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/06/06/24-RL-optimizers/">&lt;p&gt;Earlier this year in the spring, I got the chance to take part in Penn’s Directed Reading Program (DRP) in the Math department. I wanted to explore machine learning for time-series data and sequential learning, and eventually settled on reinforcement learning (RL)– a topic I had heard a lot about but knew very little. I knew quantitative researchers and practioners were attempting to leverage reinforcement learning for all sorts of problems in financial forecasting and optimization, but that’s about all I had to go off. So, I decided to spend sometime and take the opportunity to obtain valuable guidance in my efforts to understand RL.&lt;/p&gt;
+      <id>https://a-sircar1.github.io/2024/06/06/24-RL-optimizers</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/2024/06/06/24-RL-optimizers/">&lt;p&gt;Earlier this year in the spring, I got the chance to take part in Penn’s Directed Reading Program (DRP) in the Math department. I wanted to explore machine learning for time-series data and sequential learning, and eventually settled on reinforcement learning (RL)– a topic I had heard a lot about but knew very little. I knew quantitative researchers and practioners were attempting to leverage reinforcement learning for all sorts of problems in financial forecasting and optimization, but that’s about all I had to go off. So, I decided to spend sometime and take the opportunity to obtain valuable guidance in my efforts to understand RL.&lt;/p&gt;
 
 &lt;p&gt;I read through a couple of chapters in Barto and Sutton’s textbook and then decided to take a look at some of the papers for applied RL in finance. These were interesting, but I kept gravitating back to more theory-oriented RL work– not really because I see myself as a theory person, but because that perspective made it a lot easier for me to connect the algorithms to the kinds of questions I care about in financial economics, like robustness, risk, and when the model’s assumptions actually line up with market data or real-world market problems. In my literature search, a piece that stood out to me was a BAIR article on “Learning to Optimize with RL,” which frames optimization algorithms themselves as policies learned via RL.&lt;sup id=&quot;fnref:bair&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:bair&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; In parallel, I worked through parts of an online RL theory book that develops the foundations of Markov decision processes, value functions, and convergence guarantees in a clean, abstract way.&lt;sup id=&quot;fnref:rlbook&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:rlbook&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 
@@ -809,7 +809,7 @@ Y^2
 
 &lt;p&gt;The figure below plots the mean gap, its 95th percentile, and the theoretical \(2\varepsilon_n\) curve as functions of \(n\) on a semi-logarithmic scale:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/home/assets/img/RL-optimizers-plot1.png&quot; alt=&quot;Meta-optimizer Selection Experiment in the Toy Market&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/RL-optimizers-plot1.png&quot; alt=&quot;Meta-optimizer Selection Experiment in the Toy Market&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The exact values are in the table below:&lt;/p&gt;
 
@@ -928,12 +928,12 @@ Y^2
       <title type="html">On Provable Guarantees of Adversarial Robustness of Mixture of Experts</title>
       
       
-      <link href="https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness/" rel="alternate" type="text/html" title="On Provable Guarantees of Adversarial Robustness of Mixture of Experts" />
+      <link href="https://a-sircar1.github.io/2024/05/25/24-MoE-Robustness/" rel="alternate" type="text/html" title="On Provable Guarantees of Adversarial Robustness of Mixture of Experts" />
       
       <published>2024-05-25T06:10:56+00:00</published>
       <updated>2024-05-25T06:10:56+00:00</updated>
-      <id>https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness</id>
-      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness/">&lt;p&gt;Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity.&lt;/p&gt;
+      <id>https://a-sircar1.github.io/2024/05/25/24-MoE-Robustness</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/2024/05/25/24-MoE-Robustness/">&lt;p&gt;Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity.&lt;/p&gt;
 
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 
