@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Home</title>
+  <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  
+
+  <link rel="stylesheet" href="/home/assets/main.css">
+  <link rel="canonical" href="https://a-sircar1.github.io/home/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/home/feed.xml">
+
+  
+<script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+  
+  <meta property="og:title" content="Home">
+  <meta property="og:site_name" content="Arnab Sircar">
+  <meta property="og:url" content="https://a-sircar1.github.io/home/">
+  <meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Home">
+  <meta name="twitter:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  
+  
+
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/home/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/home/about/">About</a>
+      
+        
+        <a class="page-link" href="/home/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/home/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div id="top" class="hero">
+  <div class="hero-text">
+    
+
+    <p>
+      I'm a senior at the University of Pennsylvania studying mathematical economics and computer science. 
+    </p>
+
+    <p>
+      I use this site to share <a href="#research">projects and research</a>, as well
+      as occasional notes and reflections on my
+      <a href="/home/archives/">blog</a>.
+    </p>
+
+    <p>
+      I'm currently working on illiquid asset pricing and valuation for private markets and am advised by <a href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a> in the Wharton School's Finance department. I've also had wonderful opportunities to be advised by several faculty and mentors in Penn's CIS department.
+    </p>
+  </div>
+
+  <div class="hero-photo">
+    <img src="/home/assets/img/ASircar.jpeg" alt="Arnab Sircar" />
+  </div>
+</div>
+
+<!-- News / Recent Updates -->
+<section id="news" class="card news-updates">
+  <h2>News / Recent Updates</h2>
+  <ul class="news-list">
+    
+    
+      <li>No recent news yet.</li>
+    
+  </ul>
+</section>
+
+<hr class="section-divider" />
+
+<!-- Recent Blog Posts -->
+<section class="card recent-posts">
+  <h2>Recent Blog Posts</h2>
+  <ul class="post-list">
+    
+      <li class="recent-post-item">
+        <h4 class="recent-post-title">
+          <a class="recent-post-link" href="/home/2025/07/14/25-Cat-Bonds/">Catastrophe Bond Pricing and Risk</a>
+        </h4>
+        <p class="recent-post-excerpt">
+          This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into th...
+        </p>
+        <p class="recent-post-meta">
+          July 14, 2025
+          
+            &bullet;
+            <a href="/home/categories/finance">
+              finance
+            </a>
+          
+        </p>
+      </li>
+    
+      <li class="recent-post-item">
+        <h4 class="recent-post-title">
+          <a class="recent-post-link" href="/home/2024/12/30/24-IHMS-SETARMA/">Regimes of Return Smoothing</a>
+        </h4>
+        <p class="recent-post-excerpt">
+          I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at ...
+        </p>
+        <p class="recent-post-meta">
+          December 30, 2024
+          
+            &bullet;
+            <a href="/home/categories/finance">
+              finance
+            </a>
+          
+        </p>
+      </li>
+    
+  </ul>
+
+  <p class="more-posts">
+    <a href="/home/archives/">View all posts in the blog →</a>
+  </p>
+</section>
+
+<!-- Research / Projects / Other Extended Works -->
+<section id="research" class="card research-section">
+  <h2>Research / Projects / Other Extended Works</h2>
+  <p><em>Full papers available upon request</em></p>
+
+  <article class="research-item">
+    <h3 class="research-title">
+      ETFs and Junk-Bond Liquidity
+    </h3>
+    <p class="research-authors">Arnab Sircar</p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          The rapid growth of exchange-traded funds (ETFs) has reshaped consumer access to corporate credit: the two flagship U.S. high-yield (HY) vehicles, namely HYG and JNK, now rival the size of traditional intermediary inventories. While this liquidity transformation is welcomed by investors, regulators worry that large creations and redemptions in ETFs may force dealer balance-sheet adjustments that feed directly into the pricing of high-yield, or "junk" bonds, potentially increasing overall corporate bond market stress. To determine if ETF flow pressure truly propagates to the cash market, or whether both settings simply react to overall liquidity conditions, I construct a weekly panel that spans January 2022-December 2023 that combines ~3.8~million TRACE bond prints for more than 18,000 speculative-grade CUSIPs with primary-market ETF flows, bid–ask–based illiquidity for both ETFs and bonds, issuer-level trade counts, and macro-financial controls from FRED. First, I estimate a standard regression model that is robust to heteroskedasticity and autocorrelation. Here, I show that ETF flows have almost no explanatory power for weekly changes in the HY–IG spread. In other words, regular buying and selling of these ETFs does not appear to move the overall credit market on the week-to-week basis. Second, I use a two-stage least squares (2SLS) system that treats ETF flows and credit spreads as possibly influencing each other at the same time. Even under this more flexible setup, the results show no meaningful feedback effect: a large \$1 billion ETF flow changes the spread by much less than a basis point which is too small to matter in practice. Third, I estimate a seemingly unrelated regressions (SUR) model, which allows for the possibility that a latent liquidity shock could potentially affect both ETF liquidity and credit spreads at the same time. This model reveals that the <em>liquidity gap</em>-- how much easier it is to trade ETFs than the underlying bonds-- is a useful predictor: when ETF liquidity improves, i.e., the gap decreases, credit spreads tend to decrease the following week. But the reverse does not hold-- credit spreads do not predict next week's ETF liquidity. Finally, I run a bond-level fixed-effects panel regression using over 18,000 issuers. This model confirms the market-level findings at a more granular level. When the ETF–bond liquidity gap narrows by one standard deviation, yields on actively traded high-yield bonds fall by about two basis points. In contrast, even the largest ETF flows have virtually no effect on the yield of an individual bond. The overall evidence in the paper does not support the idea that large ETF flows cause instability in the junk bond market. Instead, the liquidity of the ETFs themselves matter more. When ETF trading is smooth and efficient, it essentially provides a cushion for dealers and arbitrageurs, helping to stabilize the general market. For policymakers and investors, monitoring this ETF liquidity cushion/buffer offers a better flag of funding stress than simply tracking raw ETF flows.
+        </p>
+      </div>
+    </details>
+  </article>
+
+  <article class="research-item">
+    <h3 class="research-title">
+      Online Learning the Stochastic Discount Factor
+    </h3>
+    <p class="research-authors">Arnab Sircar</p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          In the empirical asset pricing literature, there has long been the challenge of selecting competing stochastic discount factors (SDFs) with structural differences when risk-pricing regimes shift. This note attempts to build a preliminary framework toward solving this problem in generating an interdisciplinary link between online learning and empirical asset pricing. Specifically, in this note, SDF selection is cast as an online convex optimization problem in which a learner dynamically shifts between SDF models that are tuned to the prevailing regimes in, crucially, the distribution-free setting. By treating the Hansen-Jagannathan (HJ) distance as the loss in each period and updating the SDF weights with the multiplicative weights algorithm of Arora et al. (2012), an adaptive SDF is built that has cumulative pricing error that provably exceeds that of the best fixed expert by only \(O(\sqrt{T\log K})\). This implies an \(O(\sqrt{\log K/T})\) convergence rate in sample HJ distance without distributional assumptions on returns. From the economic perspective, the framework sequentially reallocates weight toward whichever economic narrative or family of pricing kernels currently minimizes mispricing. 
+        </p>
+        <p>
+          A controlled simulation in a toy setup provides empirical evidence for the bound while a simple COVID 19 Pandemic-era U.S. macroeconomic panel shows that the algorithm switches relatively smoothly between consumption-based and factor-based SDFs. The results suggest that the framework provides a lightweight, model-agnostic path toward SDF estimation that is adaptive to regimes shifts and avoids repeated calibration and rejection tests, side-stepping classical problems related to the factor zoo and data snooping in the financial econometrics literature.
+        </p>
+      </div>
+    </details>
+  </article>
+
+  <article class="research-item">
+    <h3 class="research-title">
+      Online Click-through Rate Prediction and Welfare Optimization for Autobidders in Advertising Auctions
+    </h3>
+    <p class="research-authors">Arnab Sircar, Anirudh Bharadwaj, Ansh Nagwekar, Terrence Ji</p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          Autobidding agents have taken an increasing role of importance in online advertising platforms, allowing advertisers to bypass fine-grained bid management by providing high-level constraints to agents designed to bid on their behalf. With the rapid adoption of autobidding agents comes the need for examination of problems that carry over from prior research in ad auction design. Specifically, we tackle the challenge of click-through rate (CTR) prediction in the online setting, a key problem that has spanned nearly all online auction environments and is also carried over to the automated ecosystem. Taking advantage of budget-pacing dynamics, we build algorithms for autobidding agents that incorporate online Upper Confidence Bound (UCB)-style CTR predictions for bid-adjustment in repeated, single-slot auctions with fixed agent budgets that are easily generalized to the multi-slot setting. We design separate algorithms to satisfy the myopic setting, in which agents aim to maximize their value objective only for the current round in each time-step, and the non-myopic setting, in which agents aim to strategically maximize their value objective across all rounds. 
+        </p>
+        <p>
+          We provide no-regret guarantees for auction revenue when it is assumed that valuations are generated by an adversary. Furthermore, our paper provides a robust analysis of welfare dynamics for autobidding agents. We show that, upon several repeated rounds of auctions in the myopic setting, a system of autobidding agents achieves optimal expected aggregate liquid welfare. We provide empirical analysis via simulation in support of our theoretical results regarding the accomodation of our system-level welfare objective and compliance with our revenue regret bound. We also present further empirical results on the accuracy of our CTR estimation method embedded within the budget-pacing algorithms we propose for autobidders.
+        </p>
+      </div>
+    </details>
+  </article>
+
+  <article class="research-item">
+    <h3 class="research-title">
+      On Provable Guarantees of Adversarial Robustness of Mixture of Experts
+    </h3>
+    <p class="research-authors">Arnab Sircar</p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE)
+          paradigm has become extremely popular in several settings, including vision and
+          language-modeling. Although there are several empirical works detailing the
+          accomplishments of numerous variants and applications of MoE, relatively few studies
+          have been conducted in establishing theoretical guarantees for this class of models.
+          Furthermore, the notion of having several independent expert sub-modules perform
+          inference on specialized portions of an input space assigned by a routing mechanism
+          demands an analysis of the robustness of such a procedure. Notably, adversarial
+          robustness is a key property desired in any kind of predictive model. In this work,
+          we specifically wonder whether the MoE architecture lends itself to classical
+          adversarial defense techniques. To this extent, we develop the <em>robust MoE
+          classifier</em> that takes advantage of randomized smoothing to increase adversarial
+          robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz
+          constants than dense, standard neural network counterparts that implement randomized
+          smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball
+          in which our algorithm will be robust. Next, we perform an empirical study of the
+          performance of our model compared to several baseline models in the presence of
+          adversarial attacks and discuss a modified FGSM attack against models that exhibit
+          the MoE architecture. Finally, we end with a discussion on the potential for
+          theoretical guarantees to be made regarding the robustness of MoE given datasets that
+          exhibit specific features.
+        </p>
+      </div>
+    </details>
+  </article>
+
+  <article class="research-item">
+    <h3 class="research-title">
+      Why is Common Sense Uncommon? A Network Model for Simulating Identity-dependent Shared Beliefs
+    </h3>
+
+    <p class="research-meta">
+      2024 International Conference on Computational Social Science (IC2S2 2024) <br />
+      &middot; Oral presentation (≈37&#37; acceptance rate)
+    </p>
+
+    <p class="research-authors">
+      Arnab Sircar,
+      <a href="https://whiting.me/" target="_blank" rel="noopener">Mark Whiting</a>,
+      <a href="https://duncanjwatts.com/" target="_blank" rel="noopener">Duncan Watts</a>
+    </p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          Common sense is often described as sound, practical judgment shared by nearly all
+          people, yet recent empirical work suggests that truly “commonsensical” statements
+          are surprisingly rare. Building on Whiting and Watts’ framework, which defines a
+          statement’s commonsensicality as the geometric mean of <em>consensus</em>
+          (agreement about its truth) and <em>awareness</em> (ability to predict the majority
+          view), we develop a network model to study how social influence and identity shape
+          the prevalence of common sense.
+        </p>
+        <p>
+          We represent a population as a social network whose nodes are individuals and whose
+          edges are social ties. Nodes are assigned to one of \(k\) identity groups, and we
+          introduce an edge–rewiring process that tunes the level of identity dependence
+          (homophily) in the network: with probability \(p\), an edge that connects different
+          identities is rewired to connect to someone of the same identity. For a set of
+          statements, consensus is given by the initial distribution of beliefs, while
+          awareness combines influence from neighbors (with additional weight on
+          same-identity neighbors) and a “Willingness to Explore” parameter that captures
+          individuals sampling beliefs from non-neighbors.
+        </p>
+        <p>
+          Across networks with varying numbers of identity groups, homophily levels, and
+          stylized settings for initial beliefs and exploration, we examine the distribution
+          of commonsensicality scores. We find steady, decreasing trends in the fraction of
+          statements that qualify as common sense as identity dependence increases or
+          exploration decreases, producing levels of common sense comparable to those observed
+          empirically. Our model highlights how network structure and identity affiliation can
+          jointly constrain the formation of shared “common sense” at scale.
+        </p>
+      </div>
+    </details>
+  </article>
+
+
+  <article class="research-item">
+    <h3 class="research-title">
+       Characterization of Emotional Contagion in Collaborative Decision Support Systems
+    </h3>
+
+    <p class="research-meta">
+      2022 IEEE 8th International Conference on Collaboration and Internet Computing (CIC) <br />
+      <span class="award-badge">
+  🏆 <span class="award-text">Best Student Paper Award</span></span>
+    </p>
+
+    <p class="research-authors">
+      Arnab Sircar,
+      <a href="https://deliberatorium.org/homepage/index.html" target="_blank" rel="noopener">
+        Mark Klein
+      </a>
+    </p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          This research focuses on how emotional aspects of participants in online group
+          decision-making manifest themselves, with particular emphasis on the toxicity
+          levels of discussions around various issues. We perform a comparative study
+          of three platforms: a Reddit-like online forum, Polis (a platform for
+          computational democracy where participants vote on issues), and the
+          Deliberatorium, developed at the MIT Center for Collective Intelligence.
+          These platforms have their own specific structures that aid in group discussions.
+          A central question in this work is how to characterize the contagion of toxicity
+          in the three platforms and the extent to which their structures inhibit it.
+          We first extract two sets of data from each platform: a control group and
+          an experimental group in which an intervention is applied by inserting an
+          empathy statement intended to inhibit toxicity. Toxicity levels, determined
+          using the Google Perspective API, are compared across these samples.
+          We then construct generative models that extend the sample datasets by adding synthetic nodes (artificial entries in group discussions) based on
+          parameters such as popularity, novelty, root bias, and reciprocity among
+          participants. Two additional parameters-- node type and toxicity score-- are assigned to the synthetic nodes. These generative models allow us
+          to extend the datasets to study toxicity contagion in each platform by
+          developing a toxicity contagion index, \(EC_{\text{tox}}\), expressed as a
+          percentage of the total number of nodes. The idea for this index is adapted
+          from ecological studies, where contagion of specific land patches is examined
+          in the presence of multiple patch types. Using this metric, we assess toxicity contagion in both the control and experimental groups. With the empathy-statement intervention, Deliberatorium shows a modest improvement in \(EC_{\text{tox}}\) from 1.309&#37; to 1.297&#37;. In the Reddit-like forum, \(EC_{\text{tox}}\) increases from 1.711&#37; to 1.951&#37;,
+          while in Polis it improves from 1.750&#37; to 1.663&#37;. Overall,
+          Deliberatorium exhibits the lowest flow of toxicity, suggesting that
+          inherent structural features in its design may naturally inhibit toxicity
+          in group discussions.
+        </p>
+      </div>
+    </details>
+  </article>
+
+  <article class="research-item">
+    <h3 class="research-title">
+       Composite Indices for Adoption of Electric Vehicles (EVs)
+    </h3>
+
+    <p class="research-meta">
+      2021 IEEE International Conference on Fuzzy Systems (FUZZ-IEEE)
+    </p>
+
+    <p class="research-authors">
+      Arnab Sircar
+    </p>
+
+    <details class="research-abstract">
+      <summary class="abstract-summary">Abstract</summary>
+      <div class="abstract-body">
+        <p>
+          This study focused on developing composite indices (CI) to determine the degree to which electric vehicles (EVs) may be adopted by consumers, manufacturers, and investors. These indices may be used as gauges of where resources should be allocated in the EV industry. The first step was to collect opinions from six experts who provided inputs as fuzzy numbers. They provided inputs on twelve different factors which were divided into three categories: Design and Manufacture, Performance and Efficiency, and Sustainability and Environment. The CIs were developed for each category. Using the fuzzy inputs, two different methods of aggregating the opinions were used: the first was the Agreement Matrix method (AM) which focused on the degree of agreement among the experts, and the second one was called the Normalized Defuzzification method (ND) that focused on the weights of various factors as well as a signal-to-noise ratio metric. In order to compare the CIs obtained from these methods, the idea of information loss was used. After performing the calculations, it was observed that the AM method had lower CI information losses for all three categories. A few extensions of this study are provided in the conclusion.
+        </p>
+      </div>
+    </details>
+  </article>
+</section>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/home/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

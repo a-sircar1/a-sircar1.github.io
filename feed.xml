@@ -1,0 +1,973 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <generator uri="http://jekyllrb.com" version="4.3.4">Jekyll</generator>
+  
+  
+  <link href="https://a-sircar1.github.io/home/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://a-sircar1.github.io/home/" rel="alternate" type="text/html" hreflang="en" />
+  <updated>2025-12-11T14:02:55+00:00</updated>
+  <id>https://a-sircar1.github.io/home/</id>
+
+  
+    <title type="html">Arnab Sircar</title>
+  
+
+  
+    <subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle>
+  
+
+  
+    <author>
+        <name>Arnab Sircar</name>
+      
+      
+    </author>
+  
+
+  
+  
+    <entry>
+      
+      <title type="html">Catastrophe Bond Pricing and Risk</title>
+      
+      
+      <link href="https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds/" rel="alternate" type="text/html" title="Catastrophe Bond Pricing and Risk" />
+      
+      <published>2025-07-14T06:10:56+00:00</published>
+      <updated>2025-07-14T06:10:56+00:00</updated>
+      <id>https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds/">&lt;p&gt;This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market.&lt;/p&gt;
+
+&lt;p&gt;In credit markets, spreads are often representative of probabilities of default, default intensity, and assumptions on the recovery of the debt. For catastrophe bonds (or cat bonds), the idea remains, but the same abstraction has such a different flavor that I decided to think through it a little more carefully. I detail my findings in this post.&lt;/p&gt;
+
+&lt;p&gt;For cat bonds, the quoted spread is really the market’s price for a defined portion of the losses associated with a particular catastrophe. You take the bond’s discount margin, compare it to the model’s expected loss for that tranche, and then ask the question: is the market paying enough for the risk in this layer? In other words, do you get paid a lot per unit of modeled loss, or is the compensation low? This post is all about making the translation between how a hurricane loss distribution becomes a tranche, and how that tranche can become a spread that can actually be traded.&lt;/p&gt;
+
+&lt;details open=&quot;&quot; class=&quot;toc-wrap&quot;&gt;
+  &lt;summary&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/summary&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;#recap&quot;&gt;A Recap on Cat Bonds&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#el-to-dm&quot;&gt;Expected Loss to Discount Margin&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#multiple&quot;&gt;The “Multiple” and the Implied Disaster Curve&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#structuring&quot;&gt;Structuring a Deal&lt;/a&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href=&quot;#example&quot;&gt;Example&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#going-forward&quot;&gt;2025 and Going Forward&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#references&quot;&gt;Notes and References&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;h2 id=&quot;recap&quot;&gt;A Recap on Cat Bonds&lt;/h2&gt;
+
+&lt;p&gt;A cat bond is basically a principal-at-risk, floating-rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain conditions are met. The key quoting convention is the &lt;strong&gt;discount margin&lt;/strong&gt; (DM) which is the spread over the collateral yield. &lt;sup id=&quot;fnref:chicagofed&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:chicagofed&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;If you want exactly one diagram in this post, just take a look at the Chicago Fed’s:&lt;/p&gt;
+
+&lt;figure class=&quot;img-center&quot;&gt;
+  &lt;img src=&quot;/home/assets/img/chicago_fed_catbond_structure.png&quot; alt=&quot;Cat bond structure diagram (Chicago Fed)&quot; /&gt;
+  &lt;figcaption&gt;Catastrophe Bond Structure (Federal Reserve Bank of Chicago)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;Please refer to the Chicago Fed’s primer article (linked in the references) for a much more detailed background and sketch. With the basics out of the way, we can move forward.&lt;/p&gt;
+
+&lt;h2 id=&quot;el-to-dm&quot;&gt;Expected Loss to Discount Margin&lt;/h2&gt;
+
+&lt;p&gt;Other than the reported coupon, there are two values that matter the most when it comes to the evaluation of cat bonds:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Expected loss (EL)&lt;/strong&gt;: This is the catastrophe risk modeler’s estimate of the average annual principal loss (or actuarial loss cost) fraction.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Discount margin (DM)&lt;/strong&gt;: This is what the bond pays you over the collateral for taking that risk.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For the sake of intuition, if collateral earns \(r_t\), then the coupon is roughly:&lt;/p&gt;
+
+\[C_t \approx r_t + \mathrm{DM}\]
+
+&lt;p&gt;So DM is the “cat spread.” The market then roughly decomposes DM into:&lt;/p&gt;
+
+\[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\]
+
+&lt;p&gt;If you want a single standardized valuation statistic, then consider the &lt;strong&gt;multiple&lt;/strong&gt;:&lt;/p&gt;
+
+\[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\]
+
+&lt;p&gt;It’s the cat-bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy.&lt;/p&gt;
+
+&lt;h2 id=&quot;multiple&quot;&gt;The “Multiple” and the Implied Disaster Curve&lt;/h2&gt;
+
+&lt;p&gt;This is where cat bonds offer an interesting mental model– an equivalence can be drawn between catastrophe insurance coverage and the priced tranche of a particular loss distribution. That is, &lt;em&gt;the term sheet can be treated as a tranche quote on a tail distrbution&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;A clean way to see this is to start with a toy model that lets us do some back-of-the-envelope math: maturity \(T\), a trigger condition arriving with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers.&lt;/p&gt;
+
+&lt;p&gt;Then the annualized expected principal loss is approximately \(qL\), and the par-spread here becomes the following:&lt;/p&gt;
+
+\[\mathrm{DM}_{\text{par}} \approx qL\]
+
+&lt;p&gt;i.e. we end up with &lt;strong&gt;spread ≈ hazard × loss-given-trigger&lt;/strong&gt; (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two quick translations:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;From DM to an implied “market EL”&lt;/strong&gt;&lt;br /&gt;
+If the bond has binary losses \((L \approx 1)\), then \(\mathrm{DM}\) is already a rough proxy for \(q\). If the losses are partial, you can scale by \(L\).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;From modeled EL to a clearing DM through the multiple&lt;/strong&gt;&lt;br /&gt;
+Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the trigger condition, and the current market.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;From the perspective of hedge funds, this makes cat bonds really interesting. You’re not just “buying catastrophe risk,” you’re buying a point on an implied tail curve– the bets in the market are on the shape of the curve.&lt;/p&gt;
+
+&lt;h2 id=&quot;structuring&quot;&gt;Structuring a Deal&lt;/h2&gt;
+
+&lt;p&gt;This is the structuring problem that sponsors and banks actually solve:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Choose attachment and limit so the tranche has the expected loss investors will buy at an acceptable multiple.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;attaches at \(A\): the bond starts taking losses only once \(X &amp;gt; A\)&lt;/li&gt;
+  &lt;li&gt;exhausts at \(E\): once the losses hit \(E\), the bond pays out its maximum; the investors can’t lose more than the tranche size&lt;/li&gt;
+  &lt;li&gt;limit \(K = E-A\): the maximum dollar amount that the tranche can pay out&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Its payout is:&lt;/p&gt;
+
+\[\text{payout}(X)=\min\{\max(X-A,0),K\}\]
+
+&lt;p&gt;A very useful identity is then (boiling down the math from Excel):&lt;/p&gt;
+
+\[\mathbb{E}[\text{payout}] = \int_A^E \mathbb{P}(X&amp;gt;u)\,du\]
+
+&lt;p&gt;So the annual expected loss fraction is:&lt;/p&gt;
+
+\[\mathrm{EL} = \frac{\mathbb{E}[\text{payout}]}{K}\]
+
+&lt;p&gt;It’s simple but that’s the connection from catastrophe modeling to the bond structuring:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The modeler gives an exceedance probability curve \(u \mapsto \mathbb{P}(X&amp;gt;u)\)&lt;/li&gt;
+  &lt;li&gt;Integrate it over \([A,E]\) to get expected payout&lt;/li&gt;
+  &lt;li&gt;Divide by \(K\) to get \(EL\)&lt;/li&gt;
+  &lt;li&gt;Multiply by a clearing multiple \(M\) to get the spread that you print&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;Discretization&lt;/h3&gt;
+
+&lt;p&gt;If the model provides points \((u_i, p_i)\) on the exceedance probability curve rather than the actual functional form, then approximate the integral with trapezoids:&lt;/p&gt;
+
+\[\int_A^E \mathbb{P}(X&amp;gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i),\]
+
+&lt;p&gt;over grid points spanning \([A,E]\).&lt;/p&gt;
+
+&lt;h3 id=&quot;example&quot;&gt;An Example&lt;/h3&gt;
+
+&lt;p&gt;Suppose the risk modeler produces the following &lt;strong&gt;annual&lt;/strong&gt; exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions):&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Loss threshold \(u\) (USD mm)&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;800&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;900&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;1000&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;1100&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;1200&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;1300&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;\(\mathbb{P}(X&amp;gt;u)\)&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;6.0%&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4.8%&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.8%&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;3.0%&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2.4%&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.9%&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;You’re deciding between two candidate tranches, each with $200mm limit** (so \(K=200\)).&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Candidate 1:&lt;/strong&gt; \(A=1000\), \(E=1200\) (\(K=200\))&lt;/p&gt;
+
+&lt;p&gt;Approximate the expected payout using trapezoids with step size \(100\):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;\([1000,1100]\): avg prob \(=\frac{3.8\%+3.0\%}{2}=3.4\%\) ⇒ contribution \(=0.034\times 100=3.4\) (mm)&lt;/li&gt;
+  &lt;li&gt;\([1100,1200]\): avg prob \(=\frac{3.0\%+2.4\%}{2}=2.7\%\) ⇒ contribution \(=0.027\times 100=2.7\) (mm)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So \(\mathbb{E}[\text{payout}] \approx 3.4+2.7=6.1\) (mm), and:&lt;/p&gt;
+
+\[\mathrm{EL}_1 = \frac{6.1}{200} = 3.05\% \text{ per year}\]
+
+&lt;p&gt;If the market is clearing this style of risk at, say, &lt;strong&gt;\(M=1.8\)&lt;/strong&gt;, then the required discount margin is:&lt;/p&gt;
+
+\[\mathrm{DM}_1 = M\cdot \mathrm{EL}_1 = 1.8\times 3.05\% = 5.49\% \approx 549\text{ bps}\]
+
+&lt;p&gt;&lt;strong&gt;Candidate 2:&lt;/strong&gt; Raise the layer by $100mm: \(A=1100\), \(E=1300\) (still \(K=200\))&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;\([1100,1200]\): contribution \(=2.7\) (mm) (same as above)&lt;/li&gt;
+  &lt;li&gt;\([1200,1300]\): avg prob \(=\frac{2.4\%+1.9\%}{2}=2.15\%\) ⇒ contribution \(=0.0215\times 100=2.15\) (mm)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So \(\mathbb{E}[\text{payout}]\approx 4.85\) (mm), and:&lt;/p&gt;
+
+\[\mathrm{EL}_2 = \frac{4.85}{200} = 2.425\%\]
+
+\[\mathrm{DM}_2 = 1.8\times 2.425\% = 4.365\% \approx 437\text{ bps}\]
+
+&lt;p&gt;&lt;strong&gt;So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;That’s why this abstraction and translation matters:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;For a &lt;strong&gt;sponsor&lt;/strong&gt;, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread.&lt;/li&gt;
+  &lt;li&gt;For an &lt;strong&gt;investor&lt;/strong&gt;, doing this quickly is how you decide whether a new bond issuance is &lt;strong&gt;compensatory or not&lt;/strong&gt; relative to its modeled tail risk.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;going-forward&quot;&gt;2025 and Going Forward&lt;/h2&gt;
+
+&lt;p&gt;If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;As of &lt;strong&gt;June 27, 2025&lt;/strong&gt;, Plenum data show the cat bond market’s risk spread (discount margin) at &lt;strong&gt;6.73%&lt;/strong&gt; and the collateral yield at &lt;strong&gt;4.3%&lt;/strong&gt;– implying an overall yield of roughly &lt;strong&gt;11.03%&lt;/strong&gt;. &lt;sup id=&quot;fnref:plenum-jun2025&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:plenum-jun2025&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+  &lt;li&gt;A few weeks earlier, as of &lt;strong&gt;May 30, 2025&lt;/strong&gt;, the overall cat bond market yield was around &lt;strong&gt;10.93%&lt;/strong&gt;. &lt;sup id=&quot;fnref:plenum-may2025&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:plenum-may2025&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the &lt;strong&gt;DM&lt;/strong&gt; and how it stacks up against modeled &lt;strong&gt;expected loss&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;And the other 2025 development that matters for structure is distribution: the &lt;strong&gt;Brookmont Catastrophic Bond ETF (ILS)&lt;/strong&gt; launched &lt;strong&gt;April 1, 2025&lt;/strong&gt;, with a stated &lt;strong&gt;1.58%&lt;/strong&gt; expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. &lt;sup id=&quot;fnref:ils-etf&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ils-etf&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;sup id=&quot;fnref:ft&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ft&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;None of this news really says where spreads should be. But based on all this, the takeaway is that:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Don’t anchor on “8–10% yields.” Anchor on &lt;strong&gt;DM&lt;/strong&gt;, &lt;strong&gt;EL&lt;/strong&gt;, and the &lt;strong&gt;multiple&lt;/strong&gt;, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;Notes and References&lt;/h2&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:chicagofed&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;A. Polacek, &lt;em&gt;“Catastrophe Bonds: A Primer and Retrospective,”&lt;/em&gt; Chicago Fed Letter No. 405 (2018). The diagram in the screenshot above is taken from the website. &lt;a href=&quot;https://www.chicagofed.org/publications/chicago-fed-letter/2018/405&quot;&gt;https://www.chicagofed.org/publications/chicago-fed-letter/2018/405&lt;/a&gt;. &lt;a href=&quot;#fnref:chicagofed&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:plenum-jun2025&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;S. Evans, &lt;em&gt;“Cat bond yields rise above 11%, discount margin to decrease through wind season: Plenum,”&lt;/em&gt; Artemis (July 7, 2025). &lt;a href=&quot;https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.&quot;&gt;https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.&lt;/a&gt;. &lt;a href=&quot;#fnref:plenum-jun2025&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:plenum-may2025&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;S. Evans, &lt;em&gt;“Cat bond yields up slightly to 10.93% at May 30th. Seasonal spread widening nears end: Plenum,”&lt;/em&gt; Artemis (June 3, 2025). &lt;a href=&quot;https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/&quot;&gt;https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/&lt;/a&gt;. &lt;a href=&quot;#fnref:plenum-may2025&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:ils-etf&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Brookmont, &lt;em&gt;Brookmont Catastrophic Bond ETF (ILS) Fact Sheet&lt;/em&gt;. &lt;a href=&quot;https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf&quot;&gt;https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf&lt;/a&gt;. &lt;a href=&quot;#fnref:ils-etf&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:ft&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Financial Times, &lt;em&gt;“First cat bond ETF opens new frontier in low-correlation returns”&lt;/em&gt; (Apr 1, 2025). &lt;a href=&quot;https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233&quot;&gt;https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233&lt;/a&gt;. &lt;a href=&quot;#fnref:ft&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>Arnab Sircar</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="finance" />
+      
+
+      
+
+      
+        <summary type="html">This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market. In credit markets, spreads are often representative of probabilities of default, default intensity, and assumptions on the recovery of the debt. For catastrophe bonds (or cat bonds), the idea remains, but the same abstraction has such a different flavor that I decided to think through it a little more carefully. I detail my findings in this post. For cat bonds, the quoted spread is really the market’s price for a defined portion of the losses associated with a particular catastrophe. You take the bond’s discount margin, compare it to the model’s expected loss for that tranche, and then ask the question: is the market paying enough for the risk in this layer? In other words, do you get paid a lot per unit of modeled loss, or is the compensation low? This post is all about making the translation between how a hurricane loss distribution becomes a tranche, and how that tranche can become a spread that can actually be traded. Table of Contents A Recap on Cat Bonds Expected Loss to Discount Margin The “Multiple” and the Implied Disaster Curve Structuring a Deal Example 2025 and Going Forward Notes and References A Recap on Cat Bonds A cat bond is basically a principal-at-risk, floating-rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain conditions are met. The key quoting convention is the discount margin (DM) which is the spread over the collateral yield. 1 If you want exactly one diagram in this post, just take a look at the Chicago Fed’s: Catastrophe Bond Structure (Federal Reserve Bank of Chicago) Please refer to the Chicago Fed’s primer article (linked in the references) for a much more detailed background and sketch. With the basics out of the way, we can move forward. Expected Loss to Discount Margin Other than the reported coupon, there are two values that matter the most when it comes to the evaluation of cat bonds: Expected loss (EL): This is the catastrophe risk modeler’s estimate of the average annual principal loss (or actuarial loss cost) fraction. Discount margin (DM): This is what the bond pays you over the collateral for taking that risk. For the sake of intuition, if collateral earns \(r_t\), then the coupon is roughly: \[C_t \approx r_t + \mathrm{DM}\] So DM is the “cat spread.” The market then roughly decomposes DM into: \[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\] If you want a single standardized valuation statistic, then consider the multiple: \[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\] It’s the cat-bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy. The “Multiple” and the Implied Disaster Curve This is where cat bonds offer an interesting mental model– an equivalence can be drawn between catastrophe insurance coverage and the priced tranche of a particular loss distribution. That is, the term sheet can be treated as a tranche quote on a tail distrbution. A clean way to see this is to start with a toy model that lets us do some back-of-the-envelope math: maturity \(T\), a trigger condition arriving with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers. Then the annualized expected principal loss is approximately \(qL\), and the par-spread here becomes the following: \[\mathrm{DM}_{\text{par}} \approx qL\] i.e. we end up with spread ≈ hazard × loss-given-trigger (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two quick translations: From DM to an implied “market EL” If the bond has binary losses \((L \approx 1)\), then \(\mathrm{DM}\) is already a rough proxy for \(q\). If the losses are partial, you can scale by \(L\). From modeled EL to a clearing DM through the multiple Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the trigger condition, and the current market. From the perspective of hedge funds, this makes cat bonds really interesting. You’re not just “buying catastrophe risk,” you’re buying a point on an implied tail curve– the bets in the market are on the shape of the curve. Structuring a Deal This is the structuring problem that sponsors and banks actually solve: Choose attachment and limit so the tranche has the expected loss investors will buy at an acceptable multiple. Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that : attaches at \(A\): the bond starts taking losses only once \(X &amp;gt; A\) exhausts at \(E\): once the losses hit \(E\), the bond pays out its maximum; the investors can’t lose more than the tranche size limit \(K = E-A\): the maximum dollar amount that the tranche can pay out Its payout is: \[\text{payout}(X)=\min\{\max(X-A,0),K\}\] A very useful identity is then (boiling down the math from Excel): \[\mathbb{E}[\text{payout}] = \int_A^E \mathbb{P}(X&amp;gt;u)\,du\] So the annual expected loss fraction is: \[\mathrm{EL} = \frac{\mathbb{E}[\text{payout}]}{K}\] It’s simple but that’s the connection from catastrophe modeling to the bond structuring: The modeler gives an exceedance probability curve \(u \mapsto \mathbb{P}(X&amp;gt;u)\) Integrate it over \([A,E]\) to get expected payout Divide by \(K\) to get \(EL\) Multiply by a clearing multiple \(M\) to get the spread that you print Discretization If the model provides points \((u_i, p_i)\) on the exceedance probability curve rather than the actual functional form, then approximate the integral with trapezoids: \[\int_A^E \mathbb{P}(X&amp;gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i),\] over grid points spanning \([A,E]\). An Example Suppose the risk modeler produces the following annual exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions): Loss threshold \(u\) (USD mm) 800 900 1000 1100 1200 1300 \(\mathbb{P}(X&amp;gt;u)\) 6.0% 4.8% 3.8% 3.0% 2.4% 1.9% You’re deciding between two candidate tranches, each with $200mm limit** (so \(K=200\)). Candidate 1: \(A=1000\), \(E=1200\) (\(K=200\)) Approximate the expected payout using trapezoids with step size \(100\): \([1000,1100]\): avg prob \(=\frac{3.8\%+3.0\%}{2}=3.4\%\) ⇒ contribution \(=0.034\times 100=3.4\) (mm) \([1100,1200]\): avg prob \(=\frac{3.0\%+2.4\%}{2}=2.7\%\) ⇒ contribution \(=0.027\times 100=2.7\) (mm) So \(\mathbb{E}[\text{payout}] \approx 3.4+2.7=6.1\) (mm), and: \[\mathrm{EL}_1 = \frac{6.1}{200} = 3.05\% \text{ per year}\] If the market is clearing this style of risk at, say, \(M=1.8\), then the required discount margin is: \[\mathrm{DM}_1 = M\cdot \mathrm{EL}_1 = 1.8\times 3.05\% = 5.49\% \approx 549\text{ bps}\] Candidate 2: Raise the layer by $100mm: \(A=1100\), \(E=1300\) (still \(K=200\)) \([1100,1200]\): contribution \(=2.7\) (mm) (same as above) \([1200,1300]\): avg prob \(=\frac{2.4\%+1.9\%}{2}=2.15\%\) ⇒ contribution \(=0.0215\times 100=2.15\) (mm) So \(\mathbb{E}[\text{payout}]\approx 4.85\) (mm), and: \[\mathrm{EL}_2 = \frac{4.85}{200} = 2.425\%\] \[\mathrm{DM}_2 = 1.8\times 2.425\% = 4.365\% \approx 437\text{ bps}\] So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps That’s why this abstraction and translation matters: For a sponsor, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread. For an investor, doing this quickly is how you decide whether a new bond issuance is compensatory or not relative to its modeled tail risk. 2025 and Going Forward If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle: As of June 27, 2025, Plenum data show the cat bond market’s risk spread (discount margin) at 6.73% and the collateral yield at 4.3%– implying an overall yield of roughly 11.03%. 2 A few weeks earlier, as of May 30, 2025, the overall cat bond market yield was around 10.93%. 3 This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the DM and how it stacks up against modeled expected loss. And the other 2025 development that matters for structure is distribution: the Brookmont Catastrophic Bond ETF (ILS) launched April 1, 2025, with a stated 1.58% expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. 45 None of this news really says where spreads should be. But based on all this, the takeaway is that: Don’t anchor on “8–10% yields.” Anchor on DM, EL, and the multiple, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment. Notes and References A. Polacek, “Catastrophe Bonds: A Primer and Retrospective,” Chicago Fed Letter No. 405 (2018). The diagram in the screenshot above is taken from the website. https://www.chicagofed.org/publications/chicago-fed-letter/2018/405. &amp;#8617; S. Evans, “Cat bond yields rise above 11%, discount margin to decrease through wind season: Plenum,” Artemis (July 7, 2025). https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.. &amp;#8617; S. Evans, “Cat bond yields up slightly to 10.93% at May 30th. Seasonal spread widening nears end: Plenum,” Artemis (June 3, 2025). https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/. &amp;#8617; Brookmont, Brookmont Catastrophic Bond ETF (ILS) Fact Sheet. https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf. &amp;#8617; Financial Times, “First cat bond ETF opens new frontier in low-correlation returns” (Apr 1, 2025). https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233. &amp;#8617;</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+    <entry>
+      
+      <title type="html">Regimes of Return Smoothing</title>
+      
+      
+      <link href="https://a-sircar1.github.io/home/2024/12/30/24-IHMS-SETARMA/" rel="alternate" type="text/html" title="Regimes of Return Smoothing" />
+      
+      <published>2024-12-30T06:10:56+00:00</published>
+      <updated>2024-12-30T06:10:56+00:00</updated>
+      <id>https://a-sircar1.github.io/home/2024/12/30/24-IHMS-SETARMA</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/12/30/24-IHMS-SETARMA/">&lt;p&gt;I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real estate and hedge funds– move through different “smoothing regimes” over time. I introduce an Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model that lets the data uncover both the number and structure of these regimes, with regime-specific lag orders and autocorrelation patterns. The core idea is that reported returns reflect not just true economic performance, but evolving reporting and valuation practices that may react to market conditions. Using industry indices, I document how the intensity and shape of smoothing shift around major market events, and propose summary measures– like the sum of MA coefficients and a Herfindahl-style concentration index– to compare regimes. My hope is that this framework becomes a starting point for a more systematic, regime-based view of return smoothing and risk management in illiquid markets.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Return smoothing is a common feature observed in the returns of illiquid and alternative asset classes, including real estate and private equity. Although the definitive reasons for serial correlation observed in returns is widely debated, empirical studies have discovered time-varying autocorrelation in observed returns. In this paper, we argue that this dynamic autocorrelation or level of smoothing can be attributed to changes in return reporting structure or valuation technique, largely developed as responses to market conditions. To this extent, we develop a statistical framework called the Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model and estimation approach toward studying regime recovery and analysis in financial time-series data. Then, we adapt the standard model of return smoothing for analysis using our model. We report several preliminary statistics on the regimes and their features observed for the FTSE Nareit U.S. Real Estate Index and the Credit Suisse Hedge Fund Index as broad indicators of their respective industries/asset classes.&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>Arnab Sircar</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="finance" />
+      
+        <category term="statistics" />
+      
+
+      
+
+      
+        <summary type="html">I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real estate and hedge funds– move through different “smoothing regimes” over time. I introduce an Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model that lets the data uncover both the number and structure of these regimes, with regime-specific lag orders and autocorrelation patterns. The core idea is that reported returns reflect not just true economic performance, but evolving reporting and valuation practices that may react to market conditions. Using industry indices, I document how the intensity and shape of smoothing shift around major market events, and propose summary measures– like the sum of MA coefficients and a Herfindahl-style concentration index– to compare regimes. My hope is that this framework becomes a starting point for a more systematic, regime-based view of return smoothing and risk management in illiquid markets. Abstract Return smoothing is a common feature observed in the returns of illiquid and alternative asset classes, including real estate and private equity. Although the definitive reasons for serial correlation observed in returns is widely debated, empirical studies have discovered time-varying autocorrelation in observed returns. In this paper, we argue that this dynamic autocorrelation or level of smoothing can be attributed to changes in return reporting structure or valuation technique, largely developed as responses to market conditions. To this extent, we develop a statistical framework called the Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model and estimation approach toward studying regime recovery and analysis in financial time-series data. Then, we adapt the standard model of return smoothing for analysis using our model. We report several preliminary statistics on the regimes and their features observed for the FTSE Nareit U.S. Real Estate Index and the Credit Suisse Hedge Fund Index as broad indicators of their respective industries/asset classes.</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+    <entry>
+      
+      <title type="html">The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem</title>
+      
+      
+      <link href="https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2/" rel="alternate" type="text/html" title="The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem" />
+      
+      <published>2024-07-25T06:10:56+00:00</published>
+      <updated>2024-07-25T06:10:56+00:00</updated>
+      <id>https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2/">&lt;p&gt;&lt;em&gt;If you haven’t taken a look at Part I yet, please take a look at it &lt;a href=&quot;/home/2024/06/06/24-RL-optimizers/&quot;&gt;here&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;As soon as I finished fleshing out the single period mean-variance model from &lt;a href=&quot;/home/2024/06/06/24-RL-optimizers/&quot;&gt;Part I&lt;/a&gt;, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample.&lt;/p&gt;
+
+&lt;p&gt;Recently, the hedge funds and investors have flocked toward the Turkish Lira due to the higher interest rate environment in Turkey (as high as 50% at the time of writing this piece!), largely a result of a change in course toward conventional economic approaches in the nation and a relative curtailing of inflation.&lt;sup id=&quot;fnref:ft-try&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ft-try&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; Investors are taking advantage of the classic carry trade, in which money is borrowed for a trade in currency with lower interest rates to maximize gain on a currency in a high interest rate setting while betting that any shifts in the exchange rate do not upset the strategy. As FX in emerging markets is clearly quite a risky asset, and market regimes shift all the time, I decided it might be interesting to model a trading desk’s dynamic optimization problem to reflect this setting.&lt;/p&gt;
+
+&lt;h3&gt;Picking Up from Where We Left Off&lt;/h3&gt;
+
+&lt;p&gt;In short, my analysis in Part I treated each of the optimizers as an arm in a single period mean-variance bandit. For a fixed pair \((\mu,\Sigma)\), the problem was to choose, with as few episodes as possible, among a finite family of algorithms that output portfolios onto a simplex. The meta-distribution over cases \(p = (\mu,\Sigma)\) captured cross-sectional and temporal variation in the opportunity sets, and the main object of interest was the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) between the best optimizer and the one that was empirically selected.&lt;/p&gt;
+
+&lt;p&gt;But now, we’re shifting from single period mean-variance to a dynamic stochastic program.&lt;/p&gt;
+
+&lt;p&gt;Given that sequential adjustments are now made to the portfolio in response to sequential occurrences, a finite-state Markov decision process (MDP) can be appropriate for the model. Instead of drawing independent problem cases \(p_i \sim \mathcal{P}\) as in Part I, I now observe a single evolving state process \(s_t\) whose components summarize carry premia, volatility, any crash indicators, and also any slack on the balance sheet. In this setting, a trading strategy is then a policy \(\pi\) that maps each state \(s_t\) into a feasible control \(a_t\), for example a vector of currency positions subject to leverage and margin constraints. The objective here is to maximize a discounted risk-adjusted P&amp;amp;L functional as follows:&lt;/p&gt;
+
+\[V^{\pi}(s_0)
+=
+\mathbb{E}^{\pi}\!\left[
+\sum_{t=0}^{\infty} \gamma^t r(s_t,a_t)
+\right]\]
+
+&lt;p&gt;where \(\gamma \in (0,1)\) captures the persistence of carry and crash regimes, and the reward \(r(s_t,a_t)\) aggregates the carry, mark-to-market movements, transaction costs, and risk penalties in a bounded way.&lt;/p&gt;
+
+&lt;p&gt;From the perspective of Part I, this is a shift from comparing a finite list of static optimizers on i.i.d. portfolio problems to comparing policies in a stochastic environment. Similar underlying concentration inequalities still govern how many observations are needed to distinguish near-optimal policies from sub-optimal ones. The difference is that the relevant complexity parameters are now the number of market regimes and control actions, and the effective horizon \(1 / (1 - \gamma)\) that is implied by the persistence of emerging market (EM) FX or credit risk factors instead of the simple cardinality \(K\) of a candidate optimizer family.&lt;/p&gt;
+
+&lt;p&gt;With this in mind, I place the sample-complexity results of AJKS to a concrete dynamic problem that is controlling an EM FX carry portfolio under leverage and crash risk. The structure of the problem is inspired by the empirical literature on carry trades and currency crashes, which documents regime-dependent downside risk,&lt;sup id=&quot;fnref:brunnermeier2009&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:brunnermeier2009&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; and by work on optimal carry trade portfolios that already treat carry investing as a state-dependent dynamic allocation problem.&lt;sup id=&quot;fnref:laborda2014&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:laborda2014&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; &lt;sup id=&quot;fnref:chen2022&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:chen2022&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt; The aim of this note is to treat the same economic environment as an unknown MDP and ask how many simulated or historical episodes would be needed for an RL agent to learn a policy whose risk–adjusted value is provably close to that of the best feasible EM FX carry control policy.&lt;/p&gt;
+
+&lt;h3&gt;Model&lt;/h3&gt;
+
+&lt;p&gt;A trading desk that runs an EM FX carry book faces a dynamic stochastic program. The desk chooses a leveraged long-short position in a set of EM currencies against a funding currency, under balance-sheet, margin, and drawdown constraints. The control problem is cast as an MDP, and minmax-optimal sample complexity bounds for discounted control and finite-horizon exploration are used from results from AJKS (I will refer to the RL theory book as AJKS from here on out). &lt;sup id=&quot;fnref:ajks-ch2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt; &lt;sup id=&quot;fnref:ajks-ch7&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt; The bounds are then rewritten in terms of economically meaningful quantities like regime persistence, the number of states needed to track carry and crash risk, and the discretization of position size and leverage. The set-up can now be formalized. Consider a single funding currency, indexed by \(f\), and \(d\) EM currencies, indexed by \(j = 1,\dots,d\). At discrete times \(t = 0,1,2,\dots\), the desk rebalances over a fixed interval \(\Delta t\) (like one week, for example). For each EM currency \(j\) at time \(t\), the following objects are observed:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The short risk-free rate of the funding currency \(r_t^f\)&lt;/li&gt;
+  &lt;li&gt;The short local collateral rate \(r_{t}^j\)&lt;/li&gt;
+  &lt;li&gt;The log spot exchange rate \(S_t^j = \log \text{FX}_t^j\), that is quoted as units of funding currency per unit of EM currency&lt;/li&gt;
+  &lt;li&gt;A volatility proxy \(\sigma_t^j\) (for example, implied volatility)&lt;/li&gt;
+  &lt;li&gt;A crash-regime variable \(Z_t^j \in \{0,1\}\), where \(Z_t^j = 1\) indicates a stressed or regime that is prone to crashes for currency \(j\).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Define the instantaneous carry spread of currency \(j\) over the funding currency as&lt;/p&gt;
+
+\[c_t^j = r_{t}^j - r_t^f\]
+
+&lt;p&gt;At time \(t\) the desk chooses a position vector \(u_t = (u_t^1,\dots,u_t^d)\) in units of notional per unit of capital, where \(u_t^j &amp;gt; 0\) means being long EM currency \(j\) funded in \(f\), and \(u_t^j &amp;lt; 0\) means short EM currency \(j\) and long the funding currency. There is a gross leverage constraint:&lt;/p&gt;
+
+\[\sum_{j=1}^d \|u_t^j\| \leq L_{\max}\]
+
+&lt;p&gt;and a position cap for each of the currencies \(\|u_t^j\| \leq U_{\max}^j\).&lt;/p&gt;
+
+&lt;p&gt;Over one period, the currency-level log return in the funding currency is&lt;/p&gt;
+
+\[R_{t+1}^j = S_{t+1}^j - S_t^j + c_t^j \Delta t - \kappa_t^j(u_t^j)\]
+
+&lt;p&gt;where \(\kappa_t^j(u_t^j)\) captures trading and funding costs (for example, bid-ask spread, charges on the balance sheet, and basis). At the portfolio level, the unadjusted P&amp;amp;L per unit of capital over one period is&lt;/p&gt;
+
+\[\Pi_{t+1} = \sum_{j=1}^d u_t^j R_{t+1}^j\]
+
+&lt;p&gt;To turn this into a risk-adjusted reward that is compatible with discounted control, fix a risk-aversion parameter \(\lambda &amp;gt; 0\) and define the conditional variance like so:&lt;/p&gt;
+
+\[v_t(u_t) = \operatorname{Var}\!\left(\Pi_{t+1} \mid \mathcal{F}_t\right)\]
+
+&lt;p&gt;where \(\mathcal{F}_t\) is the information at time \(t\). Define the raw risk-adjusted payoff&lt;/p&gt;
+
+\[X_{t+1} = \Pi_{t+1} - \frac{\lambda}{2} v_t(u_t)\]
+
+&lt;p&gt;Because currency returns and carry spreads are bounded in any realistic risk environment, I say there exists a constant \(B &amp;gt; 0\) such that with high probability \(\|X_{t+1}\| \leq B\). For the math to hold, I clip and rescale to obtain the bounded reward&lt;/p&gt;
+
+\[r_{t+1} = \frac{1}{2} + \frac{1}{2B} \left( \max\{-B, \min\{X_{t+1}, B\}\} \right)\]
+
+&lt;p&gt;so that \(r_{t+1} \in [0,1]\) and all policies are compared on a normalized scale. This rescaling does not change the ordering of the policies by risk-adjusted performance.&lt;/p&gt;
+
+&lt;p&gt;The desk then faces a stochastic program of maximizing the discounted value&lt;/p&gt;
+
+\[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r_{t+1} \mid s_0 \right]\]
+
+&lt;p&gt;over policies \(\pi\) mapping states to actions, where \(\gamma \in (0,1)\) is a discount factor.&lt;/p&gt;
+
+&lt;h3&gt;State, action, and discount in financial terms&lt;/h3&gt;
+
+&lt;p&gt;Define the state at time \(t\) as a summary:&lt;/p&gt;
+
+\[s_t = \big(C_t, \Sigma_t, Z_t, M_t, K_t\big)\]
+
+&lt;p&gt;where there is:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;\(C_t\) stores the discretized carry spreads \(c_t^j\)&lt;/li&gt;
+  &lt;li&gt;\(\Sigma_t\) stores discretized volatility proxies \(\sigma_t^j\)&lt;/li&gt;
+  &lt;li&gt;\(Z_t\) is the vector of crash regimes \(Z_t^j\)&lt;/li&gt;
+  &lt;li&gt;\(M_t\) stores remaining time to any hard horizon (for example, investor capital lock-up)&lt;/li&gt;
+  &lt;li&gt;\(K_t\) stores risk and margin information like remaining capacity under VaR limits or drawdown constraints, etc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This state takes values in a finite set \(\mathcal{S}\) once each of the components is discretized into a finite grid. For example, each \(c_t^j\) might be mapped into one of \(G_c\) quantile buckets, each \(\sigma_t^j\) into \(G_{\sigma}\) buckets, and each crash regime \(Z_t^j\) into the two values \(0\) or \(1\). If aggregation is done across the currencies into factor summaries (for example, a global EM carry factor, a volatility factor, and a crash indicator), the resulting state cardinality can be written as so:&lt;/p&gt;
+
+\[\| \mathcal{S} \| = S_{\text{carry}} \cdot S_{\text{vol}} \cdot S_{\text{crash}} \cdot S_{\text{horizon}} \cdot S_{\text{margin}}\]
+
+&lt;p&gt;where each \(S_{\cdot}\) is a design choice of the desk. The action at time \(t\) is the position vector \(u_t\). For the purposes of sample-complexity analysis, discretize \(u_t^j\) onto a finite grid, for instance&lt;/p&gt;
+
+\[u_t^j \in \{-U_{\max}^j, -U_{\max}^j + \Delta u^j, \dots, U_{\max}^j\}\]
+
+&lt;p&gt;and only allow grids to be consistent with the leverage and margin constraints. The action space \(\mathcal{A}\) is then finite with cardinality \(\| \mathcal{A} \| = A_{\text{pos}}\), which depends on the position grid and the number of currencies, as well as the shape of the leverage constraint.&lt;/p&gt;
+
+&lt;p&gt;The discount factor \(\gamma\) has a financial interpretation. Suppose that the EM carry factor has an approximate exponential autocorrelation with half-life \(H_{\text{half}}\) that is measured in rebalancing periods. That is, if the lag-k autocorrelation of a relevant factor is approximately \(\rho_k \approx \exp(-k / \tau)\) for some persistence scale \(\tau\), then the half-life is defined as&lt;/p&gt;
+
+\[\frac{1}{2} = \exp\!\left(-\frac{H_{\text{half}}}{\tau}\right)\]
+
+&lt;p&gt;and solving for \(H_{\text{half}}\) produces&lt;/p&gt;
+
+\[H_{\text{half}} = \tau \log 2\]
+
+&lt;p&gt;Setting one step to length \(\Delta t\) and choosing a discount factor&lt;/p&gt;
+
+\[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\]
+
+&lt;p&gt;gives a planning horizon on the order of&lt;/p&gt;
+
+\[\frac{1}{1 - \gamma} \approx \frac{\tau}{\Delta t}\]
+
+&lt;p&gt;So the factor \(1 - \gamma\) that governs the sample complexity can be written in terms of observed carry persistence.&lt;/p&gt;
+
+&lt;p&gt;With these definitions, EM FX carry control is a discounted MDP with finite state space \(\mathcal{S}\), finite action space \(\mathcal{A}\), bounded reward in \([0,1]\), and discount factor \(\gamma \in (0,1)\). This is exactly the setting of the discounted sample-complexity results in AJKS Chapter 2. &lt;sup id=&quot;fnref:ajks-ch2:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h3&gt;Generative-model Sample Complexity in terms of EM FX&lt;/h3&gt;
+
+&lt;p&gt;Now, step back and assume the desk has access to a calibrated generative model of EM FX and carry dynamics. This can be any kind of risk simulator. Given any state-action pair \((s,a)\), the simulator returns \((s&apos;, r) \sim G(\cdot \mid s,a)\) where \(s&apos;\) is the next state and \(r \in [0,1]\) is the normalized reward. As in AJKS, define an empirical MDP \(\hat{\mathcal{M}}\) that has a transition kernel \(\hat{P}\) that is built from \(N\) independent samples for each \((s,a)\). AJKS show that there exist absolute constants such that, for any \(\varepsilon \in (0,1)\) and \(\delta \in (0,1)\), if the number of simulator calls per state-action pair \(N\) satisfies&lt;/p&gt;
+
+\[N \ge c_0 \cdot \frac{1}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c_1 \| \mathcal{S} \| \| \mathcal{A} \| / \delta\big)}{\varepsilon^2}\]
+
+&lt;p&gt;then, with probability at least \(1 - \delta\), the optimal value function \(Q^{\star}\) and the optimal empirical value function \(\hat{Q}^{\star}\) satisfy&lt;/p&gt;
+
+\[\| Q^{\star} - \hat{Q}^{\star} \|_{\infty} \leq \varepsilon\]
+
+&lt;p&gt;and the policy \(\hat{\pi}\) that is optimal in \(\hat{\mathcal{M}}\) satisfies&lt;/p&gt;
+
+\[\| Q^{\star} - Q^{\hat{\pi}} \|_{\infty} \leq \varepsilon\]
+
+&lt;p&gt;given that \(N\) is not too small.&lt;sup id=&quot;fnref:ajks-ch2:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt; The total number of simulator calls is then&lt;/p&gt;
+
+\[N_{\text{total}} = \| \mathcal{S} \| \| \mathcal{A} \| N\]
+
+&lt;p&gt;Substituting the inequality for \(N\) into the expression for \(N_{\text{total}}\), I obtain the following sample-complexity bound that is specific to EM. Let \(S = \| \mathcal{S} \|, A = \| \mathcal{A} \|\). Then it should suffice to take&lt;/p&gt;
+
+\[N_{\text{total}} \ge c \cdot \frac{S A}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c S A / \delta\big)}{\varepsilon^2}\]
+
+&lt;p&gt;for a constant \(c\), to make sure that the policy learned by model-based planning on the simulator is \(\varepsilon\)-optimal with probability at least \(1 - \delta\).&lt;sup id=&quot;fnref:ajks-ch2:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;The financial interpretation of each factor is as follows. First, the factor \(S A\) is the effective size of the EM FX control problem. Increasing the granularity of the carry buckets, volatility regimes, crash flags, or margin states increases \(S\). Increasing the granularity of position and leverage grids increases \(A\). These are design choices that would be made by the trading desk and are not fixed constraints.&lt;/p&gt;
+
+&lt;p&gt;Second, the factor \((1 - \gamma)^{-3}\) measures the difficulty that is added by persistence in carry and crash regimes. Using the relation&lt;/p&gt;
+
+\[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\]
+
+&lt;p&gt;expand \(1 - \gamma\) using the first-order approximation of the exponential,&lt;/p&gt;
+
+\[1 - \gamma = 1 - \exp\!\left(-\frac{\Delta t}{\tau}\right) \approx \frac{\Delta t}{\tau}\]
+
+&lt;p&gt;when \(\Delta t / \tau\) is small. Then&lt;/p&gt;
+
+\[\frac{1}{(1 - \gamma)^3} \approx \left( \frac{\tau}{\Delta t} \right)^3\]
+
+&lt;p&gt;Thus the sample requirement grows as the cube of the ratio between the carry persistence scale \(\tau\) and the rebalancing interval \(\Delta t\). For weekly rebalancing and assuming an eight-week half-life (for example), this ratio is of order \(8\), and its cube is of order \(512\). Slow-moving regimes make learning an optimal EM carry control policy inherently more sample intensive.&lt;/p&gt;
+
+&lt;p&gt;Third, the logarithmic factor \(\log(c S A / \delta)\) is relatively mild, but it captures the reliability parameter \(\delta\). Demanding that the learned policy is close to optimal with probability \(1 - \delta = 0.99\) instead of \(0.95\) increases the log factor but does not change the polynomial dependence on \(S\), \(A\), \(\varepsilon\), or \(1 - \gamma\).&lt;/p&gt;
+
+&lt;p&gt;This theorem is formally identical to the abstract discounted bound in AJKS, but its economics becomes interpretable once \(\gamma\), \(S\), and \(A\) are written in terms of state aggregation, position grids, and half-lives of factors.&lt;/p&gt;
+
+&lt;h3&gt;Episodic Exploration without a Generative Model&lt;/h3&gt;
+
+&lt;p&gt;In many situations the desk cannot query a simulator arbitrarily and only learns from executed positions. In that case it is natural to work with a finite-horizon formulation that is episodic. I consider a horizon of \(H\) rebalancing steps, after which the book is then forced to unwind. Episodes are indexed by \(k = 0,1,\dots,K - 1\), and each episode consists of states and actions&lt;/p&gt;
+
+\[(s_{k,0}, a_{k,0}, \dots, s_{k,H-1}, a_{k,H-1})\]
+
+&lt;p&gt;Assume that each of the episodes starts from the same benchmark state \(s_{0}\) (which could represent an unlevered start). For each episode define the regret of the policy \(\pi_k\) used in that episode as&lt;/p&gt;
+
+\[\text{Regret}_k = V^{\star}_0(s_0) - V^{\pi_k}_0(s_0)\]
+
+&lt;p&gt;where \(V^{\star}_0(s_0)\) is the optimal value starting at \(s_0\), and \(V^{\pi_k}_0(s_0)\) is the value of policy \(\pi_k\).&lt;sup id=&quot;fnref:ajks-ch7:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt; The total expected regret after \(K\) episodes is&lt;/p&gt;
+
+\[\text{Regret}(K) = \mathbb{E}\!\left[ \sum_{k=0}^{K-1} \text{Regret}_k \right]\]
+
+&lt;p&gt;In the tabular finite-horizon setting, AJKS analyze the UCB-VI algorithm and show that the regret is bounded by a term of order&lt;/p&gt;
+
+\[\text{Regret}(K) \leq C_1 H^2 S \sqrt{A K} \log\!\big(C_2 S A H K\big)\]
+
+&lt;p&gt;for absolute constants \(C_1\) and \(C_2\).&lt;sup id=&quot;fnref:ajks-ch7:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt; Now, in terms of the problem I look at, it can be seen that the average regret per episode satisfies&lt;/p&gt;
+
+\[\frac{\text{Regret}(K)}{K} \leq C_1 H^2 S \sqrt{\frac{A}{K}} \log\!\big(C_2 S A H K\big)\]
+
+&lt;p&gt;The key dependence here is that the shortfall in risk-adjusted value per episode decays on the order of&lt;/p&gt;
+
+\[H^2 S \sqrt{\frac{A}{K}}\]
+
+&lt;p&gt;up to logarithmic factors. To invert the bound, fix a target average regret per episode \(\rho &amp;gt; 0\). I want&lt;/p&gt;
+
+\[\frac{\text{Regret}(K)}{K} \leq \rho\]
+
+&lt;p&gt;Ignoring the logarithmic factors to see the main scaling, impose&lt;/p&gt;
+
+\[C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho\]
+
+&lt;p&gt;Solve the inequality for \(K\) as follows.&lt;/p&gt;
+
+\[\begin{aligned}
+&amp;amp;C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho \\
+&amp;amp;\implies \sqrt{\frac{A}{K}} \leq \frac{\rho}{C_1 H^2 S} \\
+&amp;amp;\implies \frac{A}{K} \leq \frac{\rho^2}{C_1^2 H^4 S^2}  \\
+&amp;amp;\implies K \geq A \cdot \frac{C_1^2 H^4 S^2}{\rho^2} = \left( \frac{C_1 H^2 S \sqrt{A}}{\rho} \right)^2
+\end{aligned}\]
+
+&lt;p&gt;Thus, to drive the average regret per episode below \(\rho\), the number of episodes must scale to at least the order of \(H^4 S^2 A / \rho^2\). Because \(H\) is proportional to the horizon of the control problem and \(S\) and \(A\) are determined by the state and action discretizations, this gives an explicit trade-off here– decreasing state and action granularity can reduce learning time by large factors.&lt;/p&gt;
+
+&lt;h3&gt;Optimizers as Policies for the Trading Desk&lt;/h3&gt;
+
+&lt;p&gt;Li and Malik propose viewing an optimization algorithm itself as a policy in an MDP, where the “state” consists of past instances, gradients, and objective values, and the “action” is the next update step.&lt;sup id=&quot;fnref:limalik&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:limalik&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;7&lt;/a&gt;&lt;/sup&gt; In this context, I adopt the same perspective from a trading desk’s perspective. An EM carry optimization algorithm is a policy mapping the history of spreads, volatilities, crash indicators, and portfolio P&amp;amp;L to the next position vector.&lt;/p&gt;
+
+&lt;p&gt;This has two consequences.&lt;/p&gt;
+
+&lt;p&gt;First, a learned optimizer that is trained on a distribution of EM FX environments is effectively a meta-policy that solves many related MDPs. The sample-complexity theory here that is based on AJKS gives the number of simulated or historical episodes that is required to guarantee that this learned optimizer is near-optimal across that distribution of environments, once the optimizer class is viewed as a parameterized policy class.&lt;sup id=&quot;fnref:ajks-ch2:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:ajks-ch2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Second, because the optimizer’s internal state can include risk metrics (such as realized variance), its behavior in stressed regimes can be shaped through the reward definition. For example, aggressively penalizing severe drawdowns in the reward (before clipping) may change the shape of the optimal policy in crash or crash-prone regimes without altering the official sample-complexity rate determined. The bounds guarantee that, with sufficient data, a learned optimizer that internalizes these kinds of penalties will behave appropriately across both normal and crash regimes.&lt;/p&gt;
+
+&lt;h3&gt;Notes and References&lt;/h3&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:ft-try&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Financial Times, “Traders pour billions of dollars into Turkish lira trade” (July 20, 2024). Available at &lt;a href=&quot;https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c&quot;&gt;https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c&lt;/a&gt;. &lt;a href=&quot;#fnref:ft-try&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:brunnermeier2009&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Brunnermeier, Markus K.; Nagel, Stefan; Pedersen, Lasse H. (2009). “Carry Trades and Currency Crashes.” &lt;em&gt;NBER Macroeconomics Annual&lt;/em&gt; 23, 313–347. &lt;a href=&quot;#fnref:brunnermeier2009&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:laborda2014&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Laborda, Juan; Laborda, Ricardo; Olmo, José (2014). “Optimal currency carry trade strategies.” &lt;em&gt;International Review of Economics &amp;amp; Finance&lt;/em&gt; 33, 52–66. &lt;a href=&quot;#fnref:laborda2014&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:chen2022&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Chen, Ching-Neng (2022). “Optimal carry trade portfolio choice under regime shifts.” &lt;em&gt;Review of Quantitative Finance and Accounting&lt;/em&gt; 59(2), 541–573. &lt;a href=&quot;#fnref:chen2022&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:ajks-ch2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. &lt;em&gt;Reinforcement Learning and Stochastic Optimization&lt;/em&gt; Chapter 2: “Sample Complexity with a Generative Model.” Available at &lt;a href=&quot;https://rltheorybook.github.io/&quot;&gt;https://rltheorybook.github.io/&lt;/a&gt;. &lt;a href=&quot;#fnref:ajks-ch2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:ajks-ch2:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; &lt;a href=&quot;#fnref:ajks-ch2:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt; &lt;a href=&quot;#fnref:ajks-ch2:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;4&lt;/sup&gt;&lt;/a&gt; &lt;a href=&quot;#fnref:ajks-ch2:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;5&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:ajks-ch7&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. &lt;em&gt;Reinforcement Learning and Stochastic Optimization&lt;/em&gt; Chapter 7: “Strategic Exploration in Tabular MDPs.” Available at &lt;a href=&quot;https://rltheorybook.github.io/&quot;&gt;https://rltheorybook.github.io/&lt;/a&gt;. &lt;a href=&quot;#fnref:ajks-ch7&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:ajks-ch7:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt; &lt;a href=&quot;#fnref:ajks-ch7:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:limalik&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Li, Ke; Malik, Jitendra. “Learning to Optimize.” arXiv preprint (2016). Available at &lt;a href=&quot;https://arxiv.org/abs/1606.01885&quot;&gt;https://arxiv.org/abs/1606.01885&lt;/a&gt;. &lt;a href=&quot;#fnref:limalik&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>Arnab Sircar</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="finance" />
+      
+        <category term="optimization" />
+      
+        <category term="machine-learning" />
+      
+
+      
+
+      
+        <summary type="html">If you haven’t taken a look at Part I yet, please take a look at it here. As soon as I finished fleshing out the single period mean-variance model from Part I, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample. Recently, the hedge funds and investors have flocked toward the Turkish Lira due to the higher interest rate environment in Turkey (as high as 50% at the time of writing this piece!), largely a result of a change in course toward conventional economic approaches in the nation and a relative curtailing of inflation.1 Investors are taking advantage of the classic carry trade, in which money is borrowed for a trade in currency with lower interest rates to maximize gain on a currency in a high interest rate setting while betting that any shifts in the exchange rate do not upset the strategy. As FX in emerging markets is clearly quite a risky asset, and market regimes shift all the time, I decided it might be interesting to model a trading desk’s dynamic optimization problem to reflect this setting. Picking Up from Where We Left Off In short, my analysis in Part I treated each of the optimizers as an arm in a single period mean-variance bandit. For a fixed pair \((\mu,\Sigma)\), the problem was to choose, with as few episodes as possible, among a finite family of algorithms that output portfolios onto a simplex. The meta-distribution over cases \(p = (\mu,\Sigma)\) captured cross-sectional and temporal variation in the opportunity sets, and the main object of interest was the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) between the best optimizer and the one that was empirically selected. But now, we’re shifting from single period mean-variance to a dynamic stochastic program. Given that sequential adjustments are now made to the portfolio in response to sequential occurrences, a finite-state Markov decision process (MDP) can be appropriate for the model. Instead of drawing independent problem cases \(p_i \sim \mathcal{P}\) as in Part I, I now observe a single evolving state process \(s_t\) whose components summarize carry premia, volatility, any crash indicators, and also any slack on the balance sheet. In this setting, a trading strategy is then a policy \(\pi\) that maps each state \(s_t\) into a feasible control \(a_t\), for example a vector of currency positions subject to leverage and margin constraints. The objective here is to maximize a discounted risk-adjusted P&amp;amp;L functional as follows: \[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r(s_t,a_t) \right]\] where \(\gamma \in (0,1)\) captures the persistence of carry and crash regimes, and the reward \(r(s_t,a_t)\) aggregates the carry, mark-to-market movements, transaction costs, and risk penalties in a bounded way. From the perspective of Part I, this is a shift from comparing a finite list of static optimizers on i.i.d. portfolio problems to comparing policies in a stochastic environment. Similar underlying concentration inequalities still govern how many observations are needed to distinguish near-optimal policies from sub-optimal ones. The difference is that the relevant complexity parameters are now the number of market regimes and control actions, and the effective horizon \(1 / (1 - \gamma)\) that is implied by the persistence of emerging market (EM) FX or credit risk factors instead of the simple cardinality \(K\) of a candidate optimizer family. With this in mind, I place the sample-complexity results of AJKS to a concrete dynamic problem that is controlling an EM FX carry portfolio under leverage and crash risk. The structure of the problem is inspired by the empirical literature on carry trades and currency crashes, which documents regime-dependent downside risk,2 and by work on optimal carry trade portfolios that already treat carry investing as a state-dependent dynamic allocation problem.3 4 The aim of this note is to treat the same economic environment as an unknown MDP and ask how many simulated or historical episodes would be needed for an RL agent to learn a policy whose risk–adjusted value is provably close to that of the best feasible EM FX carry control policy. Model A trading desk that runs an EM FX carry book faces a dynamic stochastic program. The desk chooses a leveraged long-short position in a set of EM currencies against a funding currency, under balance-sheet, margin, and drawdown constraints. The control problem is cast as an MDP, and minmax-optimal sample complexity bounds for discounted control and finite-horizon exploration are used from results from AJKS (I will refer to the RL theory book as AJKS from here on out). 5 6 The bounds are then rewritten in terms of economically meaningful quantities like regime persistence, the number of states needed to track carry and crash risk, and the discretization of position size and leverage. The set-up can now be formalized. Consider a single funding currency, indexed by \(f\), and \(d\) EM currencies, indexed by \(j = 1,\dots,d\). At discrete times \(t = 0,1,2,\dots\), the desk rebalances over a fixed interval \(\Delta t\) (like one week, for example). For each EM currency \(j\) at time \(t\), the following objects are observed: The short risk-free rate of the funding currency \(r_t^f\) The short local collateral rate \(r_{t}^j\) The log spot exchange rate \(S_t^j = \log \text{FX}_t^j\), that is quoted as units of funding currency per unit of EM currency A volatility proxy \(\sigma_t^j\) (for example, implied volatility) A crash-regime variable \(Z_t^j \in \{0,1\}\), where \(Z_t^j = 1\) indicates a stressed or regime that is prone to crashes for currency \(j\). Define the instantaneous carry spread of currency \(j\) over the funding currency as \[c_t^j = r_{t}^j - r_t^f\] At time \(t\) the desk chooses a position vector \(u_t = (u_t^1,\dots,u_t^d)\) in units of notional per unit of capital, where \(u_t^j &amp;gt; 0\) means being long EM currency \(j\) funded in \(f\), and \(u_t^j &amp;lt; 0\) means short EM currency \(j\) and long the funding currency. There is a gross leverage constraint: \[\sum_{j=1}^d \|u_t^j\| \leq L_{\max}\] and a position cap for each of the currencies \(\|u_t^j\| \leq U_{\max}^j\). Over one period, the currency-level log return in the funding currency is \[R_{t+1}^j = S_{t+1}^j - S_t^j + c_t^j \Delta t - \kappa_t^j(u_t^j)\] where \(\kappa_t^j(u_t^j)\) captures trading and funding costs (for example, bid-ask spread, charges on the balance sheet, and basis). At the portfolio level, the unadjusted P&amp;amp;L per unit of capital over one period is \[\Pi_{t+1} = \sum_{j=1}^d u_t^j R_{t+1}^j\] To turn this into a risk-adjusted reward that is compatible with discounted control, fix a risk-aversion parameter \(\lambda &amp;gt; 0\) and define the conditional variance like so: \[v_t(u_t) = \operatorname{Var}\!\left(\Pi_{t+1} \mid \mathcal{F}_t\right)\] where \(\mathcal{F}_t\) is the information at time \(t\). Define the raw risk-adjusted payoff \[X_{t+1} = \Pi_{t+1} - \frac{\lambda}{2} v_t(u_t)\] Because currency returns and carry spreads are bounded in any realistic risk environment, I say there exists a constant \(B &amp;gt; 0\) such that with high probability \(\|X_{t+1}\| \leq B\). For the math to hold, I clip and rescale to obtain the bounded reward \[r_{t+1} = \frac{1}{2} + \frac{1}{2B} \left( \max\{-B, \min\{X_{t+1}, B\}\} \right)\] so that \(r_{t+1} \in [0,1]\) and all policies are compared on a normalized scale. This rescaling does not change the ordering of the policies by risk-adjusted performance. The desk then faces a stochastic program of maximizing the discounted value \[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r_{t+1} \mid s_0 \right]\] over policies \(\pi\) mapping states to actions, where \(\gamma \in (0,1)\) is a discount factor. State, action, and discount in financial terms Define the state at time \(t\) as a summary: \[s_t = \big(C_t, \Sigma_t, Z_t, M_t, K_t\big)\] where there is: \(C_t\) stores the discretized carry spreads \(c_t^j\) \(\Sigma_t\) stores discretized volatility proxies \(\sigma_t^j\) \(Z_t\) is the vector of crash regimes \(Z_t^j\) \(M_t\) stores remaining time to any hard horizon (for example, investor capital lock-up) \(K_t\) stores risk and margin information like remaining capacity under VaR limits or drawdown constraints, etc. This state takes values in a finite set \(\mathcal{S}\) once each of the components is discretized into a finite grid. For example, each \(c_t^j\) might be mapped into one of \(G_c\) quantile buckets, each \(\sigma_t^j\) into \(G_{\sigma}\) buckets, and each crash regime \(Z_t^j\) into the two values \(0\) or \(1\). If aggregation is done across the currencies into factor summaries (for example, a global EM carry factor, a volatility factor, and a crash indicator), the resulting state cardinality can be written as so: \[\| \mathcal{S} \| = S_{\text{carry}} \cdot S_{\text{vol}} \cdot S_{\text{crash}} \cdot S_{\text{horizon}} \cdot S_{\text{margin}}\] where each \(S_{\cdot}\) is a design choice of the desk. The action at time \(t\) is the position vector \(u_t\). For the purposes of sample-complexity analysis, discretize \(u_t^j\) onto a finite grid, for instance \[u_t^j \in \{-U_{\max}^j, -U_{\max}^j + \Delta u^j, \dots, U_{\max}^j\}\] and only allow grids to be consistent with the leverage and margin constraints. The action space \(\mathcal{A}\) is then finite with cardinality \(\| \mathcal{A} \| = A_{\text{pos}}\), which depends on the position grid and the number of currencies, as well as the shape of the leverage constraint. The discount factor \(\gamma\) has a financial interpretation. Suppose that the EM carry factor has an approximate exponential autocorrelation with half-life \(H_{\text{half}}\) that is measured in rebalancing periods. That is, if the lag-k autocorrelation of a relevant factor is approximately \(\rho_k \approx \exp(-k / \tau)\) for some persistence scale \(\tau\), then the half-life is defined as \[\frac{1}{2} = \exp\!\left(-\frac{H_{\text{half}}}{\tau}\right)\] and solving for \(H_{\text{half}}\) produces \[H_{\text{half}} = \tau \log 2\] Setting one step to length \(\Delta t\) and choosing a discount factor \[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\] gives a planning horizon on the order of \[\frac{1}{1 - \gamma} \approx \frac{\tau}{\Delta t}\] So the factor \(1 - \gamma\) that governs the sample complexity can be written in terms of observed carry persistence. With these definitions, EM FX carry control is a discounted MDP with finite state space \(\mathcal{S}\), finite action space \(\mathcal{A}\), bounded reward in \([0,1]\), and discount factor \(\gamma \in (0,1)\). This is exactly the setting of the discounted sample-complexity results in AJKS Chapter 2. 5 Generative-model Sample Complexity in terms of EM FX Now, step back and assume the desk has access to a calibrated generative model of EM FX and carry dynamics. This can be any kind of risk simulator. Given any state-action pair \((s,a)\), the simulator returns \((s&apos;, r) \sim G(\cdot \mid s,a)\) where \(s&apos;\) is the next state and \(r \in [0,1]\) is the normalized reward. As in AJKS, define an empirical MDP \(\hat{\mathcal{M}}\) that has a transition kernel \(\hat{P}\) that is built from \(N\) independent samples for each \((s,a)\). AJKS show that there exist absolute constants such that, for any \(\varepsilon \in (0,1)\) and \(\delta \in (0,1)\), if the number of simulator calls per state-action pair \(N\) satisfies \[N \ge c_0 \cdot \frac{1}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c_1 \| \mathcal{S} \| \| \mathcal{A} \| / \delta\big)}{\varepsilon^2}\] then, with probability at least \(1 - \delta\), the optimal value function \(Q^{\star}\) and the optimal empirical value function \(\hat{Q}^{\star}\) satisfy \[\| Q^{\star} - \hat{Q}^{\star} \|_{\infty} \leq \varepsilon\] and the policy \(\hat{\pi}\) that is optimal in \(\hat{\mathcal{M}}\) satisfies \[\| Q^{\star} - Q^{\hat{\pi}} \|_{\infty} \leq \varepsilon\] given that \(N\) is not too small.5 The total number of simulator calls is then \[N_{\text{total}} = \| \mathcal{S} \| \| \mathcal{A} \| N\] Substituting the inequality for \(N\) into the expression for \(N_{\text{total}}\), I obtain the following sample-complexity bound that is specific to EM. Let \(S = \| \mathcal{S} \|, A = \| \mathcal{A} \|\). Then it should suffice to take \[N_{\text{total}} \ge c \cdot \frac{S A}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c S A / \delta\big)}{\varepsilon^2}\] for a constant \(c\), to make sure that the policy learned by model-based planning on the simulator is \(\varepsilon\)-optimal with probability at least \(1 - \delta\).5 The financial interpretation of each factor is as follows. First, the factor \(S A\) is the effective size of the EM FX control problem. Increasing the granularity of the carry buckets, volatility regimes, crash flags, or margin states increases \(S\). Increasing the granularity of position and leverage grids increases \(A\). These are design choices that would be made by the trading desk and are not fixed constraints. Second, the factor \((1 - \gamma)^{-3}\) measures the difficulty that is added by persistence in carry and crash regimes. Using the relation \[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\] expand \(1 - \gamma\) using the first-order approximation of the exponential, \[1 - \gamma = 1 - \exp\!\left(-\frac{\Delta t}{\tau}\right) \approx \frac{\Delta t}{\tau}\] when \(\Delta t / \tau\) is small. Then \[\frac{1}{(1 - \gamma)^3} \approx \left( \frac{\tau}{\Delta t} \right)^3\] Thus the sample requirement grows as the cube of the ratio between the carry persistence scale \(\tau\) and the rebalancing interval \(\Delta t\). For weekly rebalancing and assuming an eight-week half-life (for example), this ratio is of order \(8\), and its cube is of order \(512\). Slow-moving regimes make learning an optimal EM carry control policy inherently more sample intensive. Third, the logarithmic factor \(\log(c S A / \delta)\) is relatively mild, but it captures the reliability parameter \(\delta\). Demanding that the learned policy is close to optimal with probability \(1 - \delta = 0.99\) instead of \(0.95\) increases the log factor but does not change the polynomial dependence on \(S\), \(A\), \(\varepsilon\), or \(1 - \gamma\). This theorem is formally identical to the abstract discounted bound in AJKS, but its economics becomes interpretable once \(\gamma\), \(S\), and \(A\) are written in terms of state aggregation, position grids, and half-lives of factors. Episodic Exploration without a Generative Model In many situations the desk cannot query a simulator arbitrarily and only learns from executed positions. In that case it is natural to work with a finite-horizon formulation that is episodic. I consider a horizon of \(H\) rebalancing steps, after which the book is then forced to unwind. Episodes are indexed by \(k = 0,1,\dots,K - 1\), and each episode consists of states and actions \[(s_{k,0}, a_{k,0}, \dots, s_{k,H-1}, a_{k,H-1})\] Assume that each of the episodes starts from the same benchmark state \(s_{0}\) (which could represent an unlevered start). For each episode define the regret of the policy \(\pi_k\) used in that episode as \[\text{Regret}_k = V^{\star}_0(s_0) - V^{\pi_k}_0(s_0)\] where \(V^{\star}_0(s_0)\) is the optimal value starting at \(s_0\), and \(V^{\pi_k}_0(s_0)\) is the value of policy \(\pi_k\).6 The total expected regret after \(K\) episodes is \[\text{Regret}(K) = \mathbb{E}\!\left[ \sum_{k=0}^{K-1} \text{Regret}_k \right]\] In the tabular finite-horizon setting, AJKS analyze the UCB-VI algorithm and show that the regret is bounded by a term of order \[\text{Regret}(K) \leq C_1 H^2 S \sqrt{A K} \log\!\big(C_2 S A H K\big)\] for absolute constants \(C_1\) and \(C_2\).6 Now, in terms of the problem I look at, it can be seen that the average regret per episode satisfies \[\frac{\text{Regret}(K)}{K} \leq C_1 H^2 S \sqrt{\frac{A}{K}} \log\!\big(C_2 S A H K\big)\] The key dependence here is that the shortfall in risk-adjusted value per episode decays on the order of \[H^2 S \sqrt{\frac{A}{K}}\] up to logarithmic factors. To invert the bound, fix a target average regret per episode \(\rho &amp;gt; 0\). I want \[\frac{\text{Regret}(K)}{K} \leq \rho\] Ignoring the logarithmic factors to see the main scaling, impose \[C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho\] Solve the inequality for \(K\) as follows. \[\begin{aligned} &amp;amp;C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho \\ &amp;amp;\implies \sqrt{\frac{A}{K}} \leq \frac{\rho}{C_1 H^2 S} \\ &amp;amp;\implies \frac{A}{K} \leq \frac{\rho^2}{C_1^2 H^4 S^2} \\ &amp;amp;\implies K \geq A \cdot \frac{C_1^2 H^4 S^2}{\rho^2} = \left( \frac{C_1 H^2 S \sqrt{A}}{\rho} \right)^2 \end{aligned}\] Thus, to drive the average regret per episode below \(\rho\), the number of episodes must scale to at least the order of \(H^4 S^2 A / \rho^2\). Because \(H\) is proportional to the horizon of the control problem and \(S\) and \(A\) are determined by the state and action discretizations, this gives an explicit trade-off here– decreasing state and action granularity can reduce learning time by large factors. Optimizers as Policies for the Trading Desk Li and Malik propose viewing an optimization algorithm itself as a policy in an MDP, where the “state” consists of past instances, gradients, and objective values, and the “action” is the next update step.7 In this context, I adopt the same perspective from a trading desk’s perspective. An EM carry optimization algorithm is a policy mapping the history of spreads, volatilities, crash indicators, and portfolio P&amp;amp;L to the next position vector. This has two consequences. First, a learned optimizer that is trained on a distribution of EM FX environments is effectively a meta-policy that solves many related MDPs. The sample-complexity theory here that is based on AJKS gives the number of simulated or historical episodes that is required to guarantee that this learned optimizer is near-optimal across that distribution of environments, once the optimizer class is viewed as a parameterized policy class.5 Second, because the optimizer’s internal state can include risk metrics (such as realized variance), its behavior in stressed regimes can be shaped through the reward definition. For example, aggressively penalizing severe drawdowns in the reward (before clipping) may change the shape of the optimal policy in crash or crash-prone regimes without altering the official sample-complexity rate determined. The bounds guarantee that, with sufficient data, a learned optimizer that internalizes these kinds of penalties will behave appropriately across both normal and crash regimes. Notes and References Financial Times, “Traders pour billions of dollars into Turkish lira trade” (July 20, 2024). Available at https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c. &amp;#8617; Brunnermeier, Markus K.; Nagel, Stefan; Pedersen, Lasse H. (2009). “Carry Trades and Currency Crashes.” NBER Macroeconomics Annual 23, 313–347. &amp;#8617; Laborda, Juan; Laborda, Ricardo; Olmo, José (2014). “Optimal currency carry trade strategies.” International Review of Economics &amp;amp; Finance 33, 52–66. &amp;#8617; Chen, Ching-Neng (2022). “Optimal carry trade portfolio choice under regime shifts.” Review of Quantitative Finance and Accounting 59(2), 541–573. &amp;#8617; Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. Reinforcement Learning and Stochastic Optimization Chapter 2: “Sample Complexity with a Generative Model.” Available at https://rltheorybook.github.io/. &amp;#8617; &amp;#8617;2 &amp;#8617;3 &amp;#8617;4 &amp;#8617;5 Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. Reinforcement Learning and Stochastic Optimization Chapter 7: “Strategic Exploration in Tabular MDPs.” Available at https://rltheorybook.github.io/. &amp;#8617; &amp;#8617;2 &amp;#8617;3 Li, Ke; Malik, Jitendra. “Learning to Optimize.” arXiv preprint (2016). Available at https://arxiv.org/abs/1606.01885. &amp;#8617;</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+    <entry>
+      
+      <title type="html">The Sample Complexity of RL-based Optimizers for Financial Applications (Part I)</title>
+      
+      
+      <link href="https://a-sircar1.github.io/home/2024/06/06/24-RL-optimizers/" rel="alternate" type="text/html" title="The Sample Complexity of RL-based Optimizers for Financial Applications (Part I)" />
+      
+      <published>2024-06-06T06:10:56+00:00</published>
+      <updated>2024-06-06T06:10:56+00:00</updated>
+      <id>https://a-sircar1.github.io/home/2024/06/06/24-RL-optimizers</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/06/06/24-RL-optimizers/">&lt;p&gt;Earlier this year in the spring, I got the chance to take part in Penn’s Directed Reading Program (DRP) in the Math department. I wanted to explore machine learning for time-series data and sequential learning, and eventually settled on reinforcement learning (RL)– a topic I had heard a lot about but knew very little. I knew quantitative researchers and practioners were attempting to leverage reinforcement learning for all sorts of problems in financial forecasting and optimization, but that’s about all I had to go off. So, I decided to spend sometime and take the opportunity to obtain valuable guidance in my efforts to understand RL.&lt;/p&gt;
+
+&lt;p&gt;I read through a couple of chapters in Barto and Sutton’s textbook and then decided to take a look at some of the papers for applied RL in finance. These were interesting, but I kept gravitating back to more theory-oriented RL work– not really because I see myself as a theory person, but because that perspective made it a lot easier for me to connect the algorithms to the kinds of questions I care about in financial economics, like robustness, risk, and when the model’s assumptions actually line up with market data or real-world market problems. In my literature search, a piece that stood out to me was a BAIR article on “Learning to Optimize with RL,” which frames optimization algorithms themselves as policies learned via RL.&lt;sup id=&quot;fnref:bair&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:bair&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; In parallel, I worked through parts of an online RL theory book that develops the foundations of Markov decision processes, value functions, and convergence guarantees in a clean, abstract way.&lt;sup id=&quot;fnref:rlbook&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:rlbook&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;Together, these are the main readings that gave me a mental picture of RL that actually felt natural from a finance perspective: markets as sequential decision problems under uncertainty, algorithms as dynamic trading rules, and theory as a way to check on when those rules should behave sensibly. For the rest of this note, I build the model using the tools and inspiration from those works.&lt;/p&gt;
+
+&lt;h3&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;In financial settings, reinforcement learning is often introduced as a way to learn trading strategies or hedging rules. Here I use the same language to think instead about learning an optimizer (as in Li et al.) for a family of financial optimization problems.&lt;sup id=&quot;fnref:bair:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:bair&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; I intentionally design a minimal set-up: (1) start from a one-period stochastic portfolio problem, (2) reinterpret a finite family of optimizers as actions of an RL agent, (3) derive a simple sample-complexity bound for selecting a nearly optimal optimizer, (4) and finally connect this to a small mean-variance optimization experiment where I empirically validate the theoretical result.&lt;/p&gt;
+
+&lt;h3&gt;Portfolio Setup and Mean-variance Utility&lt;/h3&gt;
+
+&lt;p&gt;Let’s take \(d \ge 1\) assets, and let the random vector of one-period returns be \(R \in \mathbb{R}^d\). A portfolio is a weight vector \(w \in \mathbb{R}^d\) that satisfies the budget and non-negativity constraints like so:&lt;/p&gt;
+
+\[\sum_{j=1}^d w_j = 1\]
+
+\[w_j \ge 0 \quad  \forall j\]
+
+&lt;p&gt;The random portfolio return is then \(X(w) = w^{\top} R\). The mean vector and covariance matrix of returns can be written as \(\mu = \mathbb{E}[R] \in \mathbb{R}^d\) and \(\Sigma = \operatorname{Cov}(R) \in \mathbb{R}^{d \times d}\).&lt;/p&gt;
+
+&lt;p&gt;Consider the standard mean-variance objective with risk-aversion parameter \(\lambda &amp;gt; 0\):&lt;/p&gt;
+
+\[U(w) = \mathbb{E}[X(w)] - \frac{\lambda}{2} \operatorname{Var}(X(w))\]
+
+&lt;p&gt;The expectation can be written explicitly as&lt;/p&gt;
+
+\[\begin{aligned}
+\mathbb{E}[X(w)]
+&amp;amp;= \mathbb{E}[w^{\top} R] \\
+&amp;amp;= w^{\top} \mathbb{E}[R] \\
+&amp;amp;= w^{\top} \mu
+\end{aligned}\]
+
+&lt;p&gt;because \(w\) is deterministic. For the variance, start from the covariance definition \(\Sigma = \mathbb{E}[(R - \mu)(R - \mu)^{\top}]\). Define the centered scalar \(Y = w^{\top} R - w^{\top} \mu = w^{\top}(R - \mu)\), so that&lt;/p&gt;
+
+\[\operatorname{Var}(X(w)) = \mathbb{E}[Y^2]\]
+
+&lt;p&gt;Now expand \(Y^2\) and rewrite it as a quadratic form like so:&lt;/p&gt;
+
+\[\begin{aligned}
+Y^2
+&amp;amp;= \big(w^{\top}(R - \mu)\big)^2 \\
+&amp;amp;= \big(w^{\top}(R - \mu)\big)\big(w^{\top}(R - \mu)\big) \\
+&amp;amp;= w^{\top}(R - \mu)(R - \mu)^{\top} w
+\end{aligned}\]
+
+&lt;p&gt;Taking expectations and pulling out the deterministic weights gives the following:&lt;/p&gt;
+
+\[\mathbb{E}[Y^2]
+= \mathbb{E}\!\big[w^{\top}(R - \mu)(R - \mu)^{\top} w\big]
+= w^{\top} \mathbb{E}\!\big[(R - \mu)(R - \mu)^{\top}\big] w
+= w^{\top} \Sigma w\]
+
+&lt;p&gt;Thus the variance is \(\operatorname{Var}(X(w)) = w^{\top} \Sigma w\). Plugging in both of the pieces into the utility, I get:&lt;/p&gt;
+
+\[U(w) = w^{\top} \mu - \frac{\lambda}{2} w^{\top} \Sigma w\]
+
+&lt;p&gt;For a fixed pair \((\mu,\Sigma)\), this is a concave quadratic function of \(w\) on the simplex of admissible portfolios \(\mathcal{W}\). Many portfolio problems can generally be seen as variants of this kind of form. For convenience, write \(U(w, \mu, \Sigma) = w^{\top} \mu - \frac{\lambda}{2} w^{\top} \Sigma w\) and think of \((\mu,\Sigma)\) as the parameters that define a particular optimization parameterization \(p = (\mu, \Sigma)\). The corresponding optimal utility is&lt;/p&gt;
+
+\[U^{\star}(p) = \max_{w \in \mathcal{W}} U(w, \mu, \Sigma)\]
+
+&lt;p&gt;In practice, \(\mu\) and \(\Sigma\) are unknown as only samples can be obtained and not the population-level values. Different universes or constraints give different parameterizations \(p\). A meta-optimizer should perform well on average across a distribution of these kinds of parameterizations.&lt;/p&gt;
+
+&lt;h3&gt;A Finite Family of Optimizers as Actions&lt;/h3&gt;
+
+&lt;p&gt;Instead of tuning a single algorithm by hand, now imagine a finite family of \(K\) candidate optimizers,&lt;/p&gt;
+
+\[\mathcal{O} = \{O_1, O_2, \dots, O_K\}\]
+
+&lt;p&gt;where each of the optimizers \(O_k\) takes as input data for a given parameterization \(p\) and outputs a portfolio \(w_k\). For example, \(O_1\) could be projected gradient ascent with a small step size, \(O_2\) could be the same algorithm with a larger step size, and this can go on. To connect this to RL cleanly, consider a simple sequential environment. Say there is an unknown “meta-distribution” \(\mathcal{P}\) over problem parameterizations \(p = (\mu,\Sigma)\). In each case \(i\), nature draws a fresh parameterization&lt;/p&gt;
+
+\[p_i = (\mu_i, \Sigma_i) \sim \mathcal{P}\]
+
+&lt;p&gt;the agent chooses an action \(A_i \in \{1,\dots,K\}\), and action \(A_i = k\) means the optimizer \(O_k\) is applied to problem \(p_i\). Optimizer \(O_k\) outputs a portfolio \(w_{k,i} = O_k(p_i)\), and then out-of-sample (OOS) performance \(R_i = R_{k}(p_i)\) can be evaluated, where \(R_k(p)\) is some reward based on \(U(w_k, \mu, \Sigma)\).&lt;/p&gt;
+
+&lt;p&gt;For the analysis, the rewards are assumed bounded in \([0,1]\):&lt;/p&gt;
+
+\[0 \le R_k(p) \le 1 \quad \forall k, p\]
+
+&lt;p&gt;Note that this is not restrictive– any utility that is real-values should be able to be clipped to \([a,b]\) and then rescaled linearly to \([0,1]\) without changing the ordering of the optimizers. The mean performance of the optimizer \(k\) under the meta-distribution \(\mathcal{P}\) is \(\mu_k = \mathbb{E}_{p \sim \mathcal{P}}[R_k(p)]\), and an index of a best optimizer is \(\mu_{k^{\star}} = \max_{1 \le k \le K} \mu_k\).&lt;/p&gt;
+
+&lt;p&gt;The meta-learning problem is then to use samples from cases across \(i\) to select an index \(\hat{k}\) such that \(\mu_{\hat{k}}\) is close to \(\mu_{k^{\star}}\). This is exactly a stochastic multi-armed bandit in the exploration setting. Each optimizer is an arm and then the reward of arm \(k\) is the random value \(R_k(p)\) when \(p \sim \mathcal{P}\), and \(\mu_k\) is its mean. The only difference from the classical bandit model is that there is a financial interpretation of the reward.&lt;/p&gt;
+
+&lt;h3&gt;A Simple Meta-algorithm and its Uniform Deviation Bound&lt;/h3&gt;
+
+&lt;p&gt;For the analysis, consider the following strategy. For each optimizer \(k\), collect \(n\) independent rewards \(R_{k,1}, R_{k,2}, \dots, R_{k,n}\), where each of the rewards \(R_{k,j}\) is generated by drawing a fresh problem parameterization \(p_{k,j} \sim \mathcal{P}\), running optimizer \(O_k\), and computing its bounded reward. The empirical mean reward of optimizer \(k\) is then the following:&lt;/p&gt;
+
+\[\hat{\mu}_k = \frac{1}{n} \sum_{j=1}^n R_{k,j}\]
+
+&lt;p&gt;and at the end choose \(\hat{k} = \arg\max_{1 \le k \le K} \hat{\mu}_k\) with and break ties arbitarily. The question then is how large \(n\) must be so that we can be sure that, with high probability, the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) is small. Use Hoeffding’s inequality for bounded random variables. For a fixed optimizer \(k\), the rewards \(R_{k,1},\dots,R_{k,n}\) are independent and lie in \([0,1]\). Writing \(\hat{\mu}_k = \frac{1}{n} \sum_{j=1}^n R_{k,j}\) and \(\mu_k = \mathbb{E}[R_{k,1}]\), Hoeffding’s inequality states that for every \(\varepsilon &amp;gt; 0\),&lt;/p&gt;
+
+\[\mathbb{P}\big(\|\hat{\mu}_k - \mu_k\| \ge \varepsilon\big) \le 2 \exp(-2 n \varepsilon^2)\]
+
+&lt;p&gt;For each \(k\), then define the deviation event \(E_k = \{ \|\hat{\mu}_k - \mu_k\| \ge \varepsilon \}\), so that \(\mathbb{P}(E_k) \le 2 \exp(-2 n \varepsilon^2)\). The event that some optimizer has a deviation at least \(\varepsilon\) is the union \(\bigcup_{k=1}^K E_k\), and by the union bound,&lt;/p&gt;
+
+\[\mathbb{P}\!\left(\bigcup_{k=1}^K E_k\right) \le 2 K \exp(-2 n \varepsilon^2)\]
+
+&lt;p&gt;Equivalently, with probability at least \(1 - 2 K \exp(-2 n \varepsilon^2)\) there is the event&lt;/p&gt;
+
+\[\mathcal{E} = \{ \|\hat{\mu}_k - \mu_k\| &amp;lt; \varepsilon \quad \forall k = \{1,\dots,K \}\]
+
+&lt;p&gt;meaning that every empirical mean is within \(\varepsilon\) of its true mean.&lt;/p&gt;
+
+&lt;p&gt;On event \(\mathcal{E}\), the optimizer chosen by empirical means is at most \(2 \varepsilon\) worse than the best optimizer in terms of the true mean reward. To see this, fix an outcome where \(\mathcal{E}\) holds. By definition of \(k^{\star}\), \(\mu_{k^{\star}} = \max_{1 \le k \le K} \mu_k\). On \(\mathcal{E}\), the empirical mean of optimizer \(k^{\star}\) satisfies \(\|\hat{\mu}_{k^{\star}} - \mu_{k^{\star}}\| &amp;lt; \varepsilon\), and so \(\mu_{k^{\star}} - \hat{\mu}_{k^{\star}} \le \varepsilon\). For any other optimizer \(k\), the same event then gives \(\|\hat{\mu}_k - \mu_k\| &amp;lt; \varepsilon \Rightarrow \mu_k \le \hat{\mu}_k + \varepsilon\). By construction, \(\hat{k}\) maximizes the empirical means, so \(\hat{\mu}_{\hat{k}} \ge \hat{\mu}_{k^{\star}}\).&lt;/p&gt;
+
+&lt;p&gt;Now decompose the performance gap as&lt;/p&gt;
+
+\[\mu_{k^{\star}} - \mu_{\hat{k}} = (\mu_{k^{\star}} - \hat{\mu}_{k^{\star}}) + (\hat{\mu}_{k^{\star}} - \hat{\mu}_{\hat{k}}) + (\hat{\mu}_{\hat{k}} - \mu_{\hat{k}})\]
+
+&lt;p&gt;On \(\mathcal{E}\), the three terms satisfy \(\mu_{k^{\star}} - \hat{\mu}_{k^{\star}} \le \varepsilon\), \(\hat{\mu}_{k^{\star}} - \hat{\mu}_{\hat{k}} \le 0\), and \(\hat{\mu}_{\hat{k}} - \mu_{\hat{k}} \le \varepsilon\), so&lt;/p&gt;
+
+\[\mu_{k^{\star}} - \mu_{\hat{k}} \le \varepsilon + 0 + \varepsilon = 2 \varepsilon\]
+
+&lt;p&gt;Therefore&lt;/p&gt;
+
+\[\mathbb{P}\big(\mu_{k^{\star}} - \mu_{\hat{k}} &amp;gt; 2 \varepsilon\big)
+\le 2 K \exp(-2 n \varepsilon^2)\]
+
+&lt;p&gt;This inequality gives a clean probabilistic guarantee in that the probability that the optimizer selected by empirical mean performance is more than \(2 \varepsilon\) worse than the best optimizer is at most \(2 K \exp(-2 n \varepsilon^2)\).&lt;/p&gt;
+
+&lt;h3&gt;Sample Complexity in Terms of \(\varepsilon\) and \(\delta\)&lt;/h3&gt;
+
+&lt;p&gt;Next, to invert the bound, fix a target confidence level \(1 - \delta\) with \(0 &amp;lt; \delta &amp;lt; 1\).  The goal is to get \(2 K \exp(-2 n \varepsilon^2) \le \delta\). First, start with \(2 K \exp(-2 n \varepsilon^2) \le \delta \Rightarrow \exp(-2 n \varepsilon^2) \le \delta/(2 K)\). Taking natural logs and using the fact that the exponential is monotonic, find that \(-2 n \varepsilon^2 \le \log(\delta/(2 K))\), and multiplying by \(-1\), the inequality gets reversed so \(2 n \varepsilon^2 \ge -\log(\delta/(2 K)) = \log(2 K/\delta)\). Dividing both sides by \(2 \varepsilon^2\) finally gives:&lt;/p&gt;
+
+\[n \ge \frac{1}{2 \varepsilon^2} \log\!\left(\frac{2 K}{\delta}\right)\]
+
+&lt;p&gt;Thus, if&lt;/p&gt;
+
+\[n \ge \frac{1}{2 \varepsilon^2} \log\!\left(\frac{2 K}{\delta}\right)\]
+
+&lt;p&gt;cases per optimizer and the optimizer with largest empirical mean is selected, then with probability at least \(1 - \delta\) the chosen optimizer \(\hat{k}\) satisfies \(\mu_{k^{\star}} - \mu_{\hat{k}} \le 2 \varepsilon\). The total number of episodes is \(K n\), and the dependence on the number of optimizers is only logarithmic through the factor \(\log(2 K / \delta)\).&lt;/p&gt;
+
+&lt;p&gt;For a small numerical example, consider \(K = 4\), \(\delta = 0.05\), \(\varepsilon = 0.1\). Calculate each component explicitly like so: \(2 K = 2 \times 4 = 8\), \(\frac{2 K}{\delta} = \frac{8}{0.05} = 160\), \(\log\!\left(\frac{2 K}{\delta}\right) = \log(160) \approx 5.0752\). Next, \(\varepsilon^2 = (0.1)^2 = 0.01\), \(2 \varepsilon^2 = 2 \times 0.01 = 0.02\), \(\frac{1}{2 \varepsilon^2} = \frac{1}{0.02} = 50\). Then, putting this together:&lt;/p&gt;
+
+\[n \ge \frac{1}{2 \varepsilon^2} \log\!\left(\frac{2 K}{\delta}\right)
+\approx 50 \times 5.0752
+\approx 253.76\]
+
+&lt;p&gt;so it should be enough to take \(n = 254\) cases per optimizer. The resulting total sample size is \(K n = 4 \times 254 = 1016\). Under such a choice, the bound guarantees that the optimizer selected by the empirical mean performance is within about \(0.2\) of the best possible mean reward, with probability at least \(95\%\).&lt;/p&gt;
+
+&lt;h3&gt;Mean-variance Experiment and Empirical Results&lt;/h3&gt;
+
+&lt;p&gt;To experiment, I implement the meta-optimization set-up synthetically in a world with \(d=5\) assets and four candidate optimizers that are given by projected gradient ascent with step sizes \(\eta \in \{0.01, 0.03, 0.08, 0.15\}\). For each of the problems \(p = (\mu,\Sigma)\), all four of the optimizers are run, their mean–variance utilities are computed, and then I linearly rescale them to \([0,1]\) so that the best optimizer on that problem receives a reward of \(1\), and the worst receives a reward of \(0\). To avoid a degenerate and basically deterministic situation where the best optimizer is almost always identified perfectly, and to better mimic noisy OOS evaluation during meta-learning, I add a small Gaussian perturbation to this rescaled utility and then clip it back to \([0,1]\). This maintains the assumption that rewards are bounded in the analysis with the Hoeffding bound, but it introduces a nontrivial chance of not selecting the best optimizer when \(n\) is small.&lt;/p&gt;
+
+&lt;p&gt;On a large independent test set of problems, the estimated mean rewards of the four optimizers are \((\mu_0,\mu_1,\mu_2,\mu_3) \approx (0.24, 0.47, 0.69, 0.76)\), so the \(\eta = 0.15\) optimizer is best but not far better than \(\eta = 0.08\). For each sample size \(n\), I draw \(n\) new problems per optimizer, compute the empirical means \(\hat{\mu}*k\), choose \(\hat{k} = \arg\max_k \hat{\mu}*k\), and write down the realized performance gap \(\mu*{k^\star} - \mu*{\hat{k}}\). Repeating this 60 times per \(n\) produces an empirical distribution of the gap, which I then compare to the tolerance obtained via the Hoeffding bound:&lt;/p&gt;
+
+\[2\varepsilon_n = 2\sqrt{\frac{1}{2n}\log\left(\frac{2K}{\delta}\right)}
+\quad\text{with } K = 4,\ \delta = 0.05\]
+
+&lt;p&gt;The figure below plots the mean gap, its 95th percentile, and the theoretical \(2\varepsilon_n\) curve as functions of \(n\) on a semi-logarithmic scale:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/home/assets/img/RL-optimizers-plot1.png&quot; alt=&quot;Meta-optimizer Selection Experiment in the Toy Market&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The exact values are in the table below:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Episodes per optimizer \(n\)&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Mean gap \(\mathbb{E}[\mu_{k^\star} - \mu_{\hat{k}}]\)&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;95th pct. gap&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;Theoretical \(2\varepsilon_n\)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;4&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0496&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2900&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.5930&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;8&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0290&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0726&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.1264&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;16&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0278&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0726&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.7965&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;32&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0157&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0726&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.5632&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;64&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0060&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0726&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.3982&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;128&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0012&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.2816&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;256&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1991&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;512&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.0000&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.1408&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Even with the noisy rewards, the mean gap goes toward zero as \(n\) increases, and the 95th-percentile gap decays on the same \(1/\sqrt{n}\) scale as the theoretical \(2\varepsilon_n\) line while staying below it. This indicates that the Hoeffding bound is conservative but also accurate for this meta-optimization problem. More broadly, it can be seen that classical concentration inequalities already give useful sample-complexity guarantees for optimizer selection using RL, as demonstrated in the stylized financial setting here.&lt;/p&gt;
+
+&lt;h3&gt;Notes and References&lt;/h3&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:bair&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;BAIR Blog, “Learning to Optimize with RL” (2017). Available at &lt;a href=&quot;https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/&quot;&gt;https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/&lt;/a&gt;. &lt;a href=&quot;#fnref:bair&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt; &lt;a href=&quot;#fnref:bair:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:rlbook&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;em&gt;Reinforcement Learning and Stochastic Optimization&lt;/em&gt; (RL Theory Book). Available at &lt;a href=&quot;https://rltheorybook.github.io/&quot;&gt;https://rltheorybook.github.io/&lt;/a&gt;. &lt;a href=&quot;#fnref:rlbook&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>Arnab Sircar</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="finance" />
+      
+        <category term="optimization" />
+      
+        <category term="machine-learning" />
+      
+
+      
+
+      
+        <summary type="html">Earlier this year in the spring, I got the chance to take part in Penn’s Directed Reading Program (DRP) in the Math department. I wanted to explore machine learning for time-series data and sequential learning, and eventually settled on reinforcement learning (RL)– a topic I had heard a lot about but knew very little. I knew quantitative researchers and practioners were attempting to leverage reinforcement learning for all sorts of problems in financial forecasting and optimization, but that’s about all I had to go off. So, I decided to spend sometime and take the opportunity to obtain valuable guidance in my efforts to understand RL. I read through a couple of chapters in Barto and Sutton’s textbook and then decided to take a look at some of the papers for applied RL in finance. These were interesting, but I kept gravitating back to more theory-oriented RL work– not really because I see myself as a theory person, but because that perspective made it a lot easier for me to connect the algorithms to the kinds of questions I care about in financial economics, like robustness, risk, and when the model’s assumptions actually line up with market data or real-world market problems. In my literature search, a piece that stood out to me was a BAIR article on “Learning to Optimize with RL,” which frames optimization algorithms themselves as policies learned via RL.1 In parallel, I worked through parts of an online RL theory book that develops the foundations of Markov decision processes, value functions, and convergence guarantees in a clean, abstract way.2 Together, these are the main readings that gave me a mental picture of RL that actually felt natural from a finance perspective: markets as sequential decision problems under uncertainty, algorithms as dynamic trading rules, and theory as a way to check on when those rules should behave sensibly. For the rest of this note, I build the model using the tools and inspiration from those works. Introduction In financial settings, reinforcement learning is often introduced as a way to learn trading strategies or hedging rules. Here I use the same language to think instead about learning an optimizer (as in Li et al.) for a family of financial optimization problems.1 I intentionally design a minimal set-up: (1) start from a one-period stochastic portfolio problem, (2) reinterpret a finite family of optimizers as actions of an RL agent, (3) derive a simple sample-complexity bound for selecting a nearly optimal optimizer, (4) and finally connect this to a small mean-variance optimization experiment where I empirically validate the theoretical result. Portfolio Setup and Mean-variance Utility Let’s take \(d \ge 1\) assets, and let the random vector of one-period returns be \(R \in \mathbb{R}^d\). A portfolio is a weight vector \(w \in \mathbb{R}^d\) that satisfies the budget and non-negativity constraints like so: \[\sum_{j=1}^d w_j = 1\] \[w_j \ge 0 \quad \forall j\] The random portfolio return is then \(X(w) = w^{\top} R\). The mean vector and covariance matrix of returns can be written as \(\mu = \mathbb{E}[R] \in \mathbb{R}^d\) and \(\Sigma = \operatorname{Cov}(R) \in \mathbb{R}^{d \times d}\). Consider the standard mean-variance objective with risk-aversion parameter \(\lambda &amp;gt; 0\): \[U(w) = \mathbb{E}[X(w)] - \frac{\lambda}{2} \operatorname{Var}(X(w))\] The expectation can be written explicitly as \[\begin{aligned} \mathbb{E}[X(w)] &amp;amp;= \mathbb{E}[w^{\top} R] \\ &amp;amp;= w^{\top} \mathbb{E}[R] \\ &amp;amp;= w^{\top} \mu \end{aligned}\] because \(w\) is deterministic. For the variance, start from the covariance definition \(\Sigma = \mathbb{E}[(R - \mu)(R - \mu)^{\top}]\). Define the centered scalar \(Y = w^{\top} R - w^{\top} \mu = w^{\top}(R - \mu)\), so that \[\operatorname{Var}(X(w)) = \mathbb{E}[Y^2]\] Now expand \(Y^2\) and rewrite it as a quadratic form like so: \[\begin{aligned} Y^2 &amp;amp;= \big(w^{\top}(R - \mu)\big)^2 \\ &amp;amp;= \big(w^{\top}(R - \mu)\big)\big(w^{\top}(R - \mu)\big) \\ &amp;amp;= w^{\top}(R - \mu)(R - \mu)^{\top} w \end{aligned}\] Taking expectations and pulling out the deterministic weights gives the following: \[\mathbb{E}[Y^2] = \mathbb{E}\!\big[w^{\top}(R - \mu)(R - \mu)^{\top} w\big] = w^{\top} \mathbb{E}\!\big[(R - \mu)(R - \mu)^{\top}\big] w = w^{\top} \Sigma w\] Thus the variance is \(\operatorname{Var}(X(w)) = w^{\top} \Sigma w\). Plugging in both of the pieces into the utility, I get: \[U(w) = w^{\top} \mu - \frac{\lambda}{2} w^{\top} \Sigma w\] For a fixed pair \((\mu,\Sigma)\), this is a concave quadratic function of \(w\) on the simplex of admissible portfolios \(\mathcal{W}\). Many portfolio problems can generally be seen as variants of this kind of form. For convenience, write \(U(w, \mu, \Sigma) = w^{\top} \mu - \frac{\lambda}{2} w^{\top} \Sigma w\) and think of \((\mu,\Sigma)\) as the parameters that define a particular optimization parameterization \(p = (\mu, \Sigma)\). The corresponding optimal utility is \[U^{\star}(p) = \max_{w \in \mathcal{W}} U(w, \mu, \Sigma)\] In practice, \(\mu\) and \(\Sigma\) are unknown as only samples can be obtained and not the population-level values. Different universes or constraints give different parameterizations \(p\). A meta-optimizer should perform well on average across a distribution of these kinds of parameterizations. A Finite Family of Optimizers as Actions Instead of tuning a single algorithm by hand, now imagine a finite family of \(K\) candidate optimizers, \[\mathcal{O} = \{O_1, O_2, \dots, O_K\}\] where each of the optimizers \(O_k\) takes as input data for a given parameterization \(p\) and outputs a portfolio \(w_k\). For example, \(O_1\) could be projected gradient ascent with a small step size, \(O_2\) could be the same algorithm with a larger step size, and this can go on. To connect this to RL cleanly, consider a simple sequential environment. Say there is an unknown “meta-distribution” \(\mathcal{P}\) over problem parameterizations \(p = (\mu,\Sigma)\). In each case \(i\), nature draws a fresh parameterization \[p_i = (\mu_i, \Sigma_i) \sim \mathcal{P}\] the agent chooses an action \(A_i \in \{1,\dots,K\}\), and action \(A_i = k\) means the optimizer \(O_k\) is applied to problem \(p_i\). Optimizer \(O_k\) outputs a portfolio \(w_{k,i} = O_k(p_i)\), and then out-of-sample (OOS) performance \(R_i = R_{k}(p_i)\) can be evaluated, where \(R_k(p)\) is some reward based on \(U(w_k, \mu, \Sigma)\). For the analysis, the rewards are assumed bounded in \([0,1]\): \[0 \le R_k(p) \le 1 \quad \forall k, p\] Note that this is not restrictive– any utility that is real-values should be able to be clipped to \([a,b]\) and then rescaled linearly to \([0,1]\) without changing the ordering of the optimizers. The mean performance of the optimizer \(k\) under the meta-distribution \(\mathcal{P}\) is \(\mu_k = \mathbb{E}_{p \sim \mathcal{P}}[R_k(p)]\), and an index of a best optimizer is \(\mu_{k^{\star}} = \max_{1 \le k \le K} \mu_k\). The meta-learning problem is then to use samples from cases across \(i\) to select an index \(\hat{k}\) such that \(\mu_{\hat{k}}\) is close to \(\mu_{k^{\star}}\). This is exactly a stochastic multi-armed bandit in the exploration setting. Each optimizer is an arm and then the reward of arm \(k\) is the random value \(R_k(p)\) when \(p \sim \mathcal{P}\), and \(\mu_k\) is its mean. The only difference from the classical bandit model is that there is a financial interpretation of the reward. A Simple Meta-algorithm and its Uniform Deviation Bound For the analysis, consider the following strategy. For each optimizer \(k\), collect \(n\) independent rewards \(R_{k,1}, R_{k,2}, \dots, R_{k,n}\), where each of the rewards \(R_{k,j}\) is generated by drawing a fresh problem parameterization \(p_{k,j} \sim \mathcal{P}\), running optimizer \(O_k\), and computing its bounded reward. The empirical mean reward of optimizer \(k\) is then the following: \[\hat{\mu}_k = \frac{1}{n} \sum_{j=1}^n R_{k,j}\] and at the end choose \(\hat{k} = \arg\max_{1 \le k \le K} \hat{\mu}_k\) with and break ties arbitarily. The question then is how large \(n\) must be so that we can be sure that, with high probability, the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) is small. Use Hoeffding’s inequality for bounded random variables. For a fixed optimizer \(k\), the rewards \(R_{k,1},\dots,R_{k,n}\) are independent and lie in \([0,1]\). Writing \(\hat{\mu}_k = \frac{1}{n} \sum_{j=1}^n R_{k,j}\) and \(\mu_k = \mathbb{E}[R_{k,1}]\), Hoeffding’s inequality states that for every \(\varepsilon &amp;gt; 0\), \[\mathbb{P}\big(\|\hat{\mu}_k - \mu_k\| \ge \varepsilon\big) \le 2 \exp(-2 n \varepsilon^2)\] For each \(k\), then define the deviation event \(E_k = \{ \|\hat{\mu}_k - \mu_k\| \ge \varepsilon \}\), so that \(\mathbb{P}(E_k) \le 2 \exp(-2 n \varepsilon^2)\). The event that some optimizer has a deviation at least \(\varepsilon\) is the union \(\bigcup_{k=1}^K E_k\), and by the union bound, \[\mathbb{P}\!\left(\bigcup_{k=1}^K E_k\right) \le 2 K \exp(-2 n \varepsilon^2)\] Equivalently, with probability at least \(1 - 2 K \exp(-2 n \varepsilon^2)\) there is the event \[\mathcal{E} = \{ \|\hat{\mu}_k - \mu_k\| &amp;lt; \varepsilon \quad \forall k = \{1,\dots,K \}\] meaning that every empirical mean is within \(\varepsilon\) of its true mean. On event \(\mathcal{E}\), the optimizer chosen by empirical means is at most \(2 \varepsilon\) worse than the best optimizer in terms of the true mean reward. To see this, fix an outcome where \(\mathcal{E}\) holds. By definition of \(k^{\star}\), \(\mu_{k^{\star}} = \max_{1 \le k \le K} \mu_k\). On \(\mathcal{E}\), the empirical mean of optimizer \(k^{\star}\) satisfies \(\|\hat{\mu}_{k^{\star}} - \mu_{k^{\star}}\| &amp;lt; \varepsilon\), and so \(\mu_{k^{\star}} - \hat{\mu}_{k^{\star}} \le \varepsilon\). For any other optimizer \(k\), the same event then gives \(\|\hat{\mu}_k - \mu_k\| &amp;lt; \varepsilon \Rightarrow \mu_k \le \hat{\mu}_k + \varepsilon\). By construction, \(\hat{k}\) maximizes the empirical means, so \(\hat{\mu}_{\hat{k}} \ge \hat{\mu}_{k^{\star}}\). Now decompose the performance gap as \[\mu_{k^{\star}} - \mu_{\hat{k}} = (\mu_{k^{\star}} - \hat{\mu}_{k^{\star}}) + (\hat{\mu}_{k^{\star}} - \hat{\mu}_{\hat{k}}) + (\hat{\mu}_{\hat{k}} - \mu_{\hat{k}})\] On \(\mathcal{E}\), the three terms satisfy \(\mu_{k^{\star}} - \hat{\mu}_{k^{\star}} \le \varepsilon\), \(\hat{\mu}_{k^{\star}} - \hat{\mu}_{\hat{k}} \le 0\), and \(\hat{\mu}_{\hat{k}} - \mu_{\hat{k}} \le \varepsilon\), so \[\mu_{k^{\star}} - \mu_{\hat{k}} \le \varepsilon + 0 + \varepsilon = 2 \varepsilon\] Therefore \[\mathbb{P}\big(\mu_{k^{\star}} - \mu_{\hat{k}} &amp;gt; 2 \varepsilon\big) \le 2 K \exp(-2 n \varepsilon^2)\] This inequality gives a clean probabilistic guarantee in that the probability that the optimizer selected by empirical mean performance is more than \(2 \varepsilon\) worse than the best optimizer is at most \(2 K \exp(-2 n \varepsilon^2)\). Sample Complexity in Terms of \(\varepsilon\) and \(\delta\) Next, to invert the bound, fix a target confidence level \(1 - \delta\) with \(0 &amp;lt; \delta &amp;lt; 1\). The goal is to get \(2 K \exp(-2 n \varepsilon^2) \le \delta\). First, start with \(2 K \exp(-2 n \varepsilon^2) \le \delta \Rightarrow \exp(-2 n \varepsilon^2) \le \delta/(2 K)\). Taking natural logs and using the fact that the exponential is monotonic, find that \(-2 n \varepsilon^2 \le \log(\delta/(2 K))\), and multiplying by \(-1\), the inequality gets reversed so \(2 n \varepsilon^2 \ge -\log(\delta/(2 K)) = \log(2 K/\delta)\). Dividing both sides by \(2 \varepsilon^2\) finally gives: \[n \ge \frac{1}{2 \varepsilon^2} \log\!\left(\frac{2 K}{\delta}\right)\] Thus, if \[n \ge \frac{1}{2 \varepsilon^2} \log\!\left(\frac{2 K}{\delta}\right)\] cases per optimizer and the optimizer with largest empirical mean is selected, then with probability at least \(1 - \delta\) the chosen optimizer \(\hat{k}\) satisfies \(\mu_{k^{\star}} - \mu_{\hat{k}} \le 2 \varepsilon\). The total number of episodes is \(K n\), and the dependence on the number of optimizers is only logarithmic through the factor \(\log(2 K / \delta)\). For a small numerical example, consider \(K = 4\), \(\delta = 0.05\), \(\varepsilon = 0.1\). Calculate each component explicitly like so: \(2 K = 2 \times 4 = 8\), \(\frac{2 K}{\delta} = \frac{8}{0.05} = 160\), \(\log\!\left(\frac{2 K}{\delta}\right) = \log(160) \approx 5.0752\). Next, \(\varepsilon^2 = (0.1)^2 = 0.01\), \(2 \varepsilon^2 = 2 \times 0.01 = 0.02\), \(\frac{1}{2 \varepsilon^2} = \frac{1}{0.02} = 50\). Then, putting this together: \[n \ge \frac{1}{2 \varepsilon^2} \log\!\left(\frac{2 K}{\delta}\right) \approx 50 \times 5.0752 \approx 253.76\] so it should be enough to take \(n = 254\) cases per optimizer. The resulting total sample size is \(K n = 4 \times 254 = 1016\). Under such a choice, the bound guarantees that the optimizer selected by the empirical mean performance is within about \(0.2\) of the best possible mean reward, with probability at least \(95\%\). Mean-variance Experiment and Empirical Results To experiment, I implement the meta-optimization set-up synthetically in a world with \(d=5\) assets and four candidate optimizers that are given by projected gradient ascent with step sizes \(\eta \in \{0.01, 0.03, 0.08, 0.15\}\). For each of the problems \(p = (\mu,\Sigma)\), all four of the optimizers are run, their mean–variance utilities are computed, and then I linearly rescale them to \([0,1]\) so that the best optimizer on that problem receives a reward of \(1\), and the worst receives a reward of \(0\). To avoid a degenerate and basically deterministic situation where the best optimizer is almost always identified perfectly, and to better mimic noisy OOS evaluation during meta-learning, I add a small Gaussian perturbation to this rescaled utility and then clip it back to \([0,1]\). This maintains the assumption that rewards are bounded in the analysis with the Hoeffding bound, but it introduces a nontrivial chance of not selecting the best optimizer when \(n\) is small. On a large independent test set of problems, the estimated mean rewards of the four optimizers are \((\mu_0,\mu_1,\mu_2,\mu_3) \approx (0.24, 0.47, 0.69, 0.76)\), so the \(\eta = 0.15\) optimizer is best but not far better than \(\eta = 0.08\). For each sample size \(n\), I draw \(n\) new problems per optimizer, compute the empirical means \(\hat{\mu}*k\), choose \(\hat{k} = \arg\max_k \hat{\mu}*k\), and write down the realized performance gap \(\mu*{k^\star} - \mu*{\hat{k}}\). Repeating this 60 times per \(n\) produces an empirical distribution of the gap, which I then compare to the tolerance obtained via the Hoeffding bound: \[2\varepsilon_n = 2\sqrt{\frac{1}{2n}\log\left(\frac{2K}{\delta}\right)} \quad\text{with } K = 4,\ \delta = 0.05\] The figure below plots the mean gap, its 95th percentile, and the theoretical \(2\varepsilon_n\) curve as functions of \(n\) on a semi-logarithmic scale: The exact values are in the table below: Episodes per optimizer \(n\) Mean gap \(\mathbb{E}[\mu_{k^\star} - \mu_{\hat{k}}]\) 95th pct. gap Theoretical \(2\varepsilon_n\) 4 0.0496 0.2900 1.5930 8 0.0290 0.0726 1.1264 16 0.0278 0.0726 0.7965 32 0.0157 0.0726 0.5632 64 0.0060 0.0726 0.3982 128 0.0012 0.0000 0.2816 256 0.0000 0.0000 0.1991 512 0.0000 0.0000 0.1408 Even with the noisy rewards, the mean gap goes toward zero as \(n\) increases, and the 95th-percentile gap decays on the same \(1/\sqrt{n}\) scale as the theoretical \(2\varepsilon_n\) line while staying below it. This indicates that the Hoeffding bound is conservative but also accurate for this meta-optimization problem. More broadly, it can be seen that classical concentration inequalities already give useful sample-complexity guarantees for optimizer selection using RL, as demonstrated in the stylized financial setting here. Notes and References BAIR Blog, “Learning to Optimize with RL” (2017). Available at https://bair.berkeley.edu/blog/2017/09/12/learning-to-optimize-with-rl/. &amp;#8617; &amp;#8617;2 Reinforcement Learning and Stochastic Optimization (RL Theory Book). Available at https://rltheorybook.github.io/. &amp;#8617;</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+  
+    <entry>
+      
+      <title type="html">On Provable Guarantees of Adversarial Robustness of Mixture of Experts</title>
+      
+      
+      <link href="https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness/" rel="alternate" type="text/html" title="On Provable Guarantees of Adversarial Robustness of Mixture of Experts" />
+      
+      <published>2024-05-25T06:10:56+00:00</published>
+      <updated>2024-05-25T06:10:56+00:00</updated>
+      <id>https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness</id>
+      <content type="html" xml:base="https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness/">&lt;p&gt;Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity.&lt;/p&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Abstract&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the &lt;em&gt;robust MoE classifier&lt;/em&gt; that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      
+        <author>
+            <name>Arnab Sircar</name>
+          
+          
+        </author>
+      
+
+      
+        <category term="machine-learning" />
+      
+
+      
+
+      
+        <summary type="html">Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity. &amp;nbsp; Abstract With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the robust MoE classifier that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.</summary>
+      
+
+      
+      
+    </entry>
+  
+  
+</feed>

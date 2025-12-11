@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem</title>
+  <meta name="description" content="If you haven’t taken a look at Part I yet, please take a look at it here. As soon as I finished fleshing out the single period mean-variance model from Part I, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample. Recently, the hedge funds and investors have flocked toward the Turkish Lira due to the higher interest rate environment in Turkey (as high as 50% at the time of writing this piece!), largely a result of a change in course toward conventional economic approaches in the nation and a relative curtailing of inflation.1 Investors are taking advantage of the classic carry trade, in which money is borrowed for a trade in currency with lower interest rates to maximize gain on a currency in a high interest rate setting while betting that any shifts in the exchange rate do not upset the strategy. As FX in emerging markets is clearly quite a risky asset, and market regimes shift all the time, I decided it might be interesting to model a trading desk’s dynamic optimization problem to reflect this setting. Picking Up from Where We Left Off In short, my analysis in Part I treated each of the optimizers as an arm in a single period mean-variance bandit. For a fixed pair \((\mu,\Sigma)\), the problem was to choose, with as few episodes as possible, among a finite family of algorithms that output portfolios onto a simplex. The meta-distribution over cases \(p = (\mu,\Sigma)\) captured cross-sectional and temporal variation in the opportunity sets, and the main object of interest was the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) between the best optimizer and the one that was empirically selected. But now, we’re shifting from single period mean-variance to a dynamic stochastic program. Given that sequential adjustments are now made to the portfolio in response to sequential occurrences, a finite-state Markov decision process (MDP) can be appropriate for the model. Instead of drawing independent problem cases \(p_i \sim \mathcal{P}\) as in Part I, I now observe a single evolving state process \(s_t\) whose components summarize carry premia, volatility, any crash indicators, and also any slack on the balance sheet. In this setting, a trading strategy is then a policy \(\pi\) that maps each state \(s_t\) into a feasible control \(a_t\), for example a vector of currency positions subject to leverage and margin constraints. The objective here is to maximize a discounted risk-adjusted P&amp;amp;L functional as follows: \[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r(s_t,a_t) \right]\] where \(\gamma \in (0,1)\) captures the persistence of carry and crash regimes, and the reward \(r(s_t,a_t)\) aggregates the carry, mark-to-market movements, transaction costs, and risk penalties in a bounded way. From the perspective of Part I, this is a shift from comparing a finite list of static optimizers on i.i.d. portfolio problems to comparing policies in a stochastic environment. Similar underlying concentration inequalities still govern how many observations are needed to distinguish near-optimal policies from sub-optimal ones. The difference is that the relevant complexity parameters are now the number of market regimes and control actions, and the effective horizon \(1 / (1 - \gamma)\) that is implied by the persistence of emerging market (EM) FX or credit risk factors instead of the simple cardinality \(K\) of a candidate optimizer family. With this in mind, I place the sample-complexity results of AJKS to a concrete dynamic problem that is controlling an EM FX carry portfolio under leverage and crash risk. The structure of the problem is inspired by the empirical literature on carry trades and currency crashes, which documents regime-dependent downside risk,2 and by work on optimal carry trade portfolios that already treat carry investing as a state-dependent dynamic allocation problem.3 4 The aim of this note is to treat the same economic environment as an unknown MDP and ask how many simulated or historical episodes would be needed for an RL agent to learn a policy whose risk–adjusted value is provably close to that of the best feasible EM FX carry control policy. Model A trading desk that runs an EM FX carry book faces a dynamic stochastic program. The desk chooses a leveraged long-short position in a set of EM currencies against a funding currency, under balance-sheet, margin, and drawdown constraints. The control problem is cast as an MDP, and minmax-optimal sample complexity bounds for discounted control and finite-horizon exploration are used from results from AJKS (I will refer to the RL theory book as AJKS from here on out). 5 6 The bounds are then rewritten in terms of economically meaningful quantities like regime persistence, the number of states needed to track carry and crash risk, and the discretization of position size and leverage. The set-up can now be formalized. Consider a single funding currency, indexed by \(f\), and \(d\) EM currencies, indexed by \(j = 1,\dots,d\). At discrete times \(t = 0,1,2,\dots\), the desk rebalances over a fixed interval \(\Delta t\) (like one week, for example). For each EM currency \(j\) at time \(t\), the following objects are observed: The short risk-free rate of the funding currency \(r_t^f\) The short local collateral rate \(r_{t}^j\) The log spot exchange rate \(S_t^j = \log \text{FX}_t^j\), that is quoted as units of funding currency per unit of EM currency A volatility proxy \(\sigma_t^j\) (for example, implied volatility) A crash-regime variable \(Z_t^j \in \{0,1\}\), where \(Z_t^j = 1\) indicates a stressed or regime that is prone to crashes for currency \(j\). Define the instantaneous carry spread of currency \(j\) over the funding currency as \[c_t^j = r_{t}^j - r_t^f\] At time \(t\) the desk chooses a position vector \(u_t = (u_t^1,\dots,u_t^d)\) in units of notional per unit of capital, where \(u_t^j &amp;gt; 0\) means being long EM currency \(j\) funded in \(f\), and \(u_t^j &amp;lt; 0\) means short EM currency \(j\) and long the funding currency. There is a gross leverage constraint: \[\sum_{j=1}^d \|u_t^j\| \leq L_{\max}\] and a position cap for each of the currencies \(\|u_t^j\| \leq U_{\max}^j\). Over one period, the currency-level log return in the funding currency is \[R_{t+1}^j = S_{t+1}^j - S_t^j + c_t^j \Delta t - \kappa_t^j(u_t^j)\] where \(\kappa_t^j(u_t^j)\) captures trading and funding costs (for example, bid-ask spread, charges on the balance sheet, and basis). At the portfolio level, the unadjusted P&amp;amp;L per unit of capital over one period is \[\Pi_{t+1} = \sum_{j=1}^d u_t^j R_{t+1}^j\] To turn this into a risk-adjusted reward that is compatible with discounted control, fix a risk-aversion parameter \(\lambda &amp;gt; 0\) and define the conditional variance like so: \[v_t(u_t) = \operatorname{Var}\!\left(\Pi_{t+1} \mid \mathcal{F}_t\right)\] where \(\mathcal{F}_t\) is the information at time \(t\). Define the raw risk-adjusted payoff \[X_{t+1} = \Pi_{t+1} - \frac{\lambda}{2} v_t(u_t)\] Because currency returns and carry spreads are bounded in any realistic risk environment, I say there exists a constant \(B &amp;gt; 0\) such that with high probability \(\|X_{t+1}\| \leq B\). For the math to hold, I clip and rescale to obtain the bounded reward \[r_{t+1} = \frac{1}{2} + \frac{1}{2B} \left( \max\{-B, \min\{X_{t+1}, B\}\} \right)\] so that \(r_{t+1} \in [0,1]\) and all policies are compared on a normalized scale. This rescaling does not change the ordering of the policies by risk-adjusted performance. The desk then faces a stochastic program of maximizing the discounted value \[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r_{t+1} \mid s_0 \right]\] over policies \(\pi\) mapping states to actions, where \(\gamma \in (0,1)\) is a discount factor. State, action, and discount in financial terms Define the state at time \(t\) as a summary: \[s_t = \big(C_t, \Sigma_t, Z_t, M_t, K_t\big)\] where there is: \(C_t\) stores the discretized carry spreads \(c_t^j\) \(\Sigma_t\) stores discretized volatility proxies \(\sigma_t^j\) \(Z_t\) is the vector of crash regimes \(Z_t^j\) \(M_t\) stores remaining time to any hard horizon (for example, investor capital lock-up) \(K_t\) stores risk and margin information like remaining capacity under VaR limits or drawdown constraints, etc. This state takes values in a finite set \(\mathcal{S}\) once each of the components is discretized into a finite grid. For example, each \(c_t^j\) might be mapped into one of \(G_c\) quantile buckets, each \(\sigma_t^j\) into \(G_{\sigma}\) buckets, and each crash regime \(Z_t^j\) into the two values \(0\) or \(1\). If aggregation is done across the currencies into factor summaries (for example, a global EM carry factor, a volatility factor, and a crash indicator), the resulting state cardinality can be written as so: \[\| \mathcal{S} \| = S_{\text{carry}} \cdot S_{\text{vol}} \cdot S_{\text{crash}} \cdot S_{\text{horizon}} \cdot S_{\text{margin}}\] where each \(S_{\cdot}\) is a design choice of the desk. The action at time \(t\) is the position vector \(u_t\). For the purposes of sample-complexity analysis, discretize \(u_t^j\) onto a finite grid, for instance \[u_t^j \in \{-U_{\max}^j, -U_{\max}^j + \Delta u^j, \dots, U_{\max}^j\}\] and only allow grids to be consistent with the leverage and margin constraints. The action space \(\mathcal{A}\) is then finite with cardinality \(\| \mathcal{A} \| = A_{\text{pos}}\), which depends on the position grid and the number of currencies, as well as the shape of the leverage constraint. The discount factor \(\gamma\) has a financial interpretation. Suppose that the EM carry factor has an approximate exponential autocorrelation with half-life \(H_{\text{half}}\) that is measured in rebalancing periods. That is, if the lag-k autocorrelation of a relevant factor is approximately \(\rho_k \approx \exp(-k / \tau)\) for some persistence scale \(\tau\), then the half-life is defined as \[\frac{1}{2} = \exp\!\left(-\frac{H_{\text{half}}}{\tau}\right)\] and solving for \(H_{\text{half}}\) produces \[H_{\text{half}} = \tau \log 2\] Setting one step to length \(\Delta t\) and choosing a discount factor \[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\] gives a planning horizon on the order of \[\frac{1}{1 - \gamma} \approx \frac{\tau}{\Delta t}\] So the factor \(1 - \gamma\) that governs the sample complexity can be written in terms of observed carry persistence. With these definitions, EM FX carry control is a discounted MDP with finite state space \(\mathcal{S}\), finite action space \(\mathcal{A}\), bounded reward in \([0,1]\), and discount factor \(\gamma \in (0,1)\). This is exactly the setting of the discounted sample-complexity results in AJKS Chapter 2. 5 Generative-model Sample Complexity in terms of EM FX Now, step back and assume the desk has access to a calibrated generative model of EM FX and carry dynamics. This can be any kind of risk simulator. Given any state-action pair \((s,a)\), the simulator returns \((s&#39;, r) \sim G(\cdot \mid s,a)\) where \(s&#39;\) is the next state and \(r \in [0,1]\) is the normalized reward. As in AJKS, define an empirical MDP \(\hat{\mathcal{M}}\) that has a transition kernel \(\hat{P}\) that is built from \(N\) independent samples for each \((s,a)\). AJKS show that there exist absolute constants such that, for any \(\varepsilon \in (0,1)\) and \(\delta \in (0,1)\), if the number of simulator calls per state-action pair \(N\) satisfies \[N \ge c_0 \cdot \frac{1}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c_1 \| \mathcal{S} \| \| \mathcal{A} \| / \delta\big)}{\varepsilon^2}\] then, with probability at least \(1 - \delta\), the optimal value function \(Q^{\star}\) and the optimal empirical value function \(\hat{Q}^{\star}\) satisfy \[\| Q^{\star} - \hat{Q}^{\star} \|_{\infty} \leq \varepsilon\] and the policy \(\hat{\pi}\) that is optimal in \(\hat{\mathcal{M}}\) satisfies \[\| Q^{\star} - Q^{\hat{\pi}} \|_{\infty} \leq \varepsilon\] given that \(N\) is not too small.5 The total number of simulator calls is then \[N_{\text{total}} = \| \mathcal{S} \| \| \mathcal{A} \| N\] Substituting the inequality for \(N\) into the expression for \(N_{\text{total}}\), I obtain the following sample-complexity bound that is specific to EM. Let \(S = \| \mathcal{S} \|, A = \| \mathcal{A} \|\). Then it should suffice to take \[N_{\text{total}} \ge c \cdot \frac{S A}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c S A / \delta\big)}{\varepsilon^2}\] for a constant \(c\), to make sure that the policy learned by model-based planning on the simulator is \(\varepsilon\)-optimal with probability at least \(1 - \delta\).5 The financial interpretation of each factor is as follows. First, the factor \(S A\) is the effective size of the EM FX control problem. Increasing the granularity of the carry buckets, volatility regimes, crash flags, or margin states increases \(S\). Increasing the granularity of position and leverage grids increases \(A\). These are design choices that would be made by the trading desk and are not fixed constraints. Second, the factor \((1 - \gamma)^{-3}\) measures the difficulty that is added by persistence in carry and crash regimes. Using the relation \[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\] expand \(1 - \gamma\) using the first-order approximation of the exponential, \[1 - \gamma = 1 - \exp\!\left(-\frac{\Delta t}{\tau}\right) \approx \frac{\Delta t}{\tau}\] when \(\Delta t / \tau\) is small. Then \[\frac{1}{(1 - \gamma)^3} \approx \left( \frac{\tau}{\Delta t} \right)^3\] Thus the sample requirement grows as the cube of the ratio between the carry persistence scale \(\tau\) and the rebalancing interval \(\Delta t\). For weekly rebalancing and assuming an eight-week half-life (for example), this ratio is of order \(8\), and its cube is of order \(512\). Slow-moving regimes make learning an optimal EM carry control policy inherently more sample intensive. Third, the logarithmic factor \(\log(c S A / \delta)\) is relatively mild, but it captures the reliability parameter \(\delta\). Demanding that the learned policy is close to optimal with probability \(1 - \delta = 0.99\) instead of \(0.95\) increases the log factor but does not change the polynomial dependence on \(S\), \(A\), \(\varepsilon\), or \(1 - \gamma\). This theorem is formally identical to the abstract discounted bound in AJKS, but its economics becomes interpretable once \(\gamma\), \(S\), and \(A\) are written in terms of state aggregation, position grids, and half-lives of factors. Episodic Exploration without a Generative Model In many situations the desk cannot query a simulator arbitrarily and only learns from executed positions. In that case it is natural to work with a finite-horizon formulation that is episodic. I consider a horizon of \(H\) rebalancing steps, after which the book is then forced to unwind. Episodes are indexed by \(k = 0,1,\dots,K - 1\), and each episode consists of states and actions \[(s_{k,0}, a_{k,0}, \dots, s_{k,H-1}, a_{k,H-1})\] Assume that each of the episodes starts from the same benchmark state \(s_{0}\) (which could represent an unlevered start). For each episode define the regret of the policy \(\pi_k\) used in that episode as \[\text{Regret}_k = V^{\star}_0(s_0) - V^{\pi_k}_0(s_0)\] where \(V^{\star}_0(s_0)\) is the optimal value starting at \(s_0\), and \(V^{\pi_k}_0(s_0)\) is the value of policy \(\pi_k\).6 The total expected regret after \(K\) episodes is \[\text{Regret}(K) = \mathbb{E}\!\left[ \sum_{k=0}^{K-1} \text{Regret}_k \right]\] In the tabular finite-horizon setting, AJKS analyze the UCB-VI algorithm and show that the regret is bounded by a term of order \[\text{Regret}(K) \leq C_1 H^2 S \sqrt{A K} \log\!\big(C_2 S A H K\big)\] for absolute constants \(C_1\) and \(C_2\).6 Now, in terms of the problem I look at, it can be seen that the average regret per episode satisfies \[\frac{\text{Regret}(K)}{K} \leq C_1 H^2 S \sqrt{\frac{A}{K}} \log\!\big(C_2 S A H K\big)\] The key dependence here is that the shortfall in risk-adjusted value per episode decays on the order of \[H^2 S \sqrt{\frac{A}{K}}\] up to logarithmic factors. To invert the bound, fix a target average regret per episode \(\rho &amp;gt; 0\). I want \[\frac{\text{Regret}(K)}{K} \leq \rho\] Ignoring the logarithmic factors to see the main scaling, impose \[C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho\] Solve the inequality for \(K\) as follows. \[\begin{aligned} &amp;amp;C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho \\ &amp;amp;\implies \sqrt{\frac{A}{K}} \leq \frac{\rho}{C_1 H^2 S} \\ &amp;amp;\implies \frac{A}{K} \leq \frac{\rho^2}{C_1^2 H^4 S^2} \\ &amp;amp;\implies K \geq A \cdot \frac{C_1^2 H^4 S^2}{\rho^2} = \left( \frac{C_1 H^2 S \sqrt{A}}{\rho} \right)^2 \end{aligned}\] Thus, to drive the average regret per episode below \(\rho\), the number of episodes must scale to at least the order of \(H^4 S^2 A / \rho^2\). Because \(H\) is proportional to the horizon of the control problem and \(S\) and \(A\) are determined by the state and action discretizations, this gives an explicit trade-off here– decreasing state and action granularity can reduce learning time by large factors. Optimizers as Policies for the Trading Desk Li and Malik propose viewing an optimization algorithm itself as a policy in an MDP, where the “state” consists of past instances, gradients, and objective values, and the “action” is the next update step.7 In this context, I adopt the same perspective from a trading desk’s perspective. An EM carry optimization algorithm is a policy mapping the history of spreads, volatilities, crash indicators, and portfolio P&amp;amp;L to the next position vector. This has two consequences. First, a learned optimizer that is trained on a distribution of EM FX environments is effectively a meta-policy that solves many related MDPs. The sample-complexity theory here that is based on AJKS gives the number of simulated or historical episodes that is required to guarantee that this learned optimizer is near-optimal across that distribution of environments, once the optimizer class is viewed as a parameterized policy class.5 Second, because the optimizer’s internal state can include risk metrics (such as realized variance), its behavior in stressed regimes can be shaped through the reward definition. For example, aggressively penalizing severe drawdowns in the reward (before clipping) may change the shape of the optimal policy in crash or crash-prone regimes without altering the official sample-complexity rate determined. The bounds guarantee that, with sufficient data, a learned optimizer that internalizes these kinds of penalties will behave appropriately across both normal and crash regimes. Notes and References Financial Times, “Traders pour billions of dollars into Turkish lira trade” (July 20, 2024). Available at https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c. &amp;#8617; Brunnermeier, Markus K.; Nagel, Stefan; Pedersen, Lasse H. (2009). “Carry Trades and Currency Crashes.” NBER Macroeconomics Annual 23, 313–347. &amp;#8617; Laborda, Juan; Laborda, Ricardo; Olmo, José (2014). “Optimal currency carry trade strategies.” International Review of Economics &amp;amp; Finance 33, 52–66. &amp;#8617; Chen, Ching-Neng (2022). “Optimal carry trade portfolio choice under regime shifts.” Review of Quantitative Finance and Accounting 59(2), 541–573. &amp;#8617; Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. Reinforcement Learning and Stochastic Optimization Chapter 2: “Sample Complexity with a Generative Model.” Available at https://rltheorybook.github.io/. &amp;#8617; &amp;#8617;2 &amp;#8617;3 &amp;#8617;4 &amp;#8617;5 Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. Reinforcement Learning and Stochastic Optimization Chapter 7: “Strategic Exploration in Tabular MDPs.” Available at https://rltheorybook.github.io/. &amp;#8617; &amp;#8617;2 &amp;#8617;3 Li, Ke; Malik, Jitendra. “Learning to Optimize.” arXiv preprint (2016). Available at https://arxiv.org/abs/1606.01885. &amp;#8617;">
+  
+
+  <link rel="stylesheet" href="/home/assets/main.css">
+  <link rel="canonical" href="https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/home/feed.xml">
+
+  
+<script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+  
+  <meta property="og:title" content="The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem">
+  <meta property="og:site_name" content="Arnab Sircar">
+  <meta property="og:url" content="https://a-sircar1.github.io/home/2024/07/25/24-RL-optimizers-part2/">
+  <meta property="og:description" content="If you haven’t taken a look at Part I yet, please take a look at it here. As soon as I finished fleshing out the single period mean-variance model from Part I, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample. Recently, the hedge funds and investors have flocked toward the Turkish Lira due to the higher interest rate environment in Turkey (as high as 50% at the time of writing this piece!), largely a result of a change in course toward conventional economic approaches in the nation and a relative curtailing of inflation.1 Investors are taking advantage of the classic carry trade, in which money is borrowed for a trade in currency with lower interest rates to maximize gain on a currency in a high interest rate setting while betting that any shifts in the exchange rate do not upset the strategy. As FX in emerging markets is clearly quite a risky asset, and market regimes shift all the time, I decided it might be interesting to model a trading desk’s dynamic optimization problem to reflect this setting. Picking Up from Where We Left Off In short, my analysis in Part I treated each of the optimizers as an arm in a single period mean-variance bandit. For a fixed pair \((\mu,\Sigma)\), the problem was to choose, with as few episodes as possible, among a finite family of algorithms that output portfolios onto a simplex. The meta-distribution over cases \(p = (\mu,\Sigma)\) captured cross-sectional and temporal variation in the opportunity sets, and the main object of interest was the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) between the best optimizer and the one that was empirically selected. But now, we’re shifting from single period mean-variance to a dynamic stochastic program. Given that sequential adjustments are now made to the portfolio in response to sequential occurrences, a finite-state Markov decision process (MDP) can be appropriate for the model. Instead of drawing independent problem cases \(p_i \sim \mathcal{P}\) as in Part I, I now observe a single evolving state process \(s_t\) whose components summarize carry premia, volatility, any crash indicators, and also any slack on the balance sheet. In this setting, a trading strategy is then a policy \(\pi\) that maps each state \(s_t\) into a feasible control \(a_t\), for example a vector of currency positions subject to leverage and margin constraints. The objective here is to maximize a discounted risk-adjusted P&amp;amp;L functional as follows: \[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r(s_t,a_t) \right]\] where \(\gamma \in (0,1)\) captures the persistence of carry and crash regimes, and the reward \(r(s_t,a_t)\) aggregates the carry, mark-to-market movements, transaction costs, and risk penalties in a bounded way. From the perspective of Part I, this is a shift from comparing a finite list of static optimizers on i.i.d. portfolio problems to comparing policies in a stochastic environment. Similar underlying concentration inequalities still govern how many observations are needed to distinguish near-optimal policies from sub-optimal ones. The difference is that the relevant complexity parameters are now the number of market regimes and control actions, and the effective horizon \(1 / (1 - \gamma)\) that is implied by the persistence of emerging market (EM) FX or credit risk factors instead of the simple cardinality \(K\) of a candidate optimizer family. With this in mind, I place the sample-complexity results of AJKS to a concrete dynamic problem that is controlling an EM FX carry portfolio under leverage and crash risk. The structure of the problem is inspired by the empirical literature on carry trades and currency crashes, which documents regime-dependent downside risk,2 and by work on optimal carry trade portfolios that already treat carry investing as a state-dependent dynamic allocation problem.3 4 The aim of this note is to treat the same economic environment as an unknown MDP and ask how many simulated or historical episodes would be needed for an RL agent to learn a policy whose risk–adjusted value is provably close to that of the best feasible EM FX carry control policy. Model A trading desk that runs an EM FX carry book faces a dynamic stochastic program. The desk chooses a leveraged long-short position in a set of EM currencies against a funding currency, under balance-sheet, margin, and drawdown constraints. The control problem is cast as an MDP, and minmax-optimal sample complexity bounds for discounted control and finite-horizon exploration are used from results from AJKS (I will refer to the RL theory book as AJKS from here on out). 5 6 The bounds are then rewritten in terms of economically meaningful quantities like regime persistence, the number of states needed to track carry and crash risk, and the discretization of position size and leverage. The set-up can now be formalized. Consider a single funding currency, indexed by \(f\), and \(d\) EM currencies, indexed by \(j = 1,\dots,d\). At discrete times \(t = 0,1,2,\dots\), the desk rebalances over a fixed interval \(\Delta t\) (like one week, for example). For each EM currency \(j\) at time \(t\), the following objects are observed: The short risk-free rate of the funding currency \(r_t^f\) The short local collateral rate \(r_{t}^j\) The log spot exchange rate \(S_t^j = \log \text{FX}_t^j\), that is quoted as units of funding currency per unit of EM currency A volatility proxy \(\sigma_t^j\) (for example, implied volatility) A crash-regime variable \(Z_t^j \in \{0,1\}\), where \(Z_t^j = 1\) indicates a stressed or regime that is prone to crashes for currency \(j\). Define the instantaneous carry spread of currency \(j\) over the funding currency as \[c_t^j = r_{t}^j - r_t^f\] At time \(t\) the desk chooses a position vector \(u_t = (u_t^1,\dots,u_t^d)\) in units of notional per unit of capital, where \(u_t^j &amp;gt; 0\) means being long EM currency \(j\) funded in \(f\), and \(u_t^j &amp;lt; 0\) means short EM currency \(j\) and long the funding currency. There is a gross leverage constraint: \[\sum_{j=1}^d \|u_t^j\| \leq L_{\max}\] and a position cap for each of the currencies \(\|u_t^j\| \leq U_{\max}^j\). Over one period, the currency-level log return in the funding currency is \[R_{t+1}^j = S_{t+1}^j - S_t^j + c_t^j \Delta t - \kappa_t^j(u_t^j)\] where \(\kappa_t^j(u_t^j)\) captures trading and funding costs (for example, bid-ask spread, charges on the balance sheet, and basis). At the portfolio level, the unadjusted P&amp;amp;L per unit of capital over one period is \[\Pi_{t+1} = \sum_{j=1}^d u_t^j R_{t+1}^j\] To turn this into a risk-adjusted reward that is compatible with discounted control, fix a risk-aversion parameter \(\lambda &amp;gt; 0\) and define the conditional variance like so: \[v_t(u_t) = \operatorname{Var}\!\left(\Pi_{t+1} \mid \mathcal{F}_t\right)\] where \(\mathcal{F}_t\) is the information at time \(t\). Define the raw risk-adjusted payoff \[X_{t+1} = \Pi_{t+1} - \frac{\lambda}{2} v_t(u_t)\] Because currency returns and carry spreads are bounded in any realistic risk environment, I say there exists a constant \(B &amp;gt; 0\) such that with high probability \(\|X_{t+1}\| \leq B\). For the math to hold, I clip and rescale to obtain the bounded reward \[r_{t+1} = \frac{1}{2} + \frac{1}{2B} \left( \max\{-B, \min\{X_{t+1}, B\}\} \right)\] so that \(r_{t+1} \in [0,1]\) and all policies are compared on a normalized scale. This rescaling does not change the ordering of the policies by risk-adjusted performance. The desk then faces a stochastic program of maximizing the discounted value \[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r_{t+1} \mid s_0 \right]\] over policies \(\pi\) mapping states to actions, where \(\gamma \in (0,1)\) is a discount factor. State, action, and discount in financial terms Define the state at time \(t\) as a summary: \[s_t = \big(C_t, \Sigma_t, Z_t, M_t, K_t\big)\] where there is: \(C_t\) stores the discretized carry spreads \(c_t^j\) \(\Sigma_t\) stores discretized volatility proxies \(\sigma_t^j\) \(Z_t\) is the vector of crash regimes \(Z_t^j\) \(M_t\) stores remaining time to any hard horizon (for example, investor capital lock-up) \(K_t\) stores risk and margin information like remaining capacity under VaR limits or drawdown constraints, etc. This state takes values in a finite set \(\mathcal{S}\) once each of the components is discretized into a finite grid. For example, each \(c_t^j\) might be mapped into one of \(G_c\) quantile buckets, each \(\sigma_t^j\) into \(G_{\sigma}\) buckets, and each crash regime \(Z_t^j\) into the two values \(0\) or \(1\). If aggregation is done across the currencies into factor summaries (for example, a global EM carry factor, a volatility factor, and a crash indicator), the resulting state cardinality can be written as so: \[\| \mathcal{S} \| = S_{\text{carry}} \cdot S_{\text{vol}} \cdot S_{\text{crash}} \cdot S_{\text{horizon}} \cdot S_{\text{margin}}\] where each \(S_{\cdot}\) is a design choice of the desk. The action at time \(t\) is the position vector \(u_t\). For the purposes of sample-complexity analysis, discretize \(u_t^j\) onto a finite grid, for instance \[u_t^j \in \{-U_{\max}^j, -U_{\max}^j + \Delta u^j, \dots, U_{\max}^j\}\] and only allow grids to be consistent with the leverage and margin constraints. The action space \(\mathcal{A}\) is then finite with cardinality \(\| \mathcal{A} \| = A_{\text{pos}}\), which depends on the position grid and the number of currencies, as well as the shape of the leverage constraint. The discount factor \(\gamma\) has a financial interpretation. Suppose that the EM carry factor has an approximate exponential autocorrelation with half-life \(H_{\text{half}}\) that is measured in rebalancing periods. That is, if the lag-k autocorrelation of a relevant factor is approximately \(\rho_k \approx \exp(-k / \tau)\) for some persistence scale \(\tau\), then the half-life is defined as \[\frac{1}{2} = \exp\!\left(-\frac{H_{\text{half}}}{\tau}\right)\] and solving for \(H_{\text{half}}\) produces \[H_{\text{half}} = \tau \log 2\] Setting one step to length \(\Delta t\) and choosing a discount factor \[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\] gives a planning horizon on the order of \[\frac{1}{1 - \gamma} \approx \frac{\tau}{\Delta t}\] So the factor \(1 - \gamma\) that governs the sample complexity can be written in terms of observed carry persistence. With these definitions, EM FX carry control is a discounted MDP with finite state space \(\mathcal{S}\), finite action space \(\mathcal{A}\), bounded reward in \([0,1]\), and discount factor \(\gamma \in (0,1)\). This is exactly the setting of the discounted sample-complexity results in AJKS Chapter 2. 5 Generative-model Sample Complexity in terms of EM FX Now, step back and assume the desk has access to a calibrated generative model of EM FX and carry dynamics. This can be any kind of risk simulator. Given any state-action pair \((s,a)\), the simulator returns \((s&#39;, r) \sim G(\cdot \mid s,a)\) where \(s&#39;\) is the next state and \(r \in [0,1]\) is the normalized reward. As in AJKS, define an empirical MDP \(\hat{\mathcal{M}}\) that has a transition kernel \(\hat{P}\) that is built from \(N\) independent samples for each \((s,a)\). AJKS show that there exist absolute constants such that, for any \(\varepsilon \in (0,1)\) and \(\delta \in (0,1)\), if the number of simulator calls per state-action pair \(N\) satisfies \[N \ge c_0 \cdot \frac{1}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c_1 \| \mathcal{S} \| \| \mathcal{A} \| / \delta\big)}{\varepsilon^2}\] then, with probability at least \(1 - \delta\), the optimal value function \(Q^{\star}\) and the optimal empirical value function \(\hat{Q}^{\star}\) satisfy \[\| Q^{\star} - \hat{Q}^{\star} \|_{\infty} \leq \varepsilon\] and the policy \(\hat{\pi}\) that is optimal in \(\hat{\mathcal{M}}\) satisfies \[\| Q^{\star} - Q^{\hat{\pi}} \|_{\infty} \leq \varepsilon\] given that \(N\) is not too small.5 The total number of simulator calls is then \[N_{\text{total}} = \| \mathcal{S} \| \| \mathcal{A} \| N\] Substituting the inequality for \(N\) into the expression for \(N_{\text{total}}\), I obtain the following sample-complexity bound that is specific to EM. Let \(S = \| \mathcal{S} \|, A = \| \mathcal{A} \|\). Then it should suffice to take \[N_{\text{total}} \ge c \cdot \frac{S A}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c S A / \delta\big)}{\varepsilon^2}\] for a constant \(c\), to make sure that the policy learned by model-based planning on the simulator is \(\varepsilon\)-optimal with probability at least \(1 - \delta\).5 The financial interpretation of each factor is as follows. First, the factor \(S A\) is the effective size of the EM FX control problem. Increasing the granularity of the carry buckets, volatility regimes, crash flags, or margin states increases \(S\). Increasing the granularity of position and leverage grids increases \(A\). These are design choices that would be made by the trading desk and are not fixed constraints. Second, the factor \((1 - \gamma)^{-3}\) measures the difficulty that is added by persistence in carry and crash regimes. Using the relation \[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\] expand \(1 - \gamma\) using the first-order approximation of the exponential, \[1 - \gamma = 1 - \exp\!\left(-\frac{\Delta t}{\tau}\right) \approx \frac{\Delta t}{\tau}\] when \(\Delta t / \tau\) is small. Then \[\frac{1}{(1 - \gamma)^3} \approx \left( \frac{\tau}{\Delta t} \right)^3\] Thus the sample requirement grows as the cube of the ratio between the carry persistence scale \(\tau\) and the rebalancing interval \(\Delta t\). For weekly rebalancing and assuming an eight-week half-life (for example), this ratio is of order \(8\), and its cube is of order \(512\). Slow-moving regimes make learning an optimal EM carry control policy inherently more sample intensive. Third, the logarithmic factor \(\log(c S A / \delta)\) is relatively mild, but it captures the reliability parameter \(\delta\). Demanding that the learned policy is close to optimal with probability \(1 - \delta = 0.99\) instead of \(0.95\) increases the log factor but does not change the polynomial dependence on \(S\), \(A\), \(\varepsilon\), or \(1 - \gamma\). This theorem is formally identical to the abstract discounted bound in AJKS, but its economics becomes interpretable once \(\gamma\), \(S\), and \(A\) are written in terms of state aggregation, position grids, and half-lives of factors. Episodic Exploration without a Generative Model In many situations the desk cannot query a simulator arbitrarily and only learns from executed positions. In that case it is natural to work with a finite-horizon formulation that is episodic. I consider a horizon of \(H\) rebalancing steps, after which the book is then forced to unwind. Episodes are indexed by \(k = 0,1,\dots,K - 1\), and each episode consists of states and actions \[(s_{k,0}, a_{k,0}, \dots, s_{k,H-1}, a_{k,H-1})\] Assume that each of the episodes starts from the same benchmark state \(s_{0}\) (which could represent an unlevered start). For each episode define the regret of the policy \(\pi_k\) used in that episode as \[\text{Regret}_k = V^{\star}_0(s_0) - V^{\pi_k}_0(s_0)\] where \(V^{\star}_0(s_0)\) is the optimal value starting at \(s_0\), and \(V^{\pi_k}_0(s_0)\) is the value of policy \(\pi_k\).6 The total expected regret after \(K\) episodes is \[\text{Regret}(K) = \mathbb{E}\!\left[ \sum_{k=0}^{K-1} \text{Regret}_k \right]\] In the tabular finite-horizon setting, AJKS analyze the UCB-VI algorithm and show that the regret is bounded by a term of order \[\text{Regret}(K) \leq C_1 H^2 S \sqrt{A K} \log\!\big(C_2 S A H K\big)\] for absolute constants \(C_1\) and \(C_2\).6 Now, in terms of the problem I look at, it can be seen that the average regret per episode satisfies \[\frac{\text{Regret}(K)}{K} \leq C_1 H^2 S \sqrt{\frac{A}{K}} \log\!\big(C_2 S A H K\big)\] The key dependence here is that the shortfall in risk-adjusted value per episode decays on the order of \[H^2 S \sqrt{\frac{A}{K}}\] up to logarithmic factors. To invert the bound, fix a target average regret per episode \(\rho &amp;gt; 0\). I want \[\frac{\text{Regret}(K)}{K} \leq \rho\] Ignoring the logarithmic factors to see the main scaling, impose \[C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho\] Solve the inequality for \(K\) as follows. \[\begin{aligned} &amp;amp;C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho \\ &amp;amp;\implies \sqrt{\frac{A}{K}} \leq \frac{\rho}{C_1 H^2 S} \\ &amp;amp;\implies \frac{A}{K} \leq \frac{\rho^2}{C_1^2 H^4 S^2} \\ &amp;amp;\implies K \geq A \cdot \frac{C_1^2 H^4 S^2}{\rho^2} = \left( \frac{C_1 H^2 S \sqrt{A}}{\rho} \right)^2 \end{aligned}\] Thus, to drive the average regret per episode below \(\rho\), the number of episodes must scale to at least the order of \(H^4 S^2 A / \rho^2\). Because \(H\) is proportional to the horizon of the control problem and \(S\) and \(A\) are determined by the state and action discretizations, this gives an explicit trade-off here– decreasing state and action granularity can reduce learning time by large factors. Optimizers as Policies for the Trading Desk Li and Malik propose viewing an optimization algorithm itself as a policy in an MDP, where the “state” consists of past instances, gradients, and objective values, and the “action” is the next update step.7 In this context, I adopt the same perspective from a trading desk’s perspective. An EM carry optimization algorithm is a policy mapping the history of spreads, volatilities, crash indicators, and portfolio P&amp;amp;L to the next position vector. This has two consequences. First, a learned optimizer that is trained on a distribution of EM FX environments is effectively a meta-policy that solves many related MDPs. The sample-complexity theory here that is based on AJKS gives the number of simulated or historical episodes that is required to guarantee that this learned optimizer is near-optimal across that distribution of environments, once the optimizer class is viewed as a parameterized policy class.5 Second, because the optimizer’s internal state can include risk metrics (such as realized variance), its behavior in stressed regimes can be shaped through the reward definition. For example, aggressively penalizing severe drawdowns in the reward (before clipping) may change the shape of the optimal policy in crash or crash-prone regimes without altering the official sample-complexity rate determined. The bounds guarantee that, with sufficient data, a learned optimizer that internalizes these kinds of penalties will behave appropriately across both normal and crash regimes. Notes and References Financial Times, “Traders pour billions of dollars into Turkish lira trade” (July 20, 2024). Available at https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c. &amp;#8617; Brunnermeier, Markus K.; Nagel, Stefan; Pedersen, Lasse H. (2009). “Carry Trades and Currency Crashes.” NBER Macroeconomics Annual 23, 313–347. &amp;#8617; Laborda, Juan; Laborda, Ricardo; Olmo, José (2014). “Optimal currency carry trade strategies.” International Review of Economics &amp;amp; Finance 33, 52–66. &amp;#8617; Chen, Ching-Neng (2022). “Optimal carry trade portfolio choice under regime shifts.” Review of Quantitative Finance and Accounting 59(2), 541–573. &amp;#8617; Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. Reinforcement Learning and Stochastic Optimization Chapter 2: “Sample Complexity with a Generative Model.” Available at https://rltheorybook.github.io/. &amp;#8617; &amp;#8617;2 &amp;#8617;3 &amp;#8617;4 &amp;#8617;5 Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. Reinforcement Learning and Stochastic Optimization Chapter 7: “Strategic Exploration in Tabular MDPs.” Available at https://rltheorybook.github.io/. &amp;#8617; &amp;#8617;2 &amp;#8617;3 Li, Ke; Malik, Jitendra. “Learning to Optimize.” arXiv preprint (2016). Available at https://arxiv.org/abs/1606.01885. &amp;#8617;">
+  
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="The Sample Complexity of RL-based Optimizers for Financial Applicat...">
+  <meta name="twitter:description" content="If you haven’t taken a look at Part I yet, please take a look at it here. As soon as I finished fleshing out the single period mean-variance model from Part I, I started thinking about more tangibl...">
+  
+  
+
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/home/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/home/about/">About</a>
+      
+        
+        <a class="page-link" href="/home/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/home/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem</h1>
+    
+    <p class="post-meta"><time datetime="2024-07-25T06:10:56+00:00" itemprop="datePublished">Jul 25, 2024</time> •
+  
+    
+    
+      
+    
+      
+        <a href="/home/categories/finance/">finance</a>,
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+        <a href="/home/categories/optimization/">optimization</a>,
+      
+    
+      
+    
+  
+    
+    
+      
+        <a href="/home/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p><em>If you haven’t taken a look at Part I yet, please take a look at it <a href="/home/2024/06/06/24-RL-optimizers/">here</a>.</em></p>
+
+<p>As soon as I finished fleshing out the single period mean-variance model from <a href="/home/2024/06/06/24-RL-optimizers/">Part I</a>, I started thinking about more tangible problems that a trading desk may face, specifically (1) where the portfolios need to be dynamically rebalanced, as spreads, liquidity, and funding conditions change over time, and (2) when the risk constraints or funding constraints change and market stressors change, i.e., risk is not only captured via a fixed covariance matrix across the sample.</p>
+
+<p>Recently, the hedge funds and investors have flocked toward the Turkish Lira due to the higher interest rate environment in Turkey (as high as 50% at the time of writing this piece!), largely a result of a change in course toward conventional economic approaches in the nation and a relative curtailing of inflation.<sup id="fnref:ft-try" role="doc-noteref"><a href="#fn:ft-try" class="footnote" rel="footnote">1</a></sup> Investors are taking advantage of the classic carry trade, in which money is borrowed for a trade in currency with lower interest rates to maximize gain on a currency in a high interest rate setting while betting that any shifts in the exchange rate do not upset the strategy. As FX in emerging markets is clearly quite a risky asset, and market regimes shift all the time, I decided it might be interesting to model a trading desk’s dynamic optimization problem to reflect this setting.</p>
+
+<h3>Picking Up from Where We Left Off</h3>
+
+<p>In short, my analysis in Part I treated each of the optimizers as an arm in a single period mean-variance bandit. For a fixed pair \((\mu,\Sigma)\), the problem was to choose, with as few episodes as possible, among a finite family of algorithms that output portfolios onto a simplex. The meta-distribution over cases \(p = (\mu,\Sigma)\) captured cross-sectional and temporal variation in the opportunity sets, and the main object of interest was the gap \(\mu_{k^{\star}} - \mu_{\hat{k}}\) between the best optimizer and the one that was empirically selected.</p>
+
+<p>But now, we’re shifting from single period mean-variance to a dynamic stochastic program.</p>
+
+<p>Given that sequential adjustments are now made to the portfolio in response to sequential occurrences, a finite-state Markov decision process (MDP) can be appropriate for the model. Instead of drawing independent problem cases \(p_i \sim \mathcal{P}\) as in Part I, I now observe a single evolving state process \(s_t\) whose components summarize carry premia, volatility, any crash indicators, and also any slack on the balance sheet. In this setting, a trading strategy is then a policy \(\pi\) that maps each state \(s_t\) into a feasible control \(a_t\), for example a vector of currency positions subject to leverage and margin constraints. The objective here is to maximize a discounted risk-adjusted P&amp;L functional as follows:</p>
+
+\[V^{\pi}(s_0)
+=
+\mathbb{E}^{\pi}\!\left[
+\sum_{t=0}^{\infty} \gamma^t r(s_t,a_t)
+\right]\]
+
+<p>where \(\gamma \in (0,1)\) captures the persistence of carry and crash regimes, and the reward \(r(s_t,a_t)\) aggregates the carry, mark-to-market movements, transaction costs, and risk penalties in a bounded way.</p>
+
+<p>From the perspective of Part I, this is a shift from comparing a finite list of static optimizers on i.i.d. portfolio problems to comparing policies in a stochastic environment. Similar underlying concentration inequalities still govern how many observations are needed to distinguish near-optimal policies from sub-optimal ones. The difference is that the relevant complexity parameters are now the number of market regimes and control actions, and the effective horizon \(1 / (1 - \gamma)\) that is implied by the persistence of emerging market (EM) FX or credit risk factors instead of the simple cardinality \(K\) of a candidate optimizer family.</p>
+
+<p>With this in mind, I place the sample-complexity results of AJKS to a concrete dynamic problem that is controlling an EM FX carry portfolio under leverage and crash risk. The structure of the problem is inspired by the empirical literature on carry trades and currency crashes, which documents regime-dependent downside risk,<sup id="fnref:brunnermeier2009" role="doc-noteref"><a href="#fn:brunnermeier2009" class="footnote" rel="footnote">2</a></sup> and by work on optimal carry trade portfolios that already treat carry investing as a state-dependent dynamic allocation problem.<sup id="fnref:laborda2014" role="doc-noteref"><a href="#fn:laborda2014" class="footnote" rel="footnote">3</a></sup> <sup id="fnref:chen2022" role="doc-noteref"><a href="#fn:chen2022" class="footnote" rel="footnote">4</a></sup> The aim of this note is to treat the same economic environment as an unknown MDP and ask how many simulated or historical episodes would be needed for an RL agent to learn a policy whose risk–adjusted value is provably close to that of the best feasible EM FX carry control policy.</p>
+
+<h3>Model</h3>
+
+<p>A trading desk that runs an EM FX carry book faces a dynamic stochastic program. The desk chooses a leveraged long-short position in a set of EM currencies against a funding currency, under balance-sheet, margin, and drawdown constraints. The control problem is cast as an MDP, and minmax-optimal sample complexity bounds for discounted control and finite-horizon exploration are used from results from AJKS (I will refer to the RL theory book as AJKS from here on out). <sup id="fnref:ajks-ch2" role="doc-noteref"><a href="#fn:ajks-ch2" class="footnote" rel="footnote">5</a></sup> <sup id="fnref:ajks-ch7" role="doc-noteref"><a href="#fn:ajks-ch7" class="footnote" rel="footnote">6</a></sup> The bounds are then rewritten in terms of economically meaningful quantities like regime persistence, the number of states needed to track carry and crash risk, and the discretization of position size and leverage. The set-up can now be formalized. Consider a single funding currency, indexed by \(f\), and \(d\) EM currencies, indexed by \(j = 1,\dots,d\). At discrete times \(t = 0,1,2,\dots\), the desk rebalances over a fixed interval \(\Delta t\) (like one week, for example). For each EM currency \(j\) at time \(t\), the following objects are observed:</p>
+
+<ul>
+  <li>The short risk-free rate of the funding currency \(r_t^f\)</li>
+  <li>The short local collateral rate \(r_{t}^j\)</li>
+  <li>The log spot exchange rate \(S_t^j = \log \text{FX}_t^j\), that is quoted as units of funding currency per unit of EM currency</li>
+  <li>A volatility proxy \(\sigma_t^j\) (for example, implied volatility)</li>
+  <li>A crash-regime variable \(Z_t^j \in \{0,1\}\), where \(Z_t^j = 1\) indicates a stressed or regime that is prone to crashes for currency \(j\).</li>
+</ul>
+
+<p>Define the instantaneous carry spread of currency \(j\) over the funding currency as</p>
+
+\[c_t^j = r_{t}^j - r_t^f\]
+
+<p>At time \(t\) the desk chooses a position vector \(u_t = (u_t^1,\dots,u_t^d)\) in units of notional per unit of capital, where \(u_t^j &gt; 0\) means being long EM currency \(j\) funded in \(f\), and \(u_t^j &lt; 0\) means short EM currency \(j\) and long the funding currency. There is a gross leverage constraint:</p>
+
+\[\sum_{j=1}^d \|u_t^j\| \leq L_{\max}\]
+
+<p>and a position cap for each of the currencies \(\|u_t^j\| \leq U_{\max}^j\).</p>
+
+<p>Over one period, the currency-level log return in the funding currency is</p>
+
+\[R_{t+1}^j = S_{t+1}^j - S_t^j + c_t^j \Delta t - \kappa_t^j(u_t^j)\]
+
+<p>where \(\kappa_t^j(u_t^j)\) captures trading and funding costs (for example, bid-ask spread, charges on the balance sheet, and basis). At the portfolio level, the unadjusted P&amp;L per unit of capital over one period is</p>
+
+\[\Pi_{t+1} = \sum_{j=1}^d u_t^j R_{t+1}^j\]
+
+<p>To turn this into a risk-adjusted reward that is compatible with discounted control, fix a risk-aversion parameter \(\lambda &gt; 0\) and define the conditional variance like so:</p>
+
+\[v_t(u_t) = \operatorname{Var}\!\left(\Pi_{t+1} \mid \mathcal{F}_t\right)\]
+
+<p>where \(\mathcal{F}_t\) is the information at time \(t\). Define the raw risk-adjusted payoff</p>
+
+\[X_{t+1} = \Pi_{t+1} - \frac{\lambda}{2} v_t(u_t)\]
+
+<p>Because currency returns and carry spreads are bounded in any realistic risk environment, I say there exists a constant \(B &gt; 0\) such that with high probability \(\|X_{t+1}\| \leq B\). For the math to hold, I clip and rescale to obtain the bounded reward</p>
+
+\[r_{t+1} = \frac{1}{2} + \frac{1}{2B} \left( \max\{-B, \min\{X_{t+1}, B\}\} \right)\]
+
+<p>so that \(r_{t+1} \in [0,1]\) and all policies are compared on a normalized scale. This rescaling does not change the ordering of the policies by risk-adjusted performance.</p>
+
+<p>The desk then faces a stochastic program of maximizing the discounted value</p>
+
+\[V^{\pi}(s_0) = \mathbb{E}^{\pi}\!\left[ \sum_{t=0}^{\infty} \gamma^t r_{t+1} \mid s_0 \right]\]
+
+<p>over policies \(\pi\) mapping states to actions, where \(\gamma \in (0,1)\) is a discount factor.</p>
+
+<h3>State, action, and discount in financial terms</h3>
+
+<p>Define the state at time \(t\) as a summary:</p>
+
+\[s_t = \big(C_t, \Sigma_t, Z_t, M_t, K_t\big)\]
+
+<p>where there is:</p>
+
+<ul>
+  <li>\(C_t\) stores the discretized carry spreads \(c_t^j\)</li>
+  <li>\(\Sigma_t\) stores discretized volatility proxies \(\sigma_t^j\)</li>
+  <li>\(Z_t\) is the vector of crash regimes \(Z_t^j\)</li>
+  <li>\(M_t\) stores remaining time to any hard horizon (for example, investor capital lock-up)</li>
+  <li>\(K_t\) stores risk and margin information like remaining capacity under VaR limits or drawdown constraints, etc.</li>
+</ul>
+
+<p>This state takes values in a finite set \(\mathcal{S}\) once each of the components is discretized into a finite grid. For example, each \(c_t^j\) might be mapped into one of \(G_c\) quantile buckets, each \(\sigma_t^j\) into \(G_{\sigma}\) buckets, and each crash regime \(Z_t^j\) into the two values \(0\) or \(1\). If aggregation is done across the currencies into factor summaries (for example, a global EM carry factor, a volatility factor, and a crash indicator), the resulting state cardinality can be written as so:</p>
+
+\[\| \mathcal{S} \| = S_{\text{carry}} \cdot S_{\text{vol}} \cdot S_{\text{crash}} \cdot S_{\text{horizon}} \cdot S_{\text{margin}}\]
+
+<p>where each \(S_{\cdot}\) is a design choice of the desk. The action at time \(t\) is the position vector \(u_t\). For the purposes of sample-complexity analysis, discretize \(u_t^j\) onto a finite grid, for instance</p>
+
+\[u_t^j \in \{-U_{\max}^j, -U_{\max}^j + \Delta u^j, \dots, U_{\max}^j\}\]
+
+<p>and only allow grids to be consistent with the leverage and margin constraints. The action space \(\mathcal{A}\) is then finite with cardinality \(\| \mathcal{A} \| = A_{\text{pos}}\), which depends on the position grid and the number of currencies, as well as the shape of the leverage constraint.</p>
+
+<p>The discount factor \(\gamma\) has a financial interpretation. Suppose that the EM carry factor has an approximate exponential autocorrelation with half-life \(H_{\text{half}}\) that is measured in rebalancing periods. That is, if the lag-k autocorrelation of a relevant factor is approximately \(\rho_k \approx \exp(-k / \tau)\) for some persistence scale \(\tau\), then the half-life is defined as</p>
+
+\[\frac{1}{2} = \exp\!\left(-\frac{H_{\text{half}}}{\tau}\right)\]
+
+<p>and solving for \(H_{\text{half}}\) produces</p>
+
+\[H_{\text{half}} = \tau \log 2\]
+
+<p>Setting one step to length \(\Delta t\) and choosing a discount factor</p>
+
+\[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\]
+
+<p>gives a planning horizon on the order of</p>
+
+\[\frac{1}{1 - \gamma} \approx \frac{\tau}{\Delta t}\]
+
+<p>So the factor \(1 - \gamma\) that governs the sample complexity can be written in terms of observed carry persistence.</p>
+
+<p>With these definitions, EM FX carry control is a discounted MDP with finite state space \(\mathcal{S}\), finite action space \(\mathcal{A}\), bounded reward in \([0,1]\), and discount factor \(\gamma \in (0,1)\). This is exactly the setting of the discounted sample-complexity results in AJKS Chapter 2. <sup id="fnref:ajks-ch2:1" role="doc-noteref"><a href="#fn:ajks-ch2" class="footnote" rel="footnote">5</a></sup></p>
+
+<h3>Generative-model Sample Complexity in terms of EM FX</h3>
+
+<p>Now, step back and assume the desk has access to a calibrated generative model of EM FX and carry dynamics. This can be any kind of risk simulator. Given any state-action pair \((s,a)\), the simulator returns \((s', r) \sim G(\cdot \mid s,a)\) where \(s'\) is the next state and \(r \in [0,1]\) is the normalized reward. As in AJKS, define an empirical MDP \(\hat{\mathcal{M}}\) that has a transition kernel \(\hat{P}\) that is built from \(N\) independent samples for each \((s,a)\). AJKS show that there exist absolute constants such that, for any \(\varepsilon \in (0,1)\) and \(\delta \in (0,1)\), if the number of simulator calls per state-action pair \(N\) satisfies</p>
+
+\[N \ge c_0 \cdot \frac{1}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c_1 \| \mathcal{S} \| \| \mathcal{A} \| / \delta\big)}{\varepsilon^2}\]
+
+<p>then, with probability at least \(1 - \delta\), the optimal value function \(Q^{\star}\) and the optimal empirical value function \(\hat{Q}^{\star}\) satisfy</p>
+
+\[\| Q^{\star} - \hat{Q}^{\star} \|_{\infty} \leq \varepsilon\]
+
+<p>and the policy \(\hat{\pi}\) that is optimal in \(\hat{\mathcal{M}}\) satisfies</p>
+
+\[\| Q^{\star} - Q^{\hat{\pi}} \|_{\infty} \leq \varepsilon\]
+
+<p>given that \(N\) is not too small.<sup id="fnref:ajks-ch2:2" role="doc-noteref"><a href="#fn:ajks-ch2" class="footnote" rel="footnote">5</a></sup> The total number of simulator calls is then</p>
+
+\[N_{\text{total}} = \| \mathcal{S} \| \| \mathcal{A} \| N\]
+
+<p>Substituting the inequality for \(N\) into the expression for \(N_{\text{total}}\), I obtain the following sample-complexity bound that is specific to EM. Let \(S = \| \mathcal{S} \|, A = \| \mathcal{A} \|\). Then it should suffice to take</p>
+
+\[N_{\text{total}} \ge c \cdot \frac{S A}{(1 - \gamma)^3} \cdot \frac{\log\!\big(c S A / \delta\big)}{\varepsilon^2}\]
+
+<p>for a constant \(c\), to make sure that the policy learned by model-based planning on the simulator is \(\varepsilon\)-optimal with probability at least \(1 - \delta\).<sup id="fnref:ajks-ch2:3" role="doc-noteref"><a href="#fn:ajks-ch2" class="footnote" rel="footnote">5</a></sup></p>
+
+<p>The financial interpretation of each factor is as follows. First, the factor \(S A\) is the effective size of the EM FX control problem. Increasing the granularity of the carry buckets, volatility regimes, crash flags, or margin states increases \(S\). Increasing the granularity of position and leverage grids increases \(A\). These are design choices that would be made by the trading desk and are not fixed constraints.</p>
+
+<p>Second, the factor \((1 - \gamma)^{-3}\) measures the difficulty that is added by persistence in carry and crash regimes. Using the relation</p>
+
+\[\gamma = \exp\!\left(-\frac{\Delta t}{\tau}\right)\]
+
+<p>expand \(1 - \gamma\) using the first-order approximation of the exponential,</p>
+
+\[1 - \gamma = 1 - \exp\!\left(-\frac{\Delta t}{\tau}\right) \approx \frac{\Delta t}{\tau}\]
+
+<p>when \(\Delta t / \tau\) is small. Then</p>
+
+\[\frac{1}{(1 - \gamma)^3} \approx \left( \frac{\tau}{\Delta t} \right)^3\]
+
+<p>Thus the sample requirement grows as the cube of the ratio between the carry persistence scale \(\tau\) and the rebalancing interval \(\Delta t\). For weekly rebalancing and assuming an eight-week half-life (for example), this ratio is of order \(8\), and its cube is of order \(512\). Slow-moving regimes make learning an optimal EM carry control policy inherently more sample intensive.</p>
+
+<p>Third, the logarithmic factor \(\log(c S A / \delta)\) is relatively mild, but it captures the reliability parameter \(\delta\). Demanding that the learned policy is close to optimal with probability \(1 - \delta = 0.99\) instead of \(0.95\) increases the log factor but does not change the polynomial dependence on \(S\), \(A\), \(\varepsilon\), or \(1 - \gamma\).</p>
+
+<p>This theorem is formally identical to the abstract discounted bound in AJKS, but its economics becomes interpretable once \(\gamma\), \(S\), and \(A\) are written in terms of state aggregation, position grids, and half-lives of factors.</p>
+
+<h3>Episodic Exploration without a Generative Model</h3>
+
+<p>In many situations the desk cannot query a simulator arbitrarily and only learns from executed positions. In that case it is natural to work with a finite-horizon formulation that is episodic. I consider a horizon of \(H\) rebalancing steps, after which the book is then forced to unwind. Episodes are indexed by \(k = 0,1,\dots,K - 1\), and each episode consists of states and actions</p>
+
+\[(s_{k,0}, a_{k,0}, \dots, s_{k,H-1}, a_{k,H-1})\]
+
+<p>Assume that each of the episodes starts from the same benchmark state \(s_{0}\) (which could represent an unlevered start). For each episode define the regret of the policy \(\pi_k\) used in that episode as</p>
+
+\[\text{Regret}_k = V^{\star}_0(s_0) - V^{\pi_k}_0(s_0)\]
+
+<p>where \(V^{\star}_0(s_0)\) is the optimal value starting at \(s_0\), and \(V^{\pi_k}_0(s_0)\) is the value of policy \(\pi_k\).<sup id="fnref:ajks-ch7:1" role="doc-noteref"><a href="#fn:ajks-ch7" class="footnote" rel="footnote">6</a></sup> The total expected regret after \(K\) episodes is</p>
+
+\[\text{Regret}(K) = \mathbb{E}\!\left[ \sum_{k=0}^{K-1} \text{Regret}_k \right]\]
+
+<p>In the tabular finite-horizon setting, AJKS analyze the UCB-VI algorithm and show that the regret is bounded by a term of order</p>
+
+\[\text{Regret}(K) \leq C_1 H^2 S \sqrt{A K} \log\!\big(C_2 S A H K\big)\]
+
+<p>for absolute constants \(C_1\) and \(C_2\).<sup id="fnref:ajks-ch7:2" role="doc-noteref"><a href="#fn:ajks-ch7" class="footnote" rel="footnote">6</a></sup> Now, in terms of the problem I look at, it can be seen that the average regret per episode satisfies</p>
+
+\[\frac{\text{Regret}(K)}{K} \leq C_1 H^2 S \sqrt{\frac{A}{K}} \log\!\big(C_2 S A H K\big)\]
+
+<p>The key dependence here is that the shortfall in risk-adjusted value per episode decays on the order of</p>
+
+\[H^2 S \sqrt{\frac{A}{K}}\]
+
+<p>up to logarithmic factors. To invert the bound, fix a target average regret per episode \(\rho &gt; 0\). I want</p>
+
+\[\frac{\text{Regret}(K)}{K} \leq \rho\]
+
+<p>Ignoring the logarithmic factors to see the main scaling, impose</p>
+
+\[C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho\]
+
+<p>Solve the inequality for \(K\) as follows.</p>
+
+\[\begin{aligned}
+&amp;C_1 H^2 S \sqrt{\frac{A}{K}} \leq \rho \\
+&amp;\implies \sqrt{\frac{A}{K}} \leq \frac{\rho}{C_1 H^2 S} \\
+&amp;\implies \frac{A}{K} \leq \frac{\rho^2}{C_1^2 H^4 S^2}  \\
+&amp;\implies K \geq A \cdot \frac{C_1^2 H^4 S^2}{\rho^2} = \left( \frac{C_1 H^2 S \sqrt{A}}{\rho} \right)^2
+\end{aligned}\]
+
+<p>Thus, to drive the average regret per episode below \(\rho\), the number of episodes must scale to at least the order of \(H^4 S^2 A / \rho^2\). Because \(H\) is proportional to the horizon of the control problem and \(S\) and \(A\) are determined by the state and action discretizations, this gives an explicit trade-off here– decreasing state and action granularity can reduce learning time by large factors.</p>
+
+<h3>Optimizers as Policies for the Trading Desk</h3>
+
+<p>Li and Malik propose viewing an optimization algorithm itself as a policy in an MDP, where the “state” consists of past instances, gradients, and objective values, and the “action” is the next update step.<sup id="fnref:limalik" role="doc-noteref"><a href="#fn:limalik" class="footnote" rel="footnote">7</a></sup> In this context, I adopt the same perspective from a trading desk’s perspective. An EM carry optimization algorithm is a policy mapping the history of spreads, volatilities, crash indicators, and portfolio P&amp;L to the next position vector.</p>
+
+<p>This has two consequences.</p>
+
+<p>First, a learned optimizer that is trained on a distribution of EM FX environments is effectively a meta-policy that solves many related MDPs. The sample-complexity theory here that is based on AJKS gives the number of simulated or historical episodes that is required to guarantee that this learned optimizer is near-optimal across that distribution of environments, once the optimizer class is viewed as a parameterized policy class.<sup id="fnref:ajks-ch2:4" role="doc-noteref"><a href="#fn:ajks-ch2" class="footnote" rel="footnote">5</a></sup></p>
+
+<p>Second, because the optimizer’s internal state can include risk metrics (such as realized variance), its behavior in stressed regimes can be shaped through the reward definition. For example, aggressively penalizing severe drawdowns in the reward (before clipping) may change the shape of the optimal policy in crash or crash-prone regimes without altering the official sample-complexity rate determined. The bounds guarantee that, with sufficient data, a learned optimizer that internalizes these kinds of penalties will behave appropriately across both normal and crash regimes.</p>
+
+<h3>Notes and References</h3>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:ft-try" role="doc-endnote">
+      <p>Financial Times, “Traders pour billions of dollars into Turkish lira trade” (July 20, 2024). Available at <a href="https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c">https://www.ft.com/content/d93d22ff-0c46-4982-874e-0a0b156d140c</a>. <a href="#fnref:ft-try" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:brunnermeier2009" role="doc-endnote">
+      <p>Brunnermeier, Markus K.; Nagel, Stefan; Pedersen, Lasse H. (2009). “Carry Trades and Currency Crashes.” <em>NBER Macroeconomics Annual</em> 23, 313–347. <a href="#fnref:brunnermeier2009" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:laborda2014" role="doc-endnote">
+      <p>Laborda, Juan; Laborda, Ricardo; Olmo, José (2014). “Optimal currency carry trade strategies.” <em>International Review of Economics &amp; Finance</em> 33, 52–66. <a href="#fnref:laborda2014" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:chen2022" role="doc-endnote">
+      <p>Chen, Ching-Neng (2022). “Optimal carry trade portfolio choice under regime shifts.” <em>Review of Quantitative Finance and Accounting</em> 59(2), 541–573. <a href="#fnref:chen2022" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:ajks-ch2" role="doc-endnote">
+      <p>Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. <em>Reinforcement Learning and Stochastic Optimization</em> Chapter 2: “Sample Complexity with a Generative Model.” Available at <a href="https://rltheorybook.github.io/">https://rltheorybook.github.io/</a>. <a href="#fnref:ajks-ch2" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:ajks-ch2:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a> <a href="#fnref:ajks-ch2:2" class="reversefootnote" role="doc-backlink">&#8617;<sup>3</sup></a> <a href="#fnref:ajks-ch2:3" class="reversefootnote" role="doc-backlink">&#8617;<sup>4</sup></a> <a href="#fnref:ajks-ch2:4" class="reversefootnote" role="doc-backlink">&#8617;<sup>5</sup></a></p>
+    </li>
+    <li id="fn:ajks-ch7" role="doc-endnote">
+      <p>Agarwal, Alekh; Jiang, Nan; Kakade, Sham; Sun, Wen. <em>Reinforcement Learning and Stochastic Optimization</em> Chapter 7: “Strategic Exploration in Tabular MDPs.” Available at <a href="https://rltheorybook.github.io/">https://rltheorybook.github.io/</a>. <a href="#fnref:ajks-ch7" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:ajks-ch7:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a> <a href="#fnref:ajks-ch7:2" class="reversefootnote" role="doc-backlink">&#8617;<sup>3</sup></a></p>
+    </li>
+    <li id="fn:limalik" role="doc-endnote">
+      <p>Li, Ke; Malik, Jitendra. “Learning to Optimize.” arXiv preprint (2016). Available at <a href="https://arxiv.org/abs/1606.01885">https://arxiv.org/abs/1606.01885</a>. <a href="#fnref:limalik" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+  </div>
+
+  
+
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/home/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

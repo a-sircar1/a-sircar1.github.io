@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://a-sircar1.github.io/home/sitemap.xml

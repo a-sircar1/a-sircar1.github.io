@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>finance</title>
+  <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  
+
+  <link rel="stylesheet" href="/home/assets/main.css">
+  <link rel="canonical" href="https://a-sircar1.github.io/home/categories/finance/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/home/feed.xml">
+
+  
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+  
+  <meta property="og:title" content="finance">
+  <meta property="og:site_name" content="Arnab Sircar">
+  <meta property="og:url" content="https://a-sircar1.github.io/home/categories/finance/">
+  <meta property="og:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="finance">
+  <meta name="twitter:description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+  
+  
+
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/home/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/home/about/">About</a>
+      
+        
+        <a class="page-link" href="/home/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/home/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="home">
+
+  
+  
+  
+  <h1 class="page-heading">Archive of category &#39;finance&#39;</h1>
+
+  
+
+  <ul class="post-archives">
+    
+      
+      
+
+      <li>
+        <span class="post-meta">
+          Jul 14, 2025
+          
+             •
+  
+    
+    
+      
+    
+      
+        <a href="/home/categories/finance/">finance</a>
+      
+    
+      
+    
+      
+    
+  
+
+
+
+
+          
+          
+        </span>
+
+        <h2>
+          
+            <a class="post-link" href="/home/2025/07/14/25-Cat-Bonds/">Catastrophe Bond Pricing and Risk</a>
+          
+        </h2>
+      </li>
+    
+      
+      
+
+      <li>
+        <span class="post-meta">
+          Dec 30, 2024
+          
+             •
+  
+    
+    
+      
+    
+      
+        <a href="/home/categories/finance/">finance</a>,
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/home/categories/statistics/">statistics</a>
+      
+    
+  
+
+
+
+
+          
+          
+        </span>
+
+        <h2>
+          
+            <a class="post-link" href="/home/2024/12/30/24-IHMS-SETARMA/">Regimes of Return Smoothing</a>
+          
+        </h2>
+      </li>
+    
+      
+      
+
+      <li>
+        <span class="post-meta">
+          Jul 25, 2024
+          
+             •
+  
+    
+    
+      
+    
+      
+        <a href="/home/categories/finance/">finance</a>,
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+        <a href="/home/categories/optimization/">optimization</a>,
+      
+    
+      
+    
+  
+    
+    
+      
+        <a href="/home/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+
+
+          
+          
+        </span>
+
+        <h2>
+          
+            <a class="post-link" href="/home/2024/07/25/24-RL-optimizers-part2/">The Sample Complexity of RL-based Optimizers for Financial Applications (Part II): EM FX Carry Trade Control Problem</a>
+          
+        </h2>
+      </li>
+    
+      
+      
+
+      <li>
+        <span class="post-meta">
+          Jun 6, 2024
+          
+             •
+  
+    
+    
+      
+    
+      
+        <a href="/home/categories/finance/">finance</a>,
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+        <a href="/home/categories/optimization/">optimization</a>,
+      
+    
+      
+    
+  
+    
+    
+      
+        <a href="/home/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+
+
+          
+          
+        </span>
+
+        <h2>
+          
+            <a class="post-link" href="/home/2024/06/06/24-RL-optimizers/">The Sample Complexity of RL-based Optimizers for Financial Applications (Part I)</a>
+          
+        </h2>
+      </li>
+    
+  </ul>
+
+</div>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/home/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>On Provable Guarantees of Adversarial Robustness of Mixture of Experts</title>
+  <meta name="description" content="Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity. &amp;nbsp; Abstract With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the robust MoE classifier that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.">
+  
+
+  <link rel="stylesheet" href="/home/assets/main.css">
+  <link rel="canonical" href="https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/home/feed.xml">
+
+  
+<script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+  
+  <meta property="og:title" content="On Provable Guarantees of Adversarial Robustness of Mixture of Experts">
+  <meta property="og:site_name" content="Arnab Sircar">
+  <meta property="og:url" content="https://a-sircar1.github.io/home/2024/05/25/24-MoE-Robustness/">
+  <meta property="og:description" content="Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity. &amp;nbsp; Abstract With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the robust MoE classifier that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.">
+  
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="On Provable Guarantees of Adversarial Robustness of Mixture of Experts">
+  <meta name="twitter:description" content="Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve ...">
+  
+  
+
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/home/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/home/about/">About</a>
+      
+        
+        <a class="page-link" href="/home/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/home/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">On Provable Guarantees of Adversarial Robustness of Mixture of Experts</h1>
+    
+    <p class="post-meta"><time datetime="2024-05-25T06:10:56+00:00" itemprop="datePublished">May 25, 2024</time> •
+  
+    
+    
+      
+        <a href="/home/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Abstract</strong></p>
+
+<p>With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the <em>robust MoE classifier</em> that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.</p>
+
+
+  </div>
+
+  
+
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/home/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

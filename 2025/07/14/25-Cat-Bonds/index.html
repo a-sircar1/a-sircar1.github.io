@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Catastrophe Bond Pricing and Risk</title>
+  <meta name="description" content="This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market. In credit markets, spreads are often representative of probabilities of default, default intensity, and assumptions on the recovery of the debt. For catastrophe bonds (or cat bonds), the idea remains, but the same abstraction has such a different flavor that I decided to think through it a little more carefully. I detail my findings in this post. For cat bonds, the quoted spread is really the market’s price for a defined portion of the losses associated with a particular catastrophe. You take the bond’s discount margin, compare it to the model’s expected loss for that tranche, and then ask the question: is the market paying enough for the risk in this layer? In other words, do you get paid a lot per unit of modeled loss, or is the compensation low? This post is all about making the translation between how a hurricane loss distribution becomes a tranche, and how that tranche can become a spread that can actually be traded. Table of Contents A Recap on Cat Bonds Expected Loss to Discount Margin The “Multiple” and the Implied Disaster Curve Structuring a Deal Example 2025 and Going Forward Notes and References A Recap on Cat Bonds A cat bond is basically a principal-at-risk, floating-rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain conditions are met. The key quoting convention is the discount margin (DM) which is the spread over the collateral yield. 1 If you want exactly one diagram in this post, just take a look at the Chicago Fed’s: Catastrophe Bond Structure (Federal Reserve Bank of Chicago) Please refer to the Chicago Fed’s primer article (linked in the references) for a much more detailed background and sketch. With the basics out of the way, we can move forward. Expected Loss to Discount Margin Other than the reported coupon, there are two values that matter the most when it comes to the evaluation of cat bonds: Expected loss (EL): This is the catastrophe risk modeler’s estimate of the average annual principal loss (or actuarial loss cost) fraction. Discount margin (DM): This is what the bond pays you over the collateral for taking that risk. For the sake of intuition, if collateral earns \(r_t\), then the coupon is roughly: \[C_t \approx r_t + \mathrm{DM}\] So DM is the “cat spread.” The market then roughly decomposes DM into: \[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\] If you want a single standardized valuation statistic, then consider the multiple: \[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\] It’s the cat-bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy. The “Multiple” and the Implied Disaster Curve This is where cat bonds offer an interesting mental model– an equivalence can be drawn between catastrophe insurance coverage and the priced tranche of a particular loss distribution. That is, the term sheet can be treated as a tranche quote on a tail distrbution. A clean way to see this is to start with a toy model that lets us do some back-of-the-envelope math: maturity \(T\), a trigger condition arriving with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers. Then the annualized expected principal loss is approximately \(qL\), and the par-spread here becomes the following: \[\mathrm{DM}_{\text{par}} \approx qL\] i.e. we end up with spread ≈ hazard × loss-given-trigger (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two quick translations: From DM to an implied “market EL” If the bond has binary losses \((L \approx 1)\), then \(\mathrm{DM}\) is already a rough proxy for \(q\). If the losses are partial, you can scale by \(L\). From modeled EL to a clearing DM through the multiple Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the trigger condition, and the current market. From the perspective of hedge funds, this makes cat bonds really interesting. You’re not just “buying catastrophe risk,” you’re buying a point on an implied tail curve– the bets in the market are on the shape of the curve. Structuring a Deal This is the structuring problem that sponsors and banks actually solve: Choose attachment and limit so the tranche has the expected loss investors will buy at an acceptable multiple. Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that : attaches at \(A\): the bond starts taking losses only once \(X &amp;gt; A\) exhausts at \(E\): once the losses hit \(E\), the bond pays out its maximum; the investors can’t lose more than the tranche size limit \(K = E-A\): the maximum dollar amount that the tranche can pay out Its payout is: \[\text{payout}(X)=\min\{\max(X-A,0),K\}\] A very useful identity is then (boiling down the math from Excel): \[\mathbb{E}[\text{payout}] = \int_A^E \mathbb{P}(X&amp;gt;u)\,du\] So the annual expected loss fraction is: \[\mathrm{EL} = \frac{\mathbb{E}[\text{payout}]}{K}\] It’s simple but that’s the connection from catastrophe modeling to the bond structuring: The modeler gives an exceedance probability curve \(u \mapsto \mathbb{P}(X&amp;gt;u)\) Integrate it over \([A,E]\) to get expected payout Divide by \(K\) to get \(EL\) Multiply by a clearing multiple \(M\) to get the spread that you print Discretization If the model provides points \((u_i, p_i)\) on the exceedance probability curve rather than the actual functional form, then approximate the integral with trapezoids: \[\int_A^E \mathbb{P}(X&amp;gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i),\] over grid points spanning \([A,E]\). An Example Suppose the risk modeler produces the following annual exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions): Loss threshold \(u\) (USD mm) 800 900 1000 1100 1200 1300 \(\mathbb{P}(X&amp;gt;u)\) 6.0% 4.8% 3.8% 3.0% 2.4% 1.9% You’re deciding between two candidate tranches, each with $200mm limit** (so \(K=200\)). Candidate 1: \(A=1000\), \(E=1200\) (\(K=200\)) Approximate the expected payout using trapezoids with step size \(100\): \([1000,1100]\): avg prob \(=\frac{3.8\%+3.0\%}{2}=3.4\%\) ⇒ contribution \(=0.034\times 100=3.4\) (mm) \([1100,1200]\): avg prob \(=\frac{3.0\%+2.4\%}{2}=2.7\%\) ⇒ contribution \(=0.027\times 100=2.7\) (mm) So \(\mathbb{E}[\text{payout}] \approx 3.4+2.7=6.1\) (mm), and: \[\mathrm{EL}_1 = \frac{6.1}{200} = 3.05\% \text{ per year}\] If the market is clearing this style of risk at, say, \(M=1.8\), then the required discount margin is: \[\mathrm{DM}_1 = M\cdot \mathrm{EL}_1 = 1.8\times 3.05\% = 5.49\% \approx 549\text{ bps}\] Candidate 2: Raise the layer by $100mm: \(A=1100\), \(E=1300\) (still \(K=200\)) \([1100,1200]\): contribution \(=2.7\) (mm) (same as above) \([1200,1300]\): avg prob \(=\frac{2.4\%+1.9\%}{2}=2.15\%\) ⇒ contribution \(=0.0215\times 100=2.15\) (mm) So \(\mathbb{E}[\text{payout}]\approx 4.85\) (mm), and: \[\mathrm{EL}_2 = \frac{4.85}{200} = 2.425\%\] \[\mathrm{DM}_2 = 1.8\times 2.425\% = 4.365\% \approx 437\text{ bps}\] So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps That’s why this abstraction and translation matters: For a sponsor, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread. For an investor, doing this quickly is how you decide whether a new bond issuance is compensatory or not relative to its modeled tail risk. 2025 and Going Forward If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle: As of June 27, 2025, Plenum data show the cat bond market’s risk spread (discount margin) at 6.73% and the collateral yield at 4.3%– implying an overall yield of roughly 11.03%. 2 A few weeks earlier, as of May 30, 2025, the overall cat bond market yield was around 10.93%. 3 This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the DM and how it stacks up against modeled expected loss. And the other 2025 development that matters for structure is distribution: the Brookmont Catastrophic Bond ETF (ILS) launched April 1, 2025, with a stated 1.58% expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. 45 None of this news really says where spreads should be. But based on all this, the takeaway is that: Don’t anchor on “8–10% yields.” Anchor on DM, EL, and the multiple, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment. Notes and References A. Polacek, “Catastrophe Bonds: A Primer and Retrospective,” Chicago Fed Letter No. 405 (2018). The diagram in the screenshot above is taken from the website. https://www.chicagofed.org/publications/chicago-fed-letter/2018/405. &amp;#8617; S. Evans, “Cat bond yields rise above 11%, discount margin to decrease through wind season: Plenum,” Artemis (July 7, 2025). https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.. &amp;#8617; S. Evans, “Cat bond yields up slightly to 10.93% at May 30th. Seasonal spread widening nears end: Plenum,” Artemis (June 3, 2025). https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/. &amp;#8617; Brookmont, Brookmont Catastrophic Bond ETF (ILS) Fact Sheet. https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf. &amp;#8617; Financial Times, “First cat bond ETF opens new frontier in low-correlation returns” (Apr 1, 2025). https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233. &amp;#8617;">
+  
+
+  <link rel="stylesheet" href="/home/assets/main.css">
+  <link rel="canonical" href="https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/home/feed.xml">
+
+  
+<script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+  
+  <meta property="og:title" content="Catastrophe Bond Pricing and Risk">
+  <meta property="og:site_name" content="Arnab Sircar">
+  <meta property="og:url" content="https://a-sircar1.github.io/home/2025/07/14/25-Cat-Bonds/">
+  <meta property="og:description" content="This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market. In credit markets, spreads are often representative of probabilities of default, default intensity, and assumptions on the recovery of the debt. For catastrophe bonds (or cat bonds), the idea remains, but the same abstraction has such a different flavor that I decided to think through it a little more carefully. I detail my findings in this post. For cat bonds, the quoted spread is really the market’s price for a defined portion of the losses associated with a particular catastrophe. You take the bond’s discount margin, compare it to the model’s expected loss for that tranche, and then ask the question: is the market paying enough for the risk in this layer? In other words, do you get paid a lot per unit of modeled loss, or is the compensation low? This post is all about making the translation between how a hurricane loss distribution becomes a tranche, and how that tranche can become a spread that can actually be traded. Table of Contents A Recap on Cat Bonds Expected Loss to Discount Margin The “Multiple” and the Implied Disaster Curve Structuring a Deal Example 2025 and Going Forward Notes and References A Recap on Cat Bonds A cat bond is basically a principal-at-risk, floating-rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain conditions are met. The key quoting convention is the discount margin (DM) which is the spread over the collateral yield. 1 If you want exactly one diagram in this post, just take a look at the Chicago Fed’s: Catastrophe Bond Structure (Federal Reserve Bank of Chicago) Please refer to the Chicago Fed’s primer article (linked in the references) for a much more detailed background and sketch. With the basics out of the way, we can move forward. Expected Loss to Discount Margin Other than the reported coupon, there are two values that matter the most when it comes to the evaluation of cat bonds: Expected loss (EL): This is the catastrophe risk modeler’s estimate of the average annual principal loss (or actuarial loss cost) fraction. Discount margin (DM): This is what the bond pays you over the collateral for taking that risk. For the sake of intuition, if collateral earns \(r_t\), then the coupon is roughly: \[C_t \approx r_t + \mathrm{DM}\] So DM is the “cat spread.” The market then roughly decomposes DM into: \[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\] If you want a single standardized valuation statistic, then consider the multiple: \[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\] It’s the cat-bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy. The “Multiple” and the Implied Disaster Curve This is where cat bonds offer an interesting mental model– an equivalence can be drawn between catastrophe insurance coverage and the priced tranche of a particular loss distribution. That is, the term sheet can be treated as a tranche quote on a tail distrbution. A clean way to see this is to start with a toy model that lets us do some back-of-the-envelope math: maturity \(T\), a trigger condition arriving with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers. Then the annualized expected principal loss is approximately \(qL\), and the par-spread here becomes the following: \[\mathrm{DM}_{\text{par}} \approx qL\] i.e. we end up with spread ≈ hazard × loss-given-trigger (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two quick translations: From DM to an implied “market EL” If the bond has binary losses \((L \approx 1)\), then \(\mathrm{DM}\) is already a rough proxy for \(q\). If the losses are partial, you can scale by \(L\). From modeled EL to a clearing DM through the multiple Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the trigger condition, and the current market. From the perspective of hedge funds, this makes cat bonds really interesting. You’re not just “buying catastrophe risk,” you’re buying a point on an implied tail curve– the bets in the market are on the shape of the curve. Structuring a Deal This is the structuring problem that sponsors and banks actually solve: Choose attachment and limit so the tranche has the expected loss investors will buy at an acceptable multiple. Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that : attaches at \(A\): the bond starts taking losses only once \(X &amp;gt; A\) exhausts at \(E\): once the losses hit \(E\), the bond pays out its maximum; the investors can’t lose more than the tranche size limit \(K = E-A\): the maximum dollar amount that the tranche can pay out Its payout is: \[\text{payout}(X)=\min\{\max(X-A,0),K\}\] A very useful identity is then (boiling down the math from Excel): \[\mathbb{E}[\text{payout}] = \int_A^E \mathbb{P}(X&amp;gt;u)\,du\] So the annual expected loss fraction is: \[\mathrm{EL} = \frac{\mathbb{E}[\text{payout}]}{K}\] It’s simple but that’s the connection from catastrophe modeling to the bond structuring: The modeler gives an exceedance probability curve \(u \mapsto \mathbb{P}(X&amp;gt;u)\) Integrate it over \([A,E]\) to get expected payout Divide by \(K\) to get \(EL\) Multiply by a clearing multiple \(M\) to get the spread that you print Discretization If the model provides points \((u_i, p_i)\) on the exceedance probability curve rather than the actual functional form, then approximate the integral with trapezoids: \[\int_A^E \mathbb{P}(X&amp;gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i),\] over grid points spanning \([A,E]\). An Example Suppose the risk modeler produces the following annual exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions): Loss threshold \(u\) (USD mm) 800 900 1000 1100 1200 1300 \(\mathbb{P}(X&amp;gt;u)\) 6.0% 4.8% 3.8% 3.0% 2.4% 1.9% You’re deciding between two candidate tranches, each with $200mm limit** (so \(K=200\)). Candidate 1: \(A=1000\), \(E=1200\) (\(K=200\)) Approximate the expected payout using trapezoids with step size \(100\): \([1000,1100]\): avg prob \(=\frac{3.8\%+3.0\%}{2}=3.4\%\) ⇒ contribution \(=0.034\times 100=3.4\) (mm) \([1100,1200]\): avg prob \(=\frac{3.0\%+2.4\%}{2}=2.7\%\) ⇒ contribution \(=0.027\times 100=2.7\) (mm) So \(\mathbb{E}[\text{payout}] \approx 3.4+2.7=6.1\) (mm), and: \[\mathrm{EL}_1 = \frac{6.1}{200} = 3.05\% \text{ per year}\] If the market is clearing this style of risk at, say, \(M=1.8\), then the required discount margin is: \[\mathrm{DM}_1 = M\cdot \mathrm{EL}_1 = 1.8\times 3.05\% = 5.49\% \approx 549\text{ bps}\] Candidate 2: Raise the layer by $100mm: \(A=1100\), \(E=1300\) (still \(K=200\)) \([1100,1200]\): contribution \(=2.7\) (mm) (same as above) \([1200,1300]\): avg prob \(=\frac{2.4\%+1.9\%}{2}=2.15\%\) ⇒ contribution \(=0.0215\times 100=2.15\) (mm) So \(\mathbb{E}[\text{payout}]\approx 4.85\) (mm), and: \[\mathrm{EL}_2 = \frac{4.85}{200} = 2.425\%\] \[\mathrm{DM}_2 = 1.8\times 2.425\% = 4.365\% \approx 437\text{ bps}\] So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps That’s why this abstraction and translation matters: For a sponsor, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread. For an investor, doing this quickly is how you decide whether a new bond issuance is compensatory or not relative to its modeled tail risk. 2025 and Going Forward If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle: As of June 27, 2025, Plenum data show the cat bond market’s risk spread (discount margin) at 6.73% and the collateral yield at 4.3%– implying an overall yield of roughly 11.03%. 2 A few weeks earlier, as of May 30, 2025, the overall cat bond market yield was around 10.93%. 3 This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the DM and how it stacks up against modeled expected loss. And the other 2025 development that matters for structure is distribution: the Brookmont Catastrophic Bond ETF (ILS) launched April 1, 2025, with a stated 1.58% expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. 45 None of this news really says where spreads should be. But based on all this, the takeaway is that: Don’t anchor on “8–10% yields.” Anchor on DM, EL, and the multiple, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment. Notes and References A. Polacek, “Catastrophe Bonds: A Primer and Retrospective,” Chicago Fed Letter No. 405 (2018). The diagram in the screenshot above is taken from the website. https://www.chicagofed.org/publications/chicago-fed-letter/2018/405. &amp;#8617; S. Evans, “Cat bond yields rise above 11%, discount margin to decrease through wind season: Plenum,” Artemis (July 7, 2025). https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.. &amp;#8617; S. Evans, “Cat bond yields up slightly to 10.93% at May 30th. Seasonal spread widening nears end: Plenum,” Artemis (June 3, 2025). https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/. &amp;#8617; Brookmont, Brookmont Catastrophic Bond ETF (ILS) Fact Sheet. https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf. &amp;#8617; Financial Times, “First cat bond ETF opens new frontier in low-correlation returns” (Apr 1, 2025). https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233. &amp;#8617;">
+  
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Catastrophe Bond Pricing and Risk">
+  <meta name="twitter:description" content="This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unp...">
+  
+  
+
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+
+  
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/home/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/home/about/">About</a>
+      
+        
+        <a class="page-link" href="/home/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/home/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Catastrophe Bond Pricing and Risk</h1>
+    
+    <p class="post-meta"><time datetime="2025-07-14T06:10:56+00:00" itemprop="datePublished">Jul 14, 2025</time> •
+  
+    
+    
+      
+    
+      
+        <a href="/home/categories/finance/">finance</a>
+      
+    
+      
+    
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into the wave of insurer collapses in Louisiana and the state’s unprecedented and subsequent access of the debt markets, I stumbled upon the catastrophe bond market.</p>
+
+<p>In credit markets, spreads are often representative of probabilities of default, default intensity, and assumptions on the recovery of the debt. For catastrophe bonds (or cat bonds), the idea remains, but the same abstraction has such a different flavor that I decided to think through it a little more carefully. I detail my findings in this post.</p>
+
+<p>For cat bonds, the quoted spread is really the market’s price for a defined portion of the losses associated with a particular catastrophe. You take the bond’s discount margin, compare it to the model’s expected loss for that tranche, and then ask the question: is the market paying enough for the risk in this layer? In other words, do you get paid a lot per unit of modeled loss, or is the compensation low? This post is all about making the translation between how a hurricane loss distribution becomes a tranche, and how that tranche can become a spread that can actually be traded.</p>
+
+<details open="" class="toc-wrap">
+  <summary><strong>Table of Contents</strong></summary>
+
+  <ul>
+    <li><a href="#recap">A Recap on Cat Bonds</a></li>
+    <li><a href="#el-to-dm">Expected Loss to Discount Margin</a></li>
+    <li><a href="#multiple">The “Multiple” and the Implied Disaster Curve</a></li>
+    <li><a href="#structuring">Structuring a Deal</a>
+      <ul>
+        <li><a href="#example">Example</a></li>
+      </ul>
+    </li>
+    <li><a href="#going-forward">2025 and Going Forward</a></li>
+    <li><a href="#references">Notes and References</a></li>
+  </ul>
+
+</details>
+
+<h2 id="recap">A Recap on Cat Bonds</h2>
+
+<p>A cat bond is basically a principal-at-risk, floating-rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain conditions are met. The key quoting convention is the <strong>discount margin</strong> (DM) which is the spread over the collateral yield. <sup id="fnref:chicagofed" role="doc-noteref"><a href="#fn:chicagofed" class="footnote" rel="footnote">1</a></sup></p>
+
+<p>If you want exactly one diagram in this post, just take a look at the Chicago Fed’s:</p>
+
+<figure class="img-center">
+  <img src="/home/assets/img/chicago_fed_catbond_structure.png" alt="Cat bond structure diagram (Chicago Fed)" />
+  <figcaption>Catastrophe Bond Structure (Federal Reserve Bank of Chicago)</figcaption>
+</figure>
+
+<p>Please refer to the Chicago Fed’s primer article (linked in the references) for a much more detailed background and sketch. With the basics out of the way, we can move forward.</p>
+
+<h2 id="el-to-dm">Expected Loss to Discount Margin</h2>
+
+<p>Other than the reported coupon, there are two values that matter the most when it comes to the evaluation of cat bonds:</p>
+
+<ul>
+  <li><strong>Expected loss (EL)</strong>: This is the catastrophe risk modeler’s estimate of the average annual principal loss (or actuarial loss cost) fraction.</li>
+  <li><strong>Discount margin (DM)</strong>: This is what the bond pays you over the collateral for taking that risk.</li>
+</ul>
+
+<p>For the sake of intuition, if collateral earns \(r_t\), then the coupon is roughly:</p>
+
+\[C_t \approx r_t + \mathrm{DM}\]
+
+<p>So DM is the “cat spread.” The market then roughly decomposes DM into:</p>
+
+\[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\]
+
+<p>If you want a single standardized valuation statistic, then consider the <strong>multiple</strong>:</p>
+
+\[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\]
+
+<p>It’s the cat-bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy.</p>
+
+<h2 id="multiple">The “Multiple” and the Implied Disaster Curve</h2>
+
+<p>This is where cat bonds offer an interesting mental model– an equivalence can be drawn between catastrophe insurance coverage and the priced tranche of a particular loss distribution. That is, <em>the term sheet can be treated as a tranche quote on a tail distrbution</em>.</p>
+
+<p>A clean way to see this is to start with a toy model that lets us do some back-of-the-envelope math: maturity \(T\), a trigger condition arriving with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers.</p>
+
+<p>Then the annualized expected principal loss is approximately \(qL\), and the par-spread here becomes the following:</p>
+
+\[\mathrm{DM}_{\text{par}} \approx qL\]
+
+<p>i.e. we end up with <strong>spread ≈ hazard × loss-given-trigger</strong> (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two quick translations:</p>
+
+<ol>
+  <li>
+    <p><strong>From DM to an implied “market EL”</strong><br />
+If the bond has binary losses \((L \approx 1)\), then \(\mathrm{DM}\) is already a rough proxy for \(q\). If the losses are partial, you can scale by \(L\).</p>
+  </li>
+  <li>
+    <p><strong>From modeled EL to a clearing DM through the multiple</strong><br />
+Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the trigger condition, and the current market.</p>
+  </li>
+</ol>
+
+<p>From the perspective of hedge funds, this makes cat bonds really interesting. You’re not just “buying catastrophe risk,” you’re buying a point on an implied tail curve– the bets in the market are on the shape of the curve.</p>
+
+<h2 id="structuring">Structuring a Deal</h2>
+
+<p>This is the structuring problem that sponsors and banks actually solve:</p>
+
+<blockquote>
+  <p><strong>Choose attachment and limit so the tranche has the expected loss investors will buy at an acceptable multiple.</strong></p>
+</blockquote>
+
+<p>Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that :</p>
+
+<ul>
+  <li>attaches at \(A\): the bond starts taking losses only once \(X &gt; A\)</li>
+  <li>exhausts at \(E\): once the losses hit \(E\), the bond pays out its maximum; the investors can’t lose more than the tranche size</li>
+  <li>limit \(K = E-A\): the maximum dollar amount that the tranche can pay out</li>
+</ul>
+
+<p>Its payout is:</p>
+
+\[\text{payout}(X)=\min\{\max(X-A,0),K\}\]
+
+<p>A very useful identity is then (boiling down the math from Excel):</p>
+
+\[\mathbb{E}[\text{payout}] = \int_A^E \mathbb{P}(X&gt;u)\,du\]
+
+<p>So the annual expected loss fraction is:</p>
+
+\[\mathrm{EL} = \frac{\mathbb{E}[\text{payout}]}{K}\]
+
+<p>It’s simple but that’s the connection from catastrophe modeling to the bond structuring:</p>
+
+<ul>
+  <li>The modeler gives an exceedance probability curve \(u \mapsto \mathbb{P}(X&gt;u)\)</li>
+  <li>Integrate it over \([A,E]\) to get expected payout</li>
+  <li>Divide by \(K\) to get \(EL\)</li>
+  <li>Multiply by a clearing multiple \(M\) to get the spread that you print</li>
+</ul>
+
+<h3>Discretization</h3>
+
+<p>If the model provides points \((u_i, p_i)\) on the exceedance probability curve rather than the actual functional form, then approximate the integral with trapezoids:</p>
+
+\[\int_A^E \mathbb{P}(X&gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i),\]
+
+<p>over grid points spanning \([A,E]\).</p>
+
+<h3 id="example">An Example</h3>
+
+<p>Suppose the risk modeler produces the following <strong>annual</strong> exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right">Loss threshold \(u\) (USD mm)</th>
+      <th style="text-align: right">800</th>
+      <th style="text-align: right">900</th>
+      <th style="text-align: right">1000</th>
+      <th style="text-align: right">1100</th>
+      <th style="text-align: right">1200</th>
+      <th style="text-align: right">1300</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">\(\mathbb{P}(X&gt;u)\)</td>
+      <td style="text-align: right">6.0%</td>
+      <td style="text-align: right">4.8%</td>
+      <td style="text-align: right">3.8%</td>
+      <td style="text-align: right">3.0%</td>
+      <td style="text-align: right">2.4%</td>
+      <td style="text-align: right">1.9%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>You’re deciding between two candidate tranches, each with $200mm limit** (so \(K=200\)).</p>
+
+<p><strong>Candidate 1:</strong> \(A=1000\), \(E=1200\) (\(K=200\))</p>
+
+<p>Approximate the expected payout using trapezoids with step size \(100\):</p>
+
+<ul>
+  <li>\([1000,1100]\): avg prob \(=\frac{3.8\%+3.0\%}{2}=3.4\%\) ⇒ contribution \(=0.034\times 100=3.4\) (mm)</li>
+  <li>\([1100,1200]\): avg prob \(=\frac{3.0\%+2.4\%}{2}=2.7\%\) ⇒ contribution \(=0.027\times 100=2.7\) (mm)</li>
+</ul>
+
+<p>So \(\mathbb{E}[\text{payout}] \approx 3.4+2.7=6.1\) (mm), and:</p>
+
+\[\mathrm{EL}_1 = \frac{6.1}{200} = 3.05\% \text{ per year}\]
+
+<p>If the market is clearing this style of risk at, say, <strong>\(M=1.8\)</strong>, then the required discount margin is:</p>
+
+\[\mathrm{DM}_1 = M\cdot \mathrm{EL}_1 = 1.8\times 3.05\% = 5.49\% \approx 549\text{ bps}\]
+
+<p><strong>Candidate 2:</strong> Raise the layer by $100mm: \(A=1100\), \(E=1300\) (still \(K=200\))</p>
+
+<ul>
+  <li>\([1100,1200]\): contribution \(=2.7\) (mm) (same as above)</li>
+  <li>\([1200,1300]\): avg prob \(=\frac{2.4\%+1.9\%}{2}=2.15\%\) ⇒ contribution \(=0.0215\times 100=2.15\) (mm)</li>
+</ul>
+
+<p>So \(\mathbb{E}[\text{payout}]\approx 4.85\) (mm), and:</p>
+
+\[\mathrm{EL}_2 = \frac{4.85}{200} = 2.425\%\]
+
+\[\mathrm{DM}_2 = 1.8\times 2.425\% = 4.365\% \approx 437\text{ bps}\]
+
+<p><strong>So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps</strong></p>
+
+<p>That’s why this abstraction and translation matters:</p>
+
+<ul>
+  <li>For a <strong>sponsor</strong>, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread.</li>
+  <li>For an <strong>investor</strong>, doing this quickly is how you decide whether a new bond issuance is <strong>compensatory or not</strong> relative to its modeled tail risk.</li>
+</ul>
+
+<h2 id="going-forward">2025 and Going Forward</h2>
+
+<p>If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle:</p>
+
+<ul>
+  <li>As of <strong>June 27, 2025</strong>, Plenum data show the cat bond market’s risk spread (discount margin) at <strong>6.73%</strong> and the collateral yield at <strong>4.3%</strong>– implying an overall yield of roughly <strong>11.03%</strong>. <sup id="fnref:plenum-jun2025" role="doc-noteref"><a href="#fn:plenum-jun2025" class="footnote" rel="footnote">2</a></sup></li>
+  <li>A few weeks earlier, as of <strong>May 30, 2025</strong>, the overall cat bond market yield was around <strong>10.93%</strong>. <sup id="fnref:plenum-may2025" role="doc-noteref"><a href="#fn:plenum-may2025" class="footnote" rel="footnote">3</a></sup></li>
+</ul>
+
+<p>This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the <strong>DM</strong> and how it stacks up against modeled <strong>expected loss</strong>.</p>
+
+<p>And the other 2025 development that matters for structure is distribution: the <strong>Brookmont Catastrophic Bond ETF (ILS)</strong> launched <strong>April 1, 2025</strong>, with a stated <strong>1.58%</strong> expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. <sup id="fnref:ils-etf" role="doc-noteref"><a href="#fn:ils-etf" class="footnote" rel="footnote">4</a></sup><sup id="fnref:ft" role="doc-noteref"><a href="#fn:ft" class="footnote" rel="footnote">5</a></sup></p>
+
+<p>None of this news really says where spreads should be. But based on all this, the takeaway is that:</p>
+
+<blockquote>
+  <p>Don’t anchor on “8–10% yields.” Anchor on <strong>DM</strong>, <strong>EL</strong>, and the <strong>multiple</strong>, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment.</p>
+</blockquote>
+
+<h2 id="references">Notes and References</h2>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:chicagofed" role="doc-endnote">
+      <p>A. Polacek, <em>“Catastrophe Bonds: A Primer and Retrospective,”</em> Chicago Fed Letter No. 405 (2018). The diagram in the screenshot above is taken from the website. <a href="https://www.chicagofed.org/publications/chicago-fed-letter/2018/405">https://www.chicagofed.org/publications/chicago-fed-letter/2018/405</a>. <a href="#fnref:chicagofed" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:plenum-jun2025" role="doc-endnote">
+      <p>S. Evans, <em>“Cat bond yields rise above 11%, discount margin to decrease through wind season: Plenum,”</em> Artemis (July 7, 2025). <a href="https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.">https://www.artemis.bm/news/cat-bond-yields-rise-above-11-discount-margin-to-decrease-through-wind-season-plenum/#:~:text=The%20overall%20yield%20of%20the,bond%20fund%20manager%20Plenum%20Investments.</a>. <a href="#fnref:plenum-jun2025" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:plenum-may2025" role="doc-endnote">
+      <p>S. Evans, <em>“Cat bond yields up slightly to 10.93% at May 30th. Seasonal spread widening nears end: Plenum,”</em> Artemis (June 3, 2025). <a href="https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/">https://www.artemis.bm/news/cat-bond-yields-up-slightly-to-10-93-at-may-30th-seasonal-spread-widening-nears-end-plenum/</a>. <a href="#fnref:plenum-may2025" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:ils-etf" role="doc-endnote">
+      <p>Brookmont, <em>Brookmont Catastrophic Bond ETF (ILS) Fact Sheet</em>. <a href="https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf">https://47598668.fs1.hubspotusercontent-na1.net/hubfs/47598668/ILS%20ETF%20Fund%20Documents/ILS%20ETF%20Fact%20Sheet.pdf</a>. <a href="#fnref:ils-etf" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:ft" role="doc-endnote">
+      <p>Financial Times, <em>“First cat bond ETF opens new frontier in low-correlation returns”</em> (Apr 1, 2025). <a href="https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233">https://www.ft.com/content/6465b1de-d476-4920-94ce-849d93116233</a>. <a href="#fnref:ft" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+  </div>
+
+  
+
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/home/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
