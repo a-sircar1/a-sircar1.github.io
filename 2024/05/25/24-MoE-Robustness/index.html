@@ -1,25 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  
-  
-  
-  <title>On Provable Guarantees of Adversarial Robustness of Mixture of Experts</title>
-  <meta name="description" content="Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity. &amp;nbsp; Abstract With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the robust MoE classifier that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.">
-  
+<title>On Provable Guarantees of Adversarial Robustness of Mixture of Experts · Arnab Sircar</title>
 
-  <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://a-sircar1.github.io/2024/05/25/24-MoE-Robustness/">
-  
-  
-  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/feed.xml">
+<link rel="stylesheet" href="https://a-sircar1.github.io/assets/main.css">
+<link rel="alternate" type="application/atom+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/feed.xml">
 
-  
+
 <script type="text/javascript" async
   src="https://polyfill.io/v3/polyfill.min.js?features=es6">
 </script>
@@ -292,29 +284,6 @@
   .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
   .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
 </style>
-
-
-  
-  <meta property="og:title" content="On Provable Guarantees of Adversarial Robustness of Mixture of Experts">
-  <meta property="og:site_name" content="Arnab Sircar">
-  <meta property="og:url" content="https://a-sircar1.github.io/2024/05/25/24-MoE-Robustness/">
-  <meta property="og:description" content="Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve been thinking about the benefits sparsity has to offer from multiple lenses, including robustness and interpretability, and I believe the comparison of MoE models with the same number of total parameters as their dense counterparts offer the perfect setting for sparsity studies. This paper is, hopefully, the first in a line of studies I’d like to conduct into the benefits of sparsity. &amp;nbsp; Abstract With its strong performances in accuracy and efficiency, the Mixture of Experts (MoE) paradigm has become extremely popular in several settings, including vision and language-modeling. Although there are several empirical works detailing the accomplishments of numerous variants and applications of MoE, relatively few studies have been conducted in establishing theoretical guarantees for this class of models. Furthermore, the notion of having several independent expert sub-modules perform inference on specialized portions of an input space assigned by a routing mechanism demands an analysis of the robustness of such a procedure. Notably, adversarial robustness is a key property desired in any kind of predictive model. In this work, we specifically wonder whether the MoE architecture lends itself to classical adversarial defense techniques. To this extent, we develop the robust MoE classifier that takes advantage of randomized smoothing to increase adversarial robustness. We theoretically show that the robust MoE classifier can achieve lower Lipschitz constants than dense, standard neural network counterparts that implement randomized smoothing. Furthermore, we provide a provable bound on the size of the \(\ell_2\)-norm ball in which our algorithm will be robust. Next, we perform an empirical study of the performance of our model compared to several baseline models in the presence of adversarial attacks and discuss a modified FGSM attack against models that exhibit the MoE architecture. Finally, we end with a discussion on the potential for theoretical guarantees to be made regarding the robustness of MoE given datasets that exhibit specific features.">
-  
-  
-  <meta name="twitter:card" content="summary">
-  
-  <meta name="twitter:title" content="On Provable Guarantees of Adversarial Robustness of Mixture of Experts">
-  <meta name="twitter:description" content="Check out this recent paper I wrote analyzing the robustness of the individual sub-models that determined via a routing architecture, following the general Mixture of Experts (MoE) framework. I’ve ...">
-  
-  
-
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
-
-  
-
-</head>
 
 
   <body>

@@ -1,25 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  
-  
-  
-  <title>Regimes of Return Smoothing</title>
-  <meta name="description" content="I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real estate and hedge funds– move through different “smoothing regimes” over time. I introduce an Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model that lets the data uncover both the number and structure of these regimes, with regime-specific lag orders and autocorrelation patterns. The core idea is that reported returns reflect not just true economic performance, but evolving reporting and valuation practices that may react to market conditions. Using industry indices, I document how the intensity and shape of smoothing shift around major market events, and propose summary measures– like the sum of MA coefficients and a Herfindahl-style concentration index– to compare regimes. My hope is that this framework becomes a starting point for a more systematic, regime-based view of return smoothing and risk management in illiquid markets. Abstract Return smoothing is a common feature observed in the returns of illiquid and alternative asset classes, including real estate and private equity. Although the definitive reasons for serial correlation observed in returns is widely debated, empirical studies have discovered time-varying autocorrelation in observed returns. In this paper, we argue that this dynamic autocorrelation or level of smoothing can be attributed to changes in return reporting structure or valuation technique, largely developed as responses to market conditions. To this extent, we develop a statistical framework called the Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model and estimation approach toward studying regime recovery and analysis in financial time-series data. Then, we adapt the standard model of return smoothing for analysis using our model. We report several preliminary statistics on the regimes and their features observed for the FTSE Nareit U.S. Real Estate Index and the Credit Suisse Hedge Fund Index as broad indicators of their respective industries/asset classes.">
-  
+<title>Regimes of Return Smoothing · Arnab Sircar</title>
 
-  <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://a-sircar1.github.io/2024/12/30/24-IHMS-SETARMA/">
-  
-  
-  <link rel="alternate" type="application/rss+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/feed.xml">
+<link rel="stylesheet" href="https://a-sircar1.github.io/assets/main.css">
+<link rel="alternate" type="application/atom+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/feed.xml">
 
-  
+
 <script type="text/javascript" async
   src="https://polyfill.io/v3/polyfill.min.js?features=es6">
 </script>
@@ -292,29 +284,6 @@
   .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
   .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
 </style>
-
-
-  
-  <meta property="og:title" content="Regimes of Return Smoothing">
-  <meta property="og:site_name" content="Arnab Sircar">
-  <meta property="og:url" content="https://a-sircar1.github.io/2024/12/30/24-IHMS-SETARMA/">
-  <meta property="og:description" content="I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real estate and hedge funds– move through different “smoothing regimes” over time. I introduce an Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model that lets the data uncover both the number and structure of these regimes, with regime-specific lag orders and autocorrelation patterns. The core idea is that reported returns reflect not just true economic performance, but evolving reporting and valuation practices that may react to market conditions. Using industry indices, I document how the intensity and shape of smoothing shift around major market events, and propose summary measures– like the sum of MA coefficients and a Herfindahl-style concentration index– to compare regimes. My hope is that this framework becomes a starting point for a more systematic, regime-based view of return smoothing and risk management in illiquid markets. Abstract Return smoothing is a common feature observed in the returns of illiquid and alternative asset classes, including real estate and private equity. Although the definitive reasons for serial correlation observed in returns is widely debated, empirical studies have discovered time-varying autocorrelation in observed returns. In this paper, we argue that this dynamic autocorrelation or level of smoothing can be attributed to changes in return reporting structure or valuation technique, largely developed as responses to market conditions. To this extent, we develop a statistical framework called the Infinite Hidden Markov-switching Self-exciting ARMA (IHMS-SETARMA) model and estimation approach toward studying regime recovery and analysis in financial time-series data. Then, we adapt the standard model of return smoothing for analysis using our model. We report several preliminary statistics on the regimes and their features observed for the FTSE Nareit U.S. Real Estate Index and the Credit Suisse Hedge Fund Index as broad indicators of their respective industries/asset classes.">
-  
-  
-  <meta name="twitter:card" content="summary">
-  
-  <meta name="twitter:title" content="Regimes of Return Smoothing">
-  <meta name="twitter:description" content="I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at how reported returns in illiquid asset classes– like real es...">
-  
-  
-
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
-
-  
-
-</head>
 
 
   <body>
