@@ -396,7 +396,7 @@
 
 \[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\]
 
-<p>If you want a single standardized valuation statistic, then consider the <strong>multiple</strong>:</p>
+<p>If you want a single standardized valuation statistic, then consider the <em>multiple</em>:</p>
 
 \[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\]
 
@@ -458,7 +458,7 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
 <p>It’s simple but that’s the connection from catastrophe modeling to the bond structuring:</p>
 
 <ul>
-  <li>The modeler gives an exceedance probability curve \(u \mapsto \mathbb{P}(X&gt;u)\)</li>
+  <li>The modeler gives a probability of excess curve that maps \(u\) to \(\mathbb{P}(X&gt;u)\)</li>
   <li>Integrate it over \([A,E]\) to get expected payout</li>
   <li>Divide by \(K\) to get \(EL\)</li>
   <li>Multiply by a clearing multiple \(M\) to get the spread that you print</li>
@@ -468,13 +468,13 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
 
 <p>If the model provides points \((u_i, p_i)\) on the exceedance probability curve rather than the actual functional form, then approximate the integral with trapezoids:</p>
 
-\[\int_A^E \mathbb{P}(X&gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i),\]
+\[\int_A^E \mathbb{P}(X&gt;u)\,du \approx \sum_i \frac{p_i+p_{i+1}}{2}\cdot (u_{i+1}-u_i)\]
 
 <p>over grid points spanning \([A,E]\).</p>
 
 <h3 id="example">An Example</h3>
 
-<p>Suppose the risk modeler produces the following <strong>annual</strong> exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions):</p>
+<p>Suppose the risk modeler produces the following annual exceedance curve for a hurricane loss index \(X\) (loss thresholds in $ millions):</p>
 
 <table>
   <thead>
@@ -533,13 +533,13 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
 
 \[\mathrm{DM}_2 = 1.8\times 2.425\% = 4.365\% \approx 437\text{ bps}\]
 
-<p><strong>So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps</strong></p>
+<p><em>So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps.</em></p>
 
 <p>That’s why this abstraction and translation matters:</p>
 
 <ul>
   <li>For a <strong>sponsor</strong>, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread.</li>
-  <li>For an <strong>investor</strong>, doing this quickly is how you decide whether a new bond issuance is <strong>compensatory or not</strong> relative to its modeled tail risk.</li>
+  <li>For an <strong>investor</strong>, doing this quickly is how you decide whether a new bond issuance is compensatory or not relative to its modeled tail risk.</li>
 </ul>
 
 <h2 id="going-forward">2025 and Going Forward</h2>
@@ -551,14 +551,14 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
   <li>A few weeks earlier, as of <strong>May 30, 2025</strong>, the overall cat bond market yield was around <strong>10.93%</strong>. <sup id="fnref:plenum-may2025" role="doc-noteref"><a href="#fn:plenum-may2025" class="footnote" rel="footnote">3</a></sup></li>
 </ul>
 
-<p>This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the <strong>DM</strong> and how it stacks up against modeled <strong>expected loss</strong>.</p>
+<p>This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the <strong>DM</strong> and how it stacks up against modeled expected loss.</p>
 
 <p>And the other 2025 development that matters for structure is distribution: the <strong>Brookmont Catastrophic Bond ETF (ILS)</strong> launched <strong>April 1, 2025</strong>, with a stated <strong>1.58%</strong> expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. <sup id="fnref:ils-etf" role="doc-noteref"><a href="#fn:ils-etf" class="footnote" rel="footnote">4</a></sup><sup id="fnref:ft" role="doc-noteref"><a href="#fn:ft" class="footnote" rel="footnote">5</a></sup></p>
 
 <p>None of this news really says where spreads should be. But based on all this, the takeaway is that:</p>
 
 <blockquote>
-  <p>Don’t anchor on “8–10% yields.” Anchor on <strong>DM</strong>, <strong>EL</strong>, and the <strong>multiple</strong>, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment.</p>
+  <p>Don’t focus on on “8–10% yields.” Focus on <strong>DM</strong>, <strong>EL</strong>, and the <strong>multiple</strong>, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment.</p>
 </blockquote>
 
 <h2 id="references">Notes and References</h2>
