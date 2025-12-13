@@ -368,9 +368,7 @@
 
 <h2 id="recap">A Recap on Cat Bonds</h2>
 
-<p>A cat bond is basically a principal-at-risk, floating-rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain conditions are met. The key quoting convention is the <strong>discount margin</strong> (DM) which is the spread over the collateral yield. <sup id="fnref:chicagofed" role="doc-noteref"><a href="#fn:chicagofed" class="footnote" rel="footnote">1</a></sup></p>
-
-<p>If you want exactly one diagram in this post, just take a look at the Chicago Fed’s:</p>
+<p>A cat bond is basically a principal-at-risk, floating rate note that is issued out of an SPV. Investor principal is placed in a collateral account (typically Treasuries/cash accounts), the coupons float off that collateral return, and then the principal can be written down if certain kinds of conditions are met. The key quoting convention here is the <strong>discount margin</strong> (DM) which is the spread over the collateral yield. <sup id="fnref:chicagofed" role="doc-noteref"><a href="#fn:chicagofed" class="footnote" rel="footnote">1</a></sup></p>
 
 <figure class="img-center">
   <img src="/assets/img/chicago_fed_catbond_structure.png" alt="Cat bond structure diagram (Chicago Fed)" />
@@ -392,27 +390,27 @@
 
 \[C_t \approx r_t + \mathrm{DM}\]
 
-<p>So DM is the “cat spread.” The market then roughly decomposes DM into:</p>
+<p>So DM is the “cat spread.” The market then roughly decomposes DM into the following:</p>
 
 \[\mathrm{DM} \approx \mathrm{EL} + \text{risk premium} + \text{frictions (liquidity, model risk, etc.)}\]
 
-<p>If you want a single standardized valuation statistic, then consider the <em>multiple</em>:</p>
+<p>For a single standardized valuation statistic, consider the <em>multiple</em>:</p>
 
 \[M \equiv \frac{\mathrm{DM}}{\mathrm{EL}}\]
 
-<p>It’s the cat-bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy.</p>
+<p>It’s the cat bond analog of “spread per unit of default risk,” and it’s a convenient shorthand because cat bond cashflows are event-driven and the modeling inputs can be noisy.</p>
 
 <h2 id="multiple">The “Multiple” and the Implied Disaster Curve</h2>
 
 <p>This is where cat bonds offer an interesting mental model– an equivalence can be drawn between catastrophe insurance coverage and the priced tranche of a particular loss distribution. That is, <em>the term sheet can be treated as a tranche quote on a tail distrbution</em>.</p>
 
-<p>A clean way to see this is to start with a toy model that lets us do some back-of-the-envelope math: maturity \(T\), a trigger condition arriving with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers.</p>
+<p>An easy way to see this is to start with a toy model that lets us do some back-of-the-envelope math: we consider maturity \(T\), a trigger condition that arises with risk-neutral intensity \(q\), and a principal loss fraction \(L\in[0,1]\) if it triggers.</p>
 
-<p>Then the annualized expected principal loss is approximately \(qL\), and the par-spread here becomes the following:</p>
+<p>Then the annualized expected principal loss is approximately \(qL\), and the par spread here becomes the following:</p>
 
 \[\mathrm{DM}_{\text{par}} \approx qL\]
 
-<p>i.e. we end up with <strong>spread ≈ hazard × loss-given-trigger</strong> (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two quick translations:</p>
+<p>i.e. we end up with <strong>spread ≈ hazard × loss-given-trigger</strong> (the same mental model you use for a CDS premium when the “recovery” is fixed). So in practice, you can do two translations here:</p>
 
 <ol>
   <li>
@@ -421,21 +419,21 @@ If the bond has binary losses \((L \approx 1)\), then \(\mathrm{DM}\) is already
   </li>
   <li>
     <p><strong>From modeled EL to a clearing DM through the multiple</strong><br />
-Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the trigger condition, and the current market.</p>
+Rearranging it gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to decide whether \(M\) is generous given the layer, the triggering condition, and the current market.</p>
   </li>
 </ol>
 
-<p>From the perspective of hedge funds, this makes cat bonds really interesting. You’re not just “buying catastrophe risk,” you’re buying a point on an implied tail curve– the bets in the market are on the shape of the curve.</p>
+<p>From the perspective of hedge funds, this makes cat bonds really interesting. In this case, you’re not just “buying catastrophe risk,” but in fact, you’re essentially betting on a point on an implied tail curve– the bets in the market are on the shape of the curve.</p>
 
 <h2 id="structuring">Structuring a Deal</h2>
 
-<p>This is the structuring problem that sponsors and banks actually solve:</p>
+<p>This is the structuring problem that sponsors and banks consider and “solve”:</p>
 
 <blockquote>
   <p><strong>Choose attachment and limit so the tranche has the expected loss investors will buy at an acceptable multiple.</strong></p>
 </blockquote>
 
-<p>Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that :</p>
+<p>Let \(X\) be the sponsor loss (or the index loss) over one year, in dollars. A cat bond tranche can be thought of as a layer that:</p>
 
 <ul>
   <li>attaches at \(A\): the bond starts taking losses only once \(X &gt; A\)</li>
@@ -457,12 +455,12 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
 
 <p>It’s simple but that’s the connection from catastrophe modeling to the bond structuring:</p>
 
-<ul>
+<ol>
   <li>The modeler gives a probability of excess curve that maps \(u\) to \(\mathbb{P}(X&gt;u)\)</li>
   <li>Integrate it over \([A,E]\) to get expected payout</li>
   <li>Divide by \(K\) to get \(EL\)</li>
   <li>Multiply by a clearing multiple \(M\) to get the spread that you print</li>
-</ul>
+</ol>
 
 <h3>Discretization</h3>
 
@@ -535,27 +533,15 @@ Rearranging gives us \(\mathrm{DM} = M \cdot \mathrm{EL}\). The job is then to d
 
 <p><em>So, given the same disaster, same maturity, and same $200mm size, if the tranche moves up by $100mm, the fair \(DM\) decreases by about 112 bps.</em></p>
 
-<p>That’s why this abstraction and translation matters:</p>
-
-<ul>
-  <li>For a <strong>sponsor</strong>, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread.</li>
-  <li>For an <strong>investor</strong>, doing this quickly is how you decide whether a new bond issuance is compensatory or not relative to its modeled tail risk.</li>
-</ul>
+<p>That’s why this abstraction and the translation matters– for a <strong>sponsor</strong>, choosing \((A,E)\) is literally choosing a point on the disaster/risk probability curve that will print at a given spread. For an <strong>investor</strong>, doing this quickly is how you decide whether a new bond issuance is compensatory or not relative to its modeled tail risk.</p>
 
 <h2 id="going-forward">2025 and Going Forward</h2>
 
-<p>If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle:</p>
+<p>If you only look at the coupon, 2025 cat bonds can look enticing. But Plenum’s market data (via Artemis) says something more subtle. As of <strong>June 27, 2025</strong>, Plenum data show the cat bond market’s risk spread (discount margin) at <strong>6.73%</strong> and the collateral yield at <strong>4.3%</strong>– implying an overall yield of roughly <strong>11.03%</strong>. <sup id="fnref:plenum-jun2025" role="doc-noteref"><a href="#fn:plenum-jun2025" class="footnote" rel="footnote">2</a></sup> A few weeks earlier, as of <strong>May 30, 2025</strong>, the overall cat bond market yield was around <strong>10.93%</strong>. <sup id="fnref:plenum-may2025" role="doc-noteref"><a href="#fn:plenum-may2025" class="footnote" rel="footnote">3</a></sup> This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the <strong>DM</strong> and how it stacks up against modeled expected loss.</p>
 
-<ul>
-  <li>As of <strong>June 27, 2025</strong>, Plenum data show the cat bond market’s risk spread (discount margin) at <strong>6.73%</strong> and the collateral yield at <strong>4.3%</strong>– implying an overall yield of roughly <strong>11.03%</strong>. <sup id="fnref:plenum-jun2025" role="doc-noteref"><a href="#fn:plenum-jun2025" class="footnote" rel="footnote">2</a></sup></li>
-  <li>A few weeks earlier, as of <strong>May 30, 2025</strong>, the overall cat bond market yield was around <strong>10.93%</strong>. <sup id="fnref:plenum-may2025" role="doc-noteref"><a href="#fn:plenum-may2025" class="footnote" rel="footnote">3</a></sup></li>
-</ul>
+<p>And the other 2025 development that matters for structure is distribution. The <strong>Brookmont Catastrophic Bond ETF (ILS)</strong> launched <strong>April 1, 2025</strong>, with a stated <strong>1.58%</strong> expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. <sup id="fnref:ils-etf" role="doc-noteref"><a href="#fn:ils-etf" class="footnote" rel="footnote">4</a></sup><sup id="fnref:ft" role="doc-noteref"><a href="#fn:ft" class="footnote" rel="footnote">5</a></sup></p>
 
-<p>This means that, even when the headline yield is ~11%, a large chunk of it is just cash rates (the collateral yield), not cat bond compensation. The number to focus on for catastrophe pricing is still the <strong>DM</strong> and how it stacks up against modeled expected loss.</p>
-
-<p>And the other 2025 development that matters for structure is distribution: the <strong>Brookmont Catastrophic Bond ETF (ILS)</strong> launched <strong>April 1, 2025</strong>, with a stated <strong>1.58%</strong> expense ratio, framed in the FT as the first cat bond ETF opening broader access to the asset class. <sup id="fnref:ils-etf" role="doc-noteref"><a href="#fn:ils-etf" class="footnote" rel="footnote">4</a></sup><sup id="fnref:ft" role="doc-noteref"><a href="#fn:ft" class="footnote" rel="footnote">5</a></sup></p>
-
-<p>None of this news really says where spreads should be. But based on all this, the takeaway is that:</p>
+<p>None of this news really says where the spreads should be. But based on all this, the takeaway is that:</p>
 
 <blockquote>
   <p>Don’t focus on on “8–10% yields.” Focus on <strong>DM</strong>, <strong>EL</strong>, and the <strong>multiple</strong>, and then ask whether you’re being paid for (i) pure catastrophe risk, or (ii) a rate regime that can vanish faster than hurricane season or any disaster-prone environment.</p>
