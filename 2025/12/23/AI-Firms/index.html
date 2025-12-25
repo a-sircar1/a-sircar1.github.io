@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The Economics of AI Inference Capacity · Arnab Sircar</title>
+
+<link rel="stylesheet" href="https://a-sircar1.github.io/assets/main.css">
+<link rel="alternate" type="application/atom+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/feed.xml">
+
+
+<script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+<style>
+  sup.proof-inline {
+    font-size:.75em; vertical-align:super; margin-left:.25rem; white-space:nowrap;
+  }
+  sup.proof-inline a { text-decoration:none; border-bottom:1px dotted currentColor; }
+  sup.proof-inline a:hover { text-decoration:underline; }
+
+  details.proof-box {
+    margin:.6rem 0 1rem;
+    padding:0;           
+    border:0;             
+    background:transparent;
+  }
+  details.proof-box[open] {
+    padding:.9rem 1rem;
+    border:1px solid #e0e0e0;
+    border-radius:8px;
+    background:#fafafa;
+  }
+
+  details.proof-box > summary {
+    position:absolute !important;
+    width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+</style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[data-proof]').forEach(function (link) {
+      var id = link.getAttribute('data-proof');
+      var box = document.getElementById(id);
+      if (!box) return;
+
+      if (box.tagName.toLowerCase() === 'details') box.open = false;
+
+      link.setAttribute('aria-expanded', 'false');
+      link.textContent = 'See proof';
+
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (box.tagName.toLowerCase() === 'details') {
+          var isOpen = box.hasAttribute('open');
+          box.open = !isOpen;
+          link.textContent = isOpen ? 'See proof' : 'Hide proof';
+          link.setAttribute('aria-expanded', String(!isOpen));
+          if (!isOpen) {
+            try { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+          }
+        }
+      });
+    });
+  });
+</script>
+
+
+
+    
+    
+
+  
+  
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">The Economics of AI Inference Capacity</h1>
+    
+    <p class="post-meta"><time datetime="2025-12-23T06:10:56+00:00" itemprop="datePublished">Dec 23, 2025</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/economics/">economics</a>,
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/artificial-intelligence/">artificial-intelligence</a>
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>The world of artificial intelligence has often always been narrated through the lens of software, hardware, model development, and new products. Only lately, I’ve been noticing the breadth of articles related to the economics of all the infrastructure development and model offerings, especially in the LLM space. After all, modern AI is produced and provided using scarce resources like compute and memory running within cooled and power-constrained facilities. So, it only makes sense that the economics of AI and the sensational financings will begin to attract more attention. I’ve recently been reading a lot about productionized AI, and I’ve realized that the “supply of AI” is not really something that can be determined in immediate response to demand simply because there’s all this infrastructure that needs to be built, financed, installed, etc. <sup id="fnref:reuters-dc-deals" role="doc-noteref"><a href="#fn:reuters-dc-deals" class="footnote" rel="footnote">1</a></sup> Then only can “allocations” in the economic sense be made.</p>
+
+<p>I think this matters mostly because the features of the market that are most visible to consumers, like rate limits, priority tiers, reserved throughput, pre-sales on compute resources, etc., are all key signatures of this market environment where capacity needs to be committed prior to the measurement of industry-wide demand. <sup id="fnref:anthropic-rate-limits" role="doc-noteref"><a href="#fn:anthropic-rate-limits" class="footnote" rel="footnote">2</a></sup> <sup id="fnref:gemini-rate-limits" role="doc-noteref"><a href="#fn:gemini-rate-limits" class="footnote" rel="footnote">3</a></sup> <sup id="fnref:openai-priority-page" role="doc-noteref"><a href="#fn:openai-priority-page" class="footnote" rel="footnote">4</a></sup> <sup id="fnref:openai-scale" role="doc-noteref"><a href="#fn:openai-scale" class="footnote" rel="footnote">5</a></sup></p>
+
+<p>This concept stuck out to me, especially as I was taking my intermediate microeconomics course this semester. It’s not really a case that we studied in class, but I decided to take a crack at modeling the phenomenon to see what I would find. The hand-wavy anecdote can be boiled down into a relatively clear microeconomic dilemma: via Bertrand competition, if several firms sell an identical service and marginal costs are low, then the price competition should be intense. But, it appears that AI services price and allocate as if scarcity is the organizing principle of the market environment and not that there happens to be scarce inputs that are factors of production. <sup id="fnref:bergemann-acm" role="doc-noteref"><a href="#fn:bergemann-acm" class="footnote" rel="footnote">6</a></sup> <sup id="fnref:zhong-arxiv" role="doc-noteref"><a href="#fn:zhong-arxiv" class="footnote" rel="footnote">7</a></sup></p>
+
+<p>See, if the latter were the case, LLMs should have a relatively simple, per-unit pricing scheme where prices would be cut until they hit the marginal cost. But in the current setting, we see firms compete by committing more and more capital upstream and rationing resources downstream. What separates AI from the general software product intuition is that, instead of cloud-like elasticity where a rise in demand increases capacity consumption and drives the marginal token cost down, the market is characterized by a race for upstream capital commitment costs and allocation that put price rules in the backseat. The fact that there are so many market pricing features indicates just that– the capacity constraint is so binding that firms cannot and will not shift away from their complicated pricing structures. And the massive timespan of AI financings only means that these pricing features are likely here to stay.</p>
+
+<p>In this post, I attempt to wrap these ideas into a model. In the setting I establish, I’ll show that when firms choose capacity first and then compete in prices, the price competition does not necessarily drive prices to marginal cost. In fact, in a two-stage game, the equilibrium features markups even though API-calling as a service appears to be homogenous AND Bertrand pricing is used in the second stage of the set-up.</p>
+
+<p>In the model, I’ll treat one good as a standardized unit of a service that is compilant with a fixed service-level agreement. In the case of AI and LLMs, this is simply a standardized unit of inference (output token or bundle of tokens) that is produced by a fixed model within a specific reliability target.</p>
+
+<h2>Demand and Costs</h2>
+
+<p>Let market demand for a general AI inference tool at price \(p\) be linear and take the form:</p>
+
+\[D(p) = A - p\]
+
+<p>such that \(A &gt; 0\), and so that the inverse demand is given as:</p>
+
+\[P(Q) - A - Q\]
+
+<p>Let the marginal service cost of the tool be constant \(c \in [0, A)\). This can be thought of the cost of serving one more unit, conditional on a given model architecture or service-level agreement. Inference is often memory-constrained and KV-cache-bandwidth constrained. So the marginal cost depends on utilization and latency targets, and \(c\) is a stylized approximation, holding the service tier fixed. <sup id="fnref:erdil-arxiv" role="doc-noteref"><a href="#fn:erdil-arxiv" class="footnote" rel="footnote">8</a></sup></p>
+
+<p>Now, it is important to realize that markups generally result from some form of market power. So, the best place to start is the monopoly setting. With a downward-sloping demand the monopolist’s marginal revenue lies below demand, and so the profit condition that equates marginal revenue and marginal cost (\(MR = MC\)) implies price is greater than marginal cost (\(P &gt; MC\)). I re-derive this below to make the point.</p>
+
+<h2>Monopoly Marginal Revenue</h2>
+
+<p>Let a single decision maker face (as monopolies are price-setters) an inverse demand \(P(q)\) with \(P'(q)&lt;0\). Revenue is</p>
+
+\[R(q)=P(q)\cdot q\]
+
+<p>Differentiate using the product rule as follows:</p>
+
+\[R'(q)=\frac{d}{dq}\big(P(q)q\big)=P'(q)\,q+P(q)\]
+
+<p>Since \(P'(q)&lt;0\) and \(q&gt;0\), we have</p>
+
+\[P'(q)\,q&lt;0 \Longrightarrow R'(q)=P'(q)\,q+P(q)&lt;P(q)\]
+
+<p>Profit is \(\pi(q)=R(q)-cq\). The first-order condition (FOC) is then</p>
+
+\[\pi'(q)=R'(q)-c=0 \implies R'(q)=c\]
+
+<p>Combine \(R'(q)=c\) with \(R'(q)&lt;P(q)\) to get</p>
+
+\[c=R'(q)&lt;P(q) \Longrightarrow P(q)&gt;c\]
+
+<p>So it can be seen that the monopoly markup \(P(q)-c\) simply arises from the inequality \(MR&lt;P\) created by the downward-sloping demand. Then, we can build a benchmark using the linear demand defined above.</p>
+
+<h3>Monopoly with linear demand</h3>
+
+<p>If \(P(q)=A-q\), then</p>
+
+\[R(q)=(A-q)q=Aq-q^2\]
+
+<p>so \(R'(q)=A-2q\). Set \(R'(q)=c\):</p>
+
+\[\begin{aligned}
+A-2q&amp;=c \\
+2q&amp;=A-c \\
+q^M&amp;=\frac{A-c}{2}
+\end{aligned}\]
+
+<p>Then</p>
+
+\[p^M=P(q^M)=A-q^M=A-\frac{A-c}{2}=\frac{A+c}{2}\]
+
+<p>and the markup is \(p^M-c=\frac{A-c}{2}\).</p>
+
+<h2>Oligopoly Benchmarks</h2>
+
+<p>Now, we move to the oligopolistic setting. First, consider</p>
+
+<h3>Bertrand competition</h3>
+
+<p>Two firms choose prices \((p_1,p_2)\) simultaneously, and the lower-priced firm serves the demand, any ties split the demand, and each has marginal cost \(c\). Restrict to \(p_i\ge c\). Standard from theory, \((p_1,p_2)=(c,c)\) is a Nash equilibrium. This can be seen as follows:</p>
+
+<ol>
+  <li>If both set \(c\), each earns zero profit.</li>
+  <li>Deviate upward: if firm 1 sets \(p_1&gt;c\) while firm 2 stays at \(c\), firm 1 sells zero and earns zero, and there is no improvement.</li>
+  <li>Deviate downward: if firm 1 sets \(p_1&lt;c\) it wins the market but earns negative returns at the margin, so profit is negative.</li>
+</ol>
+
+<p>Thus no deviation strictly improves profit. Next, from theory, no Nash equilibrium has both prices above \(c\).</p>
+
+<ol>
+  <li>If \(p_1&lt;p_2\) with both \(&gt;c\), firm 2 can undercut slightly (still above \(c\)) and capture the market, strictly improving profit.</li>
+  <li>If \(p_1=p_2&gt;c\), either firm can undercut by a small amount \(\varepsilon\) and capture the market, strictly improving profit.</li>
+</ol>
+
+<p>So under a homogeneous good within the Betrand model, price is driven down to marginal cost.</p>
+
+<h3>Cournot competition</h3>
+
+<p>Firms compete on quantity in this set-up. Firms choose quantities \(q_1,q_2\), total \(Q=q_1+q_2\), price \(P(Q)=A-Q\). The profit is then:
+\(\pi_i(q_1,q_2)=\big(A-(q_1+q_2)\big)q_i-cq_i\)</p>
+
+<p>Fix \(q_{-i}\). Then</p>
+
+\[\begin{aligned}
+\pi_i(q_i)
+&amp;=\big(A-q_i-q_{-i}\big)q_i-cq_i \\
+&amp;=(A-q_{-i})q_i-q_i^2-cq_i \\
+&amp;=(A-c-q_{-i})q_i-q_i^2
+\end{aligned}\]
+
+<p>Differentiate:</p>
+
+\[\frac{d\pi_i}{dq_i}=(A-c-q_{-i})-2q_i\]
+
+<p>The FOC is:</p>
+
+\[(A-c-q_{-i})-2q_i=0 \implies q_i=\frac{A-c-q_{-i}}{2}\]
+
+<p>In symmetric equilibrium \(q_1=q_2=q\):</p>
+
+\[\begin{aligned}
+q&amp;=\frac{A-c-q}{2} \\
+2q&amp;=A-c-q \\
+3q&amp;=A-c \\
+q^C&amp;=\frac{A-c}{3}
+\end{aligned}\]
+
+<p>Then</p>
+
+\[\begin{aligned}
+Q^C&amp;=2q^C=\frac{2(A-c)}{3}\\
+p^C&amp;=A-Q^C=\frac{A+2c}{3}
+\end{aligned}\]
+
+<p>and</p>
+
+\[p^C-c=\frac{A-c}{3}\]
+
+<p>And we find that \(p^C-c=q^C\). Note that the inverse demand curve in this setting is very similar to the monopoly demand curve. Fix \(q_{-i}\), and see that, firm \(i\) then faces inverse demand \(P(q_i+q_{-i})=(A-q_{-i})-q_i\) which is literally a monopoly demand curve with a shifted intercept.</p>
+
+<h2>The Capacity Game</h2>
+
+<p>Now, simply adjust the timing of events where the capacity selection comes first. Note that capacity can be thought of concretely as “tokens per second that can be generated or consumed,” and its binding constraints are generally due to GPU compute availability and memory.</p>
+
+<p><strong>Stage 1: Choosing capacity.</strong> Firm \(i\in\{1,2\}\) chooses a capacity \(k_i\ge 0\) (“how many service units per period can be reliably served?”). Capacity cost is convex in the form:</p>
+
+\[I(k_i)=\frac{\gamma}{2}k_i^2\]
+
+<p>with \(\gamma\ge 0\). Interpret \(\gamma\) as paramter that controls difficulty in scaling that can be attributed to power and space constraints, bottlenecks in memory, frictions in deployment, and the reality that capacity cannot be conjured instantly.<sup id="fnref:reuters-memory" role="doc-noteref"><a href="#fn:reuters-memory" class="footnote" rel="footnote">9</a></sup></p>
+
+<p><strong>Stage 2: Posting price.</strong> Firms then post prices \(p_i\ge 0\). Consumers buy from the lower-priced firm first, but each firm can then serve at most its capacity. Any unserved demand spills over to the other firm. So, let \(K=k_1+k_2\) and define the market-clearing price</p>
+
+\[p^*(K)=A-K\]
+
+<p>so that</p>
+
+\[D(p^*(K))=A-p^*(K)=K\]
+
+<h3>Pricing subgame lemma given capacities</h3>
+
+<p>We need one basic argument: the pricing subgame has a pure-strategy equilibrium at the market-clearing price.</p>
+
+<p><strong>Lemma (pricing equilibrium with binding total capacity).</strong><br />
+Fix \(k_1,k_2\). Suppose \(\text{(i) }p^*(K)\ge c\) and \(\text{(ii) }k_i\le p^*(K)-c\) for \(i=1, 2\). Then the stage-2 pricing subgame has a Nash equilibrium at \((p_1,p_2)=(p^*(K),p^*(K))\) in which each firm sells its full capacity \(q_i=k_i\).</p>
+
+<p><em>Proof.</em><br />
+Assume that both of the firms set \(p^*(K)\). Then the total demand equals total capacity, so the market clears exactly, and each firm sells \(q_i=k_i\) under a tie-breaking rule.</p>
+
+<p>Without loss of generality, consider deviations by firm 1.</p>
+
+<p><strong>(a) Undercut:</strong> set \(p_1=p^*(K)-\varepsilon\) with \(\varepsilon&gt;0\). Then firm 1 is cheapest, so it receives first priority in demand. But it cannot sell more than \(k_1\). At price \(p_1\), demand is</p>
+
+\[D(p_1)=A-p_1=A-(p^*(K)-\varepsilon)=K+\varepsilon&gt;K\]
+
+<p>so there is more than enough demand to fill capacity. So firm 1 still sells \(q_1=k_1\). Its operating profit is then</p>
+
+\[(p_1-c)k_1=(p^*(K)-\varepsilon-c)k_1=(p^*(K)-c)k_1-\varepsilon k_1\]
+
+<p>which is strictly lower than \((p^*(K)-c)k_1\).</p>
+
+<p><strong>(b) Raise price:</strong> set \(p_1=p^*(K)+x\) with \(x&gt;0\). Then firm 2 sells first up to capacity \(k_2\), and firm 1 sells the residual demand. Total demand at \(p_1\) is \(A-p_1\), so residual demand after firm 2 serves \(k_2\) is</p>
+
+\[(A-p_1)-k_2\]
+
+<p>Substitute \(p_1=p^*(K)+x\) and \(p^*(K)=A-K\):</p>
+
+\[\begin{aligned}
+(A-(p^*(K)+x))-k_2
+&amp;=A-(A-K+x)-k_2 \\
+&amp;=K-x-k_2 \\
+&amp;=k_1-x
+\end{aligned}\]
+
+<p>Thus for \(0\le x\le k_1\), firm 1 sells \(q_1=k_1-x\) and earns</p>
+
+\[\pi_1(x)=(p^*(K)+x-c)(k_1-x)\]
+
+<p>Differentiate to get:</p>
+
+\[\begin{aligned}
+\pi_1'(x)
+&amp;=\frac{d}{dx}\big((p^*(K)+x-c)(k_1-x)\big) \\
+&amp;=(k_1-x)\cdot (1) + (p^*(K)+x-c)\cdot(-1) \\
+&amp;=k_1-x-p^*(K)-x+c \\
+&amp;=k_1-(p^*(K)-c)-2x
+\end{aligned}\]
+
+<p>At \(x=0\), \(\pi_1'(0)=k_1-(p^*(K)-c)\)</p>
+
+<p>So a small price increase is unprofitable whenever \(k_1\le p^*(K)-c\), which is condition (ii). As the above holds in generality, it holds for firm 2 as well.</p>
+
+<p>Thus neither undercutting nor raising price is profitable. \((p^*(K),p^*(K))\) is a Nash equilibrium. ∎</p>
+
+<p>Note that in the equilibria that will be computed next, the total capacity satisfies \(K\le A-c\) and each firm’s capacity is not too large relative to the margin, so the lemma’s conditions should hold. Intuitively, if a modest capacity is built relative to demand, there does not need to be a discount to fill the gap.</p>
+
+<h3>Stage 1 is a capacity choice in the Cournot style</h3>
+
+<p>Because the price subgame clears at \(p=A-(k_1+k_2)\) and each firm sells its capacity, stage 1 effectively becomes:</p>
+
+\[\max_{k_i\ge 0}\ \Pi_i(k_i,k_{-i})
+=\big(A-(k_i+k_{-i})-c\big)k_i-\frac{\gamma}{2}k_i^2\]
+
+<p>Expand it and get:</p>
+
+\[\begin{aligned}
+\Pi_i
+&amp;=(A-c-(k_i+k_{-i}))k_i-\frac{\gamma}{2}k_i^2 \\
+&amp;=(A-c)k_i-k_i^2-k_{-i}k_i-\frac{\gamma}{2}k_i^2 \\
+&amp;=(A-c)k_i-\Big(1+\frac{\gamma}{2}\Big)k_i^2-k_{-i}k_i
+\end{aligned}\]
+
+<p>Differentiate with respect to \(k_i\):</p>
+
+\[\begin{aligned}
+\frac{\partial \Pi_i}{\partial k_i}
+&amp;=(A-c)-2\Big(1+\frac{\gamma}{2}\Big)k_i-k_{-i} \\
+&amp;=(A-c)-(2+\gamma)k_i-k_{-i}
+\end{aligned}\]
+
+<p>The FOC is:</p>
+
+\[(A-c)-(2+\gamma)k_i-k_{-i}=0 \implies k_i=\frac{A-c-k_{-i}}{2+\gamma}\]
+
+<p>In a symmetric equilibrium \(k_1=k_2=k\):</p>
+
+\[\begin{aligned}
+k&amp;=\frac{A-c-k}{2+\gamma} \\
+(2+\gamma)k&amp;=A-c-k \\
+(3+\gamma)k&amp;=A-c \\
+k^{NE}&amp;=\frac{A-c}{3+\gamma}
+\end{aligned}\]
+
+<p>So total capacity is</p>
+
+\[K^{NE}=2k^{NE}=\frac{2(A-c)}{3+\gamma}\]
+
+<p>and the induced market-clearing price is</p>
+
+\[\begin{aligned}
+p^{NE}
+&amp;=A-K^{NE} \\
+&amp;=A-\frac{2(A-c)}{3+\gamma} \\
+&amp;=\frac{A(3+\gamma)-2A+2c}{3+\gamma} \\
+&amp;=\frac{A(1+\gamma)+2c}{3+\gamma}
+\end{aligned}\]
+
+<p>The markup is then:</p>
+
+\[\begin{aligned}
+p^{NE}-c
+&amp;=\frac{A(1+\gamma)+2c}{3+\gamma}-c \\
+&amp;=\frac{A(1+\gamma)+2c-c(3+\gamma)}{3+\gamma} \\
+&amp;=\frac{(1+\gamma)(A-c)}{3+\gamma}
+\end{aligned}\]
+
+<h3>The Cournot shadow</h3>
+
+<p>If capacity is cheap to scale (set \(\gamma=0\)), then</p>
+
+\[k^{NE}=\frac{A-c}{3},
+\quad
+p^{NE}=\frac{A+2c}{3}\]
+
+<p>which is exactly the Cournot duopoly outcome with \(k\) playing the role of \(q\).</p>
+
+<p>At first glance this can seem paradoxical. Stage 2 is Bertrand pricing, so why doesn’t the Bertrand case force \(p=c\)? The reason is that the Bertrand move to “undercut-by-\(\varepsilon\) and take the whole market” only works if the lower price firm can actually serve the whole market. Once quantities are committed beforehand (here this is the capacity), undercutting does not let you expand quantity beyond your capacity. Price competition is still there, but it no longer determines the output. Instead it mainly allocates who serves first, up to their prechosen capacities.</p>
+
+<p>This observation is formalized in a classic paper by Kreps and Scheinkman (1983). <sup id="fnref:kreps-jstor" role="doc-noteref"><a href="#fn:kreps-jstor" class="footnote" rel="footnote">10</a></sup> They study a two-stage game in which firms first choose capacities (or quantities) and then compete in prices with capacity constraints. Under standard rationing assumptions, the equilibrium outcome matches with the Cournot quantity outcome in that the strategic action “moves upstream” into the capacity choice, and the second-stage price competition ends up clearing the market at a price that is consistent with total committed capacity.</p>
+
+<h2>Welfare</h2>
+
+<p>Under welfare theorems, competitive equilibrium is found to be efficient under price-taking. Our equilibrium is not price-taking, so the theorems should not apply. Then how should efficiency be benchmarked? I choose to compare equilibrium total capacity to the surplus-maximizing total capacity.</p>
+
+<h3>Planner’s problem (case with two firms)</h3>
+
+<p>Total gross benefit from serving quantity \(Q\) is the area under inverse demand:</p>
+
+\[\int_0^Q P(q)\,dq=\int_0^Q (A-q)\,dq=AQ-\frac{Q^2}{2}\]
+
+<p>Serving \(Q\) costs \(cQ\). First, recognize that capacity costs can be minimized by splitting \(k_1=k_2=K/2\)<sup class="proof-inline"><a href="#" data-proof="pf-k-split">See proof</a></sup>.</p>
+
+<details id="pf-k-split" class="proof-box">
+  <summary>Proof of $$k_1 = k_2 = K/2$$</summary>
+  <div>
+    Fix total capacity \(K = k_1 + k_2\) with \(k_1,k_2 \ge 0\).
+    Capacity cost is \(I(k)=\tfrac{\gamma}{2}k^2\) with \(\gamma\ge 0\).
+    Impose the constraint by writing \(k_2 = K - k_1\). Define
+    \[
+    C(k_1)=I(k_1)+I(K-k_1)=\tfrac{\gamma}{2}\big(k_1^2+(K-k_1)^2\big)
+    \]
+    Expand:
+    \[
+    C(k_1)=\tfrac{\gamma}{2}\big(2k_1^2-2Kk_1+K^2\big)
+    \]
+    differentiate:
+    \[
+    C'(k_1)=\gamma(2k_1-K)
+    \]
+    set \(C'(k_1)=0\Rightarrow k_1=K/2\), and \(C''(k_1)=2\gamma\ge 0\),
+    so \(k_1=K/2\) is a global minimizer. Thus \(k_2=K/2\). Plugging in,
+    \[
+    I(K/2)+I(K/2)=\gamma\frac{K^2}{4}
+    \]
+  </div>
+</details>
+
+\[\frac{\gamma}{2}\Big(\frac{K}{2}\Big)^2+\frac{\gamma}{2}\Big(\frac{K}{2}\Big)^2
+=\gamma\frac{K^2}{4}\]
+
+<p>The planner never builds unused capacity in this toy model, so set \(Q=K\).</p>
+
+\[\begin{aligned}
+W(K)
+&amp;=\Big(AK-\frac{K^2}{2}\Big)-cK-\gamma\frac{K^2}{4} \\
+&amp;=(A-c)K-\Big(\frac12+\frac{\gamma}{4}\Big)K^2
+\end{aligned}\]
+
+<p>Differentiate:</p>
+
+\[\begin{aligned}
+W'(K)
+&amp;=(A-c)-2\Big(\frac12+\frac{\gamma}{4}\Big)K \\
+&amp;=(A-c)-\Big(1+\frac{\gamma}{2}\Big)K
+\end{aligned}\]
+
+<p>Set \(W'(K)=0\):</p>
+
+\[\begin{aligned}
+(A-c)-\Big(1+\frac{\gamma}{2}\Big)K&amp;=0 \\
+K^*&amp;=\frac{A-c}{1+\gamma/2}=\frac{2(A-c)}{2+\gamma}
+\end{aligned}\]
+
+<p>Market equilibrium total capacity determined earlier is</p>
+
+\[K^{NE}=\frac{2(A-c)}{3+\gamma}\]
+
+<p>Take the ratio:</p>
+
+\[\begin{aligned}
+\frac{K^{NE}}{K^*}
+&amp;=\frac{\frac{2(A-c)}{3+\gamma}}{\frac{2(A-c)}{2+\gamma}} \\
+&amp;=\frac{2+\gamma}{3+\gamma} \\
+&amp;&lt;1
+\end{aligned}\]
+
+<p>So we get the following statement describing the:</p>
+
+\[\frac{K^{NE}}{K^*}=\frac{2+\gamma}{3+\gamma}&lt;1\]
+
+<p>So, it is seen that strategic capacity choice underprovides capacity relative to the surplus-maximizing benchmark by the factor shown above.</p>
+
+<h3>A strong welfare identity</h3>
+
+<p>Because the welfare function is concave and quadratic, the welfare loss can be computed in closed form in addition to the capacity loss. First, write</p>
+
+\[W(K)=(A-c)K-aK^2\]
+
+<p>with \(a=\frac12+\frac{\gamma}{4}=\frac{2+\gamma}{4}\). The maximizer is \(K^*=\frac{A-c}{2a}\) and the maximum value is</p>
+
+\[W^*=\frac{(A-c)^2}{4a}=\frac{(A-c)^2}{2+\gamma}\]
+
+<p>Now plug \(K^{NE}=\frac{2(A-c)}{3+\gamma}\) into \(W(K)\):</p>
+
+\[\begin{aligned}
+W^{NE}
+&amp;=(A-c)\frac{2(A-c)}{3+\gamma}
+-a\Big(\frac{2(A-c)}{3+\gamma}\Big)^2 \\
+&amp;=\frac{2(A-c)^2}{3+\gamma}-\frac{2+\gamma}{4}\cdot \frac{4(A-c)^2}{(3+\gamma)^2} \\
+&amp;=\frac{2(A-c)^2}{3+\gamma}-\frac{(2+\gamma)(A-c)^2}{(3+\gamma)^2} \\
+&amp;=\frac{(A-c)^2}{(3+\gamma)^2}\Big(2(3+\gamma)-(2+\gamma)\Big) \\
+&amp;=\frac{(A-c)^2}{(3+\gamma)^2}(4+\gamma)
+\end{aligned}\]
+
+<p>So</p>
+
+\[\frac{W^{NE}}{W^*} =
+\frac{\frac{(A-c)^2(4+\gamma)}{(3+\gamma)^2}}{\frac{(A-c)^2}{2+\gamma}} =
+\frac{(2+\gamma)(4+\gamma)}{(3+\gamma)^2} = 1-\frac{1}{(3+\gamma)^2}\]
+
+<p>Thus:</p>
+
+\[\begin{aligned}
+\frac{W^{NE}}{W^*}&amp;=1-\frac{1}{(3+\gamma)^2} \\
+W^*-W^{NE}&amp;=\frac{(A-c)^2}{(2+\gamma)(3+\gamma)^2}
+\end{aligned}\]
+
+<p>This is slightly counterintuitive– the fractional welfare loss decreases with the factor \(1/(3+\gamma)^2\), even though the prices can remain above marginal cost.</p>
+
+<h2>Peak-load Demand</h2>
+
+<p>Everything so far has assumed that there is a fixed demand intercept \(A\). In reality, AI demand is not constant. It has peaks. The easiest way to incorporate that is to let the demand intercept be random <strong>after</strong> the capacity is chosen. So, let the period demand curve be</p>
+
+\[\tilde D(p)=\tilde A-p\]
+
+<p>so inverse demand is</p>
+
+\[\tilde P(Q)=\tilde A-Q\]
+
+<p>Capacities \(k_1,k_2\) are selected first, with total capacity \(K=k_1+k_2\). Then \(\tilde A\) is realized and the same capacity-constrained pricing game is played.</p>
+
+<p>The point here is not to simply add noise to the set-up. The goal is to isolate the economic impacts of the value of capacity in peak demand periods.</p>
+
+<h3>Spot price with capacity</h3>
+
+<p>We can fix the total capacity \(K\) and a market realization \(\tilde A\). The market-clearing price that equates demand to total capacity is \(\tilde A-K\). But if demand is low enough, then the capacity is slack, and under vanilla Bertrand competition, this would push the spot usage price down to the marginal cost.</p>
+
+<p>There is a minor technical subtlety here. When total capacity is slack, a single firm may still have local market power if its rival cannot serve the whole residual demand by itself (we’ve noted something similar above). In production AI markets, that kind of power is often self-regulated by substitution and contestability in that users have flexibility in model/provider selection. <sup id="fnref:fradkin-demand-arxiv" role="doc-noteref"><a href="#fn:fradkin-demand-arxiv" class="footnote" rel="footnote">11</a></sup> <sup id="fnref:openrouter-state" role="doc-noteref"><a href="#fn:openrouter-state" class="footnote" rel="footnote">12</a></sup> <sup id="fnref:a16z-state" role="doc-noteref"><a href="#fn:a16z-state" class="footnote" rel="footnote">13</a></sup> I capture this in a simple way– when capacity is slack, the spot usage price is capped at marginal cost \(c\).</p>
+
+<p>With that in mind, the spot price in the stage 2 equilibrium can be written in one line.</p>
+
+<p><strong>Proposition (spot price with capacity).</strong><br />
+In the stage-2 equilibrium,</p>
+
+\[\tilde p(\tilde A,K)=\max\{c,\ \tilde A-K\}\]
+
+<p>and therefore the scarcity premium is</p>
+
+\[\tilde p(\tilde A,K)-c=(\tilde A-c-K)^+,\qquad (x)^+=\max\{x,0\}\]
+
+<p><em>Proof.</em> If \(\tilde A-K&lt;c\), then at price \(p=c\) demand is \(\tilde A-c&lt;K\), so the capacity is slack and the spot price is \(c\). If \(\tilde A-K\ge c\), then the market-clearing price \(\tilde A-K\) is at least the marginal cost. In that case, the same argument as in the deterministic pricing lemma can be applied– undercutting cannot increase the quantity beyond capacity, and so it only reduces margin. And raising price loses residual demand. So, the outcome price is \(\tilde A-K\). Combining the two cases produces the formula above. ∎</p>
+
+<p>Now define \(X=\tilde A-c\). Then the scarcity premium is</p>
+
+\[\tilde p-c=(X-K)^+\]
+
+<p>This expression is the unit that I use to think about congestion. It is basically the premium that is realized only when demand is above what the system can serve at the service level.</p>
+
+<p>Finally, define the <strong>expected scarcity rent</strong> at total capacity \(K\) by</p>
+
+\[\Lambda(K)=\mathbb E\big[(X-K)^+\big]\]
+
+<p>This is the value that priority tiers and guaranteed throughput try to capture– the expected congestion rent per unit.</p>
+
+<h3>Two identities for \(\Lambda(K)\)</h3>
+
+<p>Assume \(X\) has CDF \(F\) and finite mean.</p>
+
+<p><strong>Lemma (tail-integral formula).</strong></p>
+
+\[\Lambda(K)=\int_K^\infty (1-F(t))\,dt\]
+
+<p><em>Proof.</em> Start from</p>
+
+\[\Lambda(K)=\int_{-\infty}^{\infty} (x-K)^+\,dF(x)=\int_K^\infty (x-K)\,dF(x)\]
+
+<p>Write \(x-K=\int_K^x 1\,ds\) and swap the integrals:</p>
+
+\[\begin{aligned}
+\Lambda(K)
+&amp;=\int_K^\infty\left(\int_K^x 1\,ds\right)dF(x) \\
+&amp;=\int_K^\infty\left(\int_s^\infty dF(x)\right)ds \\
+&amp;=\int_K^\infty (1-F(s))\,ds
+\end{aligned}\]
+
+<p>Rename \(s\) to \(t\). ∎</p>
+
+<p><strong>Corollary (marginal value equals congestion probability).</strong><br />
+If \(F\) is continuous at \(K\), then</p>
+
+\[\Lambda'(K)=-(1-F(K))=-\Pr(X&gt;K)\]
+
+<h2>Efficient Capacity under Peak-load Demand</h2>
+
+<p>I now redo the welfare calculation from above in this new stochastic environment. The setting remains the same in that inverse demand is linear in each period, marginal service cost is constant, and the capacity cost is convex. As before, a planner chooses total capacity \(K\) and splits it symmetrically across the two identical technologies. Total capacity cost is then minimized by the split, producing \(\gamma\frac{K^2}{4}\). In a given state \(\tilde A\), serving quantity \(Q\) generates the total benefit</p>
+
+\[\int_0^Q (\tilde A-q)\,dq=\tilde A Q-\frac{Q^2}{2}\]
+
+<p>Net of service cost \(cQ\), the net benefit per state is:</p>
+
+\[(\tilde A-c)Q-\frac{Q^2}{2}=XQ-\frac{Q^2}{2}\]
+
+<p>Given the capacity \(K\), the planner will not serve more than \(K\). Also, in each state, the unconstrained efficient quantity solves \(\tilde A-Q=c\), so \(Q=X\). Thus the served quantity is \(Q(K,X)=\min\{K,X\}\). Expected welfare is therefore</p>
+
+\[W(K)=\mathbb E\!\left[X\min\{K,X\}-\frac{1}{2}\min\{K,X\}^2\right]-\gamma\frac{K^2}{4}\]
+
+<p>Rather than expanding this piecewise, it is easier to calculate the marginal condition directly. Increase capacity from \(K\) to \(K+dK\). In states where \(X\le K\), capacity is slack and the extra unit is unused, so the marginal welfare gain would be zero. In states where \(X&gt;K\), the capacity is binding at \(Q=K\), and the marginal welfare gain from an extra unit is the marginal net benefit at \(Q=K\):</p>
+
+\[\frac{\partial}{\partial Q}\left(XQ-\frac{Q^2}{2}\right)\Bigg|_{Q=K} = X-K\]
+
+<p>So the expected marginal benefit of capacity is exactly \(\mathbb E[(X-K)^+]=\Lambda(K)\). The marginal cost of capacity is:</p>
+
+\[\frac{d}{dK}\left(\gamma\frac{K^2}{4}\right)=\gamma\frac{K}{2}\]
+
+<p>Therefore the efficient capacity satisfies the FOC:</p>
+
+\[\Lambda(K^*)=\gamma\frac{K^*}{2}\]
+
+<p>This houses the deterministic result from before. If \(X=A-c\) is constant, then \(\Lambda(K)=(A-c-K)^+\) and</p>
+
+\[A-c-K^*=\gamma\frac{K^*}{2}
+\implies
+K^*=\frac{2(A-c)}{2+\gamma}\]
+
+<p>So under uncertainty, the efficient rule is still simple. Build capacity until expected congestion rent is equal to the marginal cost of capacity.</p>
+
+<h2>Oligopoly Capacity under Peak-load Demand</h2>
+
+<p>Now repeat the capacity game for two firms under the same uncertainty.</p>
+
+<p>In the stage 2 equilibrium, the scarcity premium in state \(X\) is \((X-K)^+\). When that premium is positive, the system is capacity constrained and each firm sells approximately its full capacity. In that case, firm \(i\)’s operating profit in state \(X\) is \((X-K)^+\,k_i\). Taking expectations and subtracting capacity cost gives the stage 1 expected payoff</p>
+
+\[\Pi_i(k_i,k_{-i})=k_i\,\Lambda(K)-\frac{\gamma}{2}k_i^2\]
+
+<p>and \(K=k_i+k_{-i}\). Differentiate with respect to \(k_i\), using \(\partial K/\partial k_i=1\):</p>
+
+\[\frac{\partial \Pi_i}{\partial k_i} = \Lambda(K)+k_i\Lambda'(K)-\gamma k_i\]
+
+<p>A best response satisfies \(\Lambda(K)+k_i\Lambda'(K)=\gamma k_i\). Apply the corollary from before, \(\Lambda'(K)=-\Pr(X&gt;K)\):</p>
+
+\[\Lambda(K)-k_i\,\Pr(X&gt;K)=\gamma k_i \implies \Lambda(K)=\big(\gamma+\Pr(X&gt;K)\big)\,k_i\]
+
+<p>In a symmetric equilibrium \(k_1=k_2=k\), so \(K=2k\) and</p>
+
+\[\Lambda(2k)=\big(\gamma+\Pr(X&gt;2k)\big)\,k\]
+
+<p>This is basically the stochastic analog of the Cournot shadow from before. It isolates a term that does not appear in the planner’s condition:</p>
+
+\[\Lambda(K^*)=\gamma\frac{K^*}{2}
+\quad\text{vs.}\quad
+\Lambda(K^{NE})=\gamma\frac{K^{NE}}{2}+\frac{K^{NE}}{2}\Pr(X&gt;K^{NE})\]
+
+<p>So the entire gap between private and efficient capacity comes from the additional term \(\frac{K}{2}\Pr(X&gt;K)\). This is the strategic scarcity incentive. Each firm knows that adding capacity reduces the scarcity rent that it can earn in all peak states, and the strength of that effect is proportional to how often the peaks occur.</p>
+
+<p><strong>Theorem (strategic underprovision)</strong><br />
+Assume that \(\Lambda(K)\) is strictly decreasing and continuous. Then the equilibrium total capacity \(K^{NE}\) is strictly below the efficient capacity \(K^*\).</p>
+
+<p><em>Proof.</em> The planner’s condition is \(\Lambda(K^*)=\gamma\frac{K^*}{2}\). The equilibrium condition is</p>
+
+\[\Lambda(K^{NE})=\gamma\frac{K^{NE}}{2}+\frac{K^{NE}}{2}\Pr(X&gt;K^{NE})\]
+
+<p>Whenever the capacity binds with positive probability, \(\Pr(X&gt;K^{NE})&gt;0\), so</p>
+
+\[\Lambda(K^{NE})&gt;\gamma\frac{K^{NE}}{2}\]
+
+<p>Since \(\Lambda(K)\) is strictly decreasing while \(\gamma K/2\) is strictly increasing, the intersection of these curves is \(K^*\). The inequality therefore implies that \(K^{NE}&lt;K^*\). ∎</p>
+
+<p>This can be seen as a stronger inefficiency claim than the deterministic ratio that we found above. Here, the gap is tied to the congestion probability \(\Pr(X&gt;K)\), which can be easily measured from past occurrences.</p>
+
+<h2>A Closed-form Example</h2>
+
+<p>Consider a simple but realistic example. Take a simple distribution for \(X\) that captures “how spiky the demand is.” Assume \(X\sim\mathrm{Unif}[0,M]\) with \(M&gt;0\). Then for \(0\le K\le M\),</p>
+
+\[\begin{aligned}
+\Pr(X&gt;K)&amp;=\frac{M-K}{M}
+\Lambda(K)&amp;=\mathbb E[(X-K)^+]=\frac{(M-K)^2}{2M}
+\end{aligned}\]
+
+<h3>Efficient capacity</h3>
+
+<p>The planner’s condition \(\Lambda(K^*)=\gamma K^*/2\) becomes</p>
+
+\[\frac{(M-K^*)^2}{2M}=\gamma\frac{K^*}{2}
+\implies
+(M-K^*)^2=\gamma M K^*\]
+
+<p>The solution in \([0,M]\) is then</p>
+
+\[K^*=\frac{M}{2}\Big(2+\gamma-\sqrt{\gamma^2+4\gamma}\Big)\]
+
+<h3>Symmetric oligopoly capacity</h3>
+
+<p>The equilibrium condition is</p>
+
+\[\Lambda(K^{NE})=\gamma\frac{K^{NE}}{2}+\frac{K^{NE}}{2}\Pr(X&gt;K^{NE})\]
+
+<p>Substitute the closed forms:</p>
+
+\[\frac{(M-K)^2}{2M}
+=
+\gamma\frac{K}{2}
++\frac{K}{2}\cdot\frac{M-K}{M}\]
+
+<p>Multiply by \(2M\) and rearrange to get:</p>
+
+\[M^2-(\gamma+3)MK+2K^2=0\]
+
+<p>The equilibrium total capacity is therefore</p>
+
+\[K^{NE}
+=\frac{M}{4}\Big((\gamma+3)-\sqrt{(\gamma+3)^2-8}\Big)\]
+
+<p>The comparison \(K^{NE}&lt;K^*\) holds here as well, and you can see that the economic reason is there in the math. The oligopoly condition contains an extra peak-probability term, which pushes the capacity downward.</p>
+
+<h2>References</h2>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:reuters-dc-deals" role="doc-endnote">
+      <p>Reuters, <em>“AI boom drives data-center dealmaking to record high, says report”</em>. <a href="https://www.reuters.com/business/ai-boom-drives-data-center-dealmaking-to-record-high-says-report-2025-12-19/">https://www.reuters.com/business/ai-boom-drives-data-center-dealmaking-to-record-high-says-report-2025-12-19/</a>. <a href="#fnref:reuters-dc-deals" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:anthropic-rate-limits" role="doc-endnote">
+      <p>Anthropic (Claude Docs), <em>“Rate limits”</em>.  <a href="https://docs.anthropic.com/en/api/rate-limits">https://docs.anthropic.com/en/api/rate-limits</a>. <a href="#fnref:anthropic-rate-limits" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:gemini-rate-limits" role="doc-endnote">
+      <p>Google AI for Developers, <em>“Rate limits, Gemini API”</em>. <a href="https://ai.google.dev/gemini-api/docs/rate-limits">https://ai.google.dev/gemini-api/docs/rate-limits</a>. <a href="#fnref:gemini-rate-limits" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:openai-priority-page" role="doc-endnote">
+      <p>OpenAI, <em>“Priority Processing for API Customers”</em>. <a href="https://openai.com/api-priority-processing/">https://openai.com/api-priority-processing/</a>. <a href="#fnref:openai-priority-page" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:openai-scale" role="doc-endnote">
+      <p>OpenAI, <em>“Scale Tier for API Customers”</em>. <a href="https://openai.com/api-scale-tier/">https://openai.com/api-scale-tier/</a>. <a href="#fnref:openai-scale" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:bergemann-acm" role="doc-endnote">
+      <p>ACM Digital Library, <em>“The Economics of Large Language Models: Token Allocation, Fine-Tuning, and Optimal Pricing”</em> (Jul 2, 2025). <a href="https://dl.acm.org/doi/10.1145/3736252.3742625">https://dl.acm.org/doi/10.1145/3736252.3742625</a>. <a href="#fnref:bergemann-acm" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:zhong-arxiv" role="doc-endnote">
+      <p>arXiv, <em>“Token is All You Price”</em> (Oct 10, 2025). <a href="https://arxiv.org/abs/2510.09859">https://arxiv.org/abs/2510.09859</a>. <a href="#fnref:zhong-arxiv" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:erdil-arxiv" role="doc-endnote">
+      <p>arXiv, <em>“Inference economics of language models”</em> (Jun 5, 2025). <a href="https://arxiv.org/abs/2506.04645">https://arxiv.org/abs/2506.04645</a>. <a href="#fnref:erdil-arxiv" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:reuters-memory" role="doc-endnote">
+      <p>Reuters, <em>“The AI frenzy is driving a new global supply chain crisis”</em> (Dec 3, 2025). <a href="https://www.reuters.com/world/china/ai-frenzy-is-driving-new-global-supply-chain-crisis-2025-12-03/">https://www.reuters.com/world/china/ai-frenzy-is-driving-new-global-supply-chain-crisis-2025-12-03/</a>. <a href="#fnref:reuters-memory" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:kreps-jstor" role="doc-endnote">
+      <p>JSTOR, <em>“Quantity Precommitment and Bertrand Competition Yield Cournot Outcomes”</em> (Autumn 1983). <a href="https://www.jstor.org/stable/3003636">https://www.jstor.org/stable/3003636</a>. <a href="#fnref:kreps-jstor" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:fradkin-demand-arxiv" role="doc-endnote">
+      <p>arXiv, <em>“Demand for LLMs: Descriptive Evidence on Substitution, Market Expansion, and Multihoming”</em> (Apr 21, 2025). <a href="https://arxiv.org/abs/2504.15440">https://arxiv.org/abs/2504.15440</a>. <a href="#fnref:fradkin-demand-arxiv" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:openrouter-state" role="doc-endnote">
+      <p>OpenRouter, <em>“State of AI”</em>. <a href="https://openrouter.ai/state-of-ai">https://openrouter.ai/state-of-ai</a>. <a href="#fnref:openrouter-state" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:a16z-state" role="doc-endnote">
+      <p>Andreessen Horowitz (a16z), <em>“State of AI: An Empirical 100 Trillion Token Study with OpenRouter”</em> (Dec 4, 2025). <a href="https://a16z.com/state-of-ai/">https://a16z.com/state-of-ai/</a>. <a href="#fnref:a16z-state" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+  </div>
+
+  
+
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

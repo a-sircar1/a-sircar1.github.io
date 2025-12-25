@@ -279,6 +279,70 @@
 </style>
 
 
+<style>
+  sup.proof-inline {
+    font-size:.75em; vertical-align:super; margin-left:.25rem; white-space:nowrap;
+  }
+  sup.proof-inline a { text-decoration:none; border-bottom:1px dotted currentColor; }
+  sup.proof-inline a:hover { text-decoration:underline; }
+
+  details.proof-box {
+    margin:.6rem 0 1rem;
+    padding:0;           
+    border:0;             
+    background:transparent;
+  }
+  details.proof-box[open] {
+    padding:.9rem 1rem;
+    border:1px solid #e0e0e0;
+    border-radius:8px;
+    background:#fafafa;
+  }
+
+  details.proof-box > summary {
+    position:absolute !important;
+    width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+</style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[data-proof]').forEach(function (link) {
+      var id = link.getAttribute('data-proof');
+      var box = document.getElementById(id);
+      if (!box) return;
+
+      if (box.tagName.toLowerCase() === 'details') box.open = false;
+
+      link.setAttribute('aria-expanded', 'false');
+      link.textContent = 'See proof';
+
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (box.tagName.toLowerCase() === 'details') {
+          var isOpen = box.hasAttribute('open');
+          box.open = !isOpen;
+          link.textContent = isOpen ? 'See proof' : 'Hide proof';
+          link.setAttribute('aria-expanded', String(!isOpen));
+          if (!isOpen) {
+            try { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+          }
+        }
+      });
+    });
+  });
+</script>
+
+
+
+    
+    
+
+  
+  
+
   <body>
 
     <header class="site-header">
@@ -323,6 +387,64 @@
 
       <li>
         <span class="post-meta">
+          Dec 23, 2025
+          
+             •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/economics/">economics</a>,
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/artificial-intelligence/">artificial-intelligence</a>
+      
+    
+  
+
+
+
+
+          
+          
+        </span>
+
+        <h2>
+          
+            <a class="post-link" href="/2025/12/23/AI-Firms/">The Economics of AI Inference Capacity</a>
+          
+        </h2>
+      </li>
+    
+      
+      
+
+      <li>
+        <span class="post-meta">
           Jul 14, 2025
           
              •
@@ -333,6 +455,10 @@
     
       
         <a href="/categories/finance/">finance</a>
+      
+    
+      
+    
       
     
       
@@ -376,6 +502,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -387,6 +517,10 @@
     
       
         <a href="/categories/statistics/">statistics</a>
+      
+    
+      
+    
       
     
   
@@ -426,6 +560,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -439,11 +577,19 @@
     
       
     
+      
+    
+      
+    
   
     
     
       
         <a href="/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
       
     
       
@@ -489,6 +635,10 @@
     
       
     
+      
+    
+      
+    
   
     
     
@@ -502,11 +652,19 @@
     
       
     
+      
+    
+      
+    
   
     
     
       
         <a href="/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
       
     
       
@@ -544,6 +702,10 @@
     
       
         <a href="/categories/machine-learning/">machine-learning</a>
+      
+    
+      
+    
       
     
       

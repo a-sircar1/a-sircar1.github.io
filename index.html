@@ -286,6 +286,70 @@
 </style>
 
 
+<style>
+  sup.proof-inline {
+    font-size:.75em; vertical-align:super; margin-left:.25rem; white-space:nowrap;
+  }
+  sup.proof-inline a { text-decoration:none; border-bottom:1px dotted currentColor; }
+  sup.proof-inline a:hover { text-decoration:underline; }
+
+  details.proof-box {
+    margin:.6rem 0 1rem;
+    padding:0;           
+    border:0;             
+    background:transparent;
+  }
+  details.proof-box[open] {
+    padding:.9rem 1rem;
+    border:1px solid #e0e0e0;
+    border-radius:8px;
+    background:#fafafa;
+  }
+
+  details.proof-box > summary {
+    position:absolute !important;
+    width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+</style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[data-proof]').forEach(function (link) {
+      var id = link.getAttribute('data-proof');
+      var box = document.getElementById(id);
+      if (!box) return;
+
+      if (box.tagName.toLowerCase() === 'details') box.open = false;
+
+      link.setAttribute('aria-expanded', 'false');
+      link.textContent = 'See proof';
+
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (box.tagName.toLowerCase() === 'details') {
+          var isOpen = box.hasAttribute('open');
+          box.open = !isOpen;
+          link.textContent = isOpen ? 'See proof' : 'Hide proof';
+          link.setAttribute('aria-expanded', String(!isOpen));
+          if (!isOpen) {
+            try { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+          }
+        }
+      });
+    });
+  });
+</script>
+
+
+
+    
+    
+
+  
+  
+
   <body>
 
     <header class="site-header">
@@ -358,17 +422,17 @@
     
       <li class="recent-post-item">
         <h4 class="recent-post-title">
-          <a class="recent-post-link" href="/2025/07/14/25-Cat-Bonds/">Catastrophe Bond Pricing and Risk</a>
+          <a class="recent-post-link" href="/2025/12/23/AI-Firms/">The Economics of AI Inference Capacity</a>
         </h4>
         <p class="recent-post-excerpt">
-          This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into th...
+          The world of artificial intelligence has often always been narrated through the lens of software, hardware, model development, and new pr...
         </p>
         <p class="recent-post-meta">
-          July 14, 2025
+          December 23, 2025
           
             &bullet;
-            <a href="/categories/finance">
-              finance
+            <a href="/categories/economics">
+              economics
             </a>
           
         </p>
@@ -376,13 +440,13 @@
     
       <li class="recent-post-item">
         <h4 class="recent-post-title">
-          <a class="recent-post-link" href="/2024/12/30/24-IHMS-SETARMA/">Regimes of Return Smoothing</a>
+          <a class="recent-post-link" href="/2025/07/14/25-Cat-Bonds/">Catastrophe Bond Pricing and Risk</a>
         </h4>
         <p class="recent-post-excerpt">
-          I recently finished up a paper on determining the regimes of return smoothing for an independent study. In my research, I took a look at ...
+          This summer, I’ve gotten the chance to dive deep into the economics and finance of insurance. While I’ve mainly been digging deep into th...
         </p>
         <p class="recent-post-meta">
-          December 30, 2024
+          July 14, 2025
           
             &bullet;
             <a href="/categories/finance">
