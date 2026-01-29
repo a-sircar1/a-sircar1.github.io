@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Hard Problems in Disguise: Distribution-Preserving Subsampling via Multiscale Trees, and a Brief Introduction to Optimal Transport · Arnab Sircar</title>
+
+<link rel="stylesheet" href="https://a-sircar1.github.io/assets/main.css">
+<link rel="alternate" type="application/atom+xml" title="Arnab Sircar" href="https://a-sircar1.github.io/feed.xml">
+
+
+<script type="text/javascript" async
+  src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+</script>
+
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-text {
+    flex: 1 1 280px;
+  }
+
+  .hero-photo {
+    flex: 0 0 320px;    
+    display: flex;
+    justify-content: center;
+  } 
+
+  .hero-photo img {
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #e0e0e0;
+  }
+
+  @media (max-width: 640px) {
+    .hero-photo { flex-basis: 200px; }
+    .hero-photo img { max-width: 200px; }
+  }
+
+
+  /* Card-style boxes ------------------------------------------------------ */
+
+  .card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 1.1rem 1.6rem;   /* slightly tighter than before */
+    margin-bottom: 1.6rem;
+  }
+
+  .card h2 {
+    margin-top: 0;
+  }
+
+  .section-divider {
+    margin: 2rem 0 1.6rem;
+    border: 0;
+    border-top: 1px solid #dddddd;
+  }
+
+  /* News / Recent updates ------------------------------------------------- */
+
+  .news-updates {
+    background-color: #f9f9f9;
+  }
+
+  .news-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .news-list li + li {
+    margin-top: 0.6rem;
+  }
+
+  .news-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0.05rem 0;
+  }
+
+  .news-excerpt {
+    margin: 0.15rem 0 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  /* Research section ------------------------------------------------------ */
+
+    /* Research section ------------------------------------------------------ */
+
+    .research-section {
+    background-color: #ffffff;
+  }
+
+  /* Each entry is tighter, with a subtle divider between items */
+  .research-item {
+    padding: 0.25rem 0;
+  }
+
+  .research-item + .research-item {
+    margin-top: 0.4rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .research-title {
+    margin: 0 0 0.05rem;
+    font-size: 1.02rem;
+  }
+
+  .research-authors {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .research-meta {
+    margin: 0.1rem 0 0;
+    font-size: 0.85em;
+    color: #777;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold */
+  }
+
+  .research-abstract {
+    margin-top: 0.25rem;
+  }
+
+  .research-abstract summary {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.18rem 0.65rem;
+    border-radius: 999px;
+    background-color: #005f99;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .research-abstract[open] summary {
+    background-color: #004474;
+  }
+
+  .research-abstract summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .abstract-body {
+    margin-top: 0.55rem;
+    font-size: 0.95em;
+    color: #444;
+  }
+
+  #research {
+    scroll-margin-top: 60px;
+  }
+
+
+    /* Recent posts ---------------------------------------------------------- */
+
+    .recent-posts {
+    background-color: #ffffff;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;   /* tighter vertical padding */
+  }
+
+  .recent-posts h2 {
+    margin-bottom: 0.6rem;    /* less gap under "Recent Blog Posts" */
+  }
+
+  .recent-posts .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .recent-posts .post-list li {
+    margin: 0;
+  }
+
+  /* spacing + subtle divider between posts */
+  .recent-posts .post-list li + li {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .recent-post-item {
+    padding: 0.2rem 0;        /* less padding in each item */
+  }
+
+  .recent-post-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
+
+  .recent-post-link {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .recent-post-link:hover {
+    color: #007acc;
+    text-decoration: underline;
+  }
+
+  .recent-post-excerpt {
+    font-size: 0.9em;
+    color: #555;
+    margin: 0.08rem 0;        /* tighter gap above/below excerpt */
+    line-height: 1.25;
+  }
+
+  .recent-post-meta {
+    font-size: 0.85em;
+    color: #777;
+    margin: 0.02rem 0 0;      /* almost no extra space under excerpt */
+    line-height: 1.1;
+  }
+
+  .more-posts {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .more-posts a {
+    text-decoration: none;
+    color: #007acc;
+  }
+
+  .more-posts a:hover {
+    text-decoration: underline;
+  }
+
+  .award-badge {
+    font-weight: 600;
+  }
+
+  .award-badge .award-text {
+    color: #b8860b;  /* dark gold (DarkGoldenRod) */
+  }
+
+</style>
+<style>
+  /* table of contents style */
+.toc-wrap { background:#fafafa; border:1px solid #e0e0e0; border-radius:8px; padding:0.75rem 1rem; margin:1rem 0; }
+.toc-wrap summary { cursor:pointer; margin-bottom:0.5rem; }
+.toc-wrap ul { margin:0.3rem 0 0 1rem; }
+.toc-wrap a { text-decoration:none; }
+.toc-wrap a:hover { text-decoration:underline; }
+</style>
+
+<style>
+  /* image caption format */
+  .img-center { text-align:center; margin: 1rem auto; }
+  .img-center img { display:block; margin:0 auto; max-width:100%; height:auto; }
+  .img-center figcaption { margin-top:.5rem; font-size:.9em; color:#666; }
+</style>
+
+
+<style>
+  sup.proof-inline {
+    font-size:.75em; vertical-align:super; margin-left:.25rem; white-space:nowrap;
+  }
+  sup.proof-inline a { text-decoration:none; border-bottom:1px dotted currentColor; }
+  sup.proof-inline a:hover { text-decoration:underline; }
+
+  details.proof-box {
+    margin:.6rem 0 1rem;
+    padding:0;           
+    border:0;             
+    background:transparent;
+  }
+  details.proof-box[open] {
+    padding:.9rem 1rem;
+    border:1px solid #e0e0e0;
+    border-radius:8px;
+    background:#fafafa;
+  }
+
+  details.proof-box > summary {
+    position:absolute !important;
+    width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+</style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[data-proof]').forEach(function (link) {
+      var id = link.getAttribute('data-proof');
+      var box = document.getElementById(id);
+      if (!box) return;
+
+      if (box.tagName.toLowerCase() === 'details') box.open = false;
+
+      link.setAttribute('aria-expanded', 'false');
+      link.textContent = 'See proof';
+
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (box.tagName.toLowerCase() === 'details') {
+          var isOpen = box.hasAttribute('open');
+          box.open = !isOpen;
+          link.textContent = isOpen ? 'See proof' : 'Hide proof';
+          link.setAttribute('aria-expanded', String(!isOpen));
+          if (!isOpen) {
+            try { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+          }
+        }
+      });
+    });
+  });
+</script>
+
+
+
+    
+    
+
+  
+  
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Arnab Sircar</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/#research">Projects</a>
+      
+        
+        <a class="page-link" href="/archives/">Blog</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Hard Problems in Disguise: Distribution-Preserving Subsampling via Multiscale Trees, and a Brief Introduction to Optimal Transport</h1>
+    
+    <p class="post-meta"><time datetime="2026-01-29T06:10:56+00:00" itemprop="datePublished">Jan 29, 2026</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/statistics/">statistics</a>
+      
+    
+      
+    
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>I’ve had the pleasure of being a teaching assistant for one of Penn’s flagship machine learning courses for the past three semesters now, and I’ve enjoyed the experience so much. There are many amazing parts of the job I can speak to, but I believe the most fruitful and memorable ones that keep me coming back semester after semester have all been from the relationships I’ve gotten to form with students, faculty, and my peer TAs alike.</p>
+
+<p>This semester, we added a final project submission to the course curriculum, in addition to the usual homeworks and exams. And along with the final project requirements came a schedule of checkpoints throughout the semester in which project groups were meant to meet with their assigned TAs. Effectively, this gave the TAs the opportunity to serve as mentors for project groups.</p>
+
+<p>I was able to work with many amazing groups and was so happy to see the amount of commitment students were putting toward their projects. I was particularly impressed with one of my groups that was working on building and evaluating an ML-based approach toward the joint prediction of the occurence and magnitude of flight delays from a large U.S. domestic flights dataset. The group was not only diligent in the completion of the project, but they also asked insightful and interesting questions that clearly showed they were thinking carefully about the nuances of the problem they were tackling.</p>
+
+<p>In fact, one of their questions was especially fascinating to me, as it was a very real, but complex problem that popped up in a seemingly simple setting. They had the following situation:</p>
+
+<blockquote>
+  <p><strong>The dataset is simply too big to work with locally on laptops. Training models on the data takes way too long. So, take a sample from the dataset such that the label distribution in the sample remains the same as that of the complete data. However, what issues does this cause for training now? What if there are fundamental differences in the feature distributions of the rows in the sample? And crucially, how can a sample be selected such that feature distributions from the original dataset are jointly preserved across all features?</strong></p>
+</blockquote>
+
+<p>After our meeting, I dug deeper into the problem and found out it was a documented challenge. I was hooked, and so, the general setup of the problem has sat in the back of my head for some weeks. In this post, I detail some of the thoughts I’ve had and findings I’ve made.</p>
+
+<h1>Roadmap and Setup</h1>
+
+<p>Informally, we can think of this problem as “sampling without changing the dataset.” But what does this mean? How should we think about this more carefully?</p>
+
+<p>A dataset is an empirical distribution, and a sample is another empirical distribution. Once we re-orient our thinking in this way, the whole problem becomes clearer, and, as we’ll soon see, much more delicate than it looks.</p>
+
+<p>Let me fix notation in a way that doesn’t assume anything special about the split, and doesn’t even assume binary labels. Suppose we have a dataset</p>
+
+\[D={(x_i,y_i)}_{i=1}^N\]
+
+<p>where each \(y_i\) belongs to a finite label set \(\mathcal Y\) (for classification), and each \(x_i\) is a vector of features in some product space \(\mathcal X\) (think \(\mathbb R^d\) for numerical features crossed with a finite product of categorical alphabets for discrete features). There is no “true distribution” in the background here. At least, we don’t need to assume one. All that matters is the empirical distribution induced by the observed dataset:</p>
+
+\[P_D =\frac1N\sum_{i=1}^N \delta_{(x_i,y_i)}\]
+
+<p>where \(\delta_z\) denotes a point mass at \(z\). Interpret this simply as \(P_D(A)\) for a set \(A\subseteq \mathcal X\times\mathcal Y\) is simply “the fraction of rows whose \((x_i,y_i)\) land in \(A\).”</p>
+
+<p>Now imagine we want to keep only \(n\ll N\) rows. We pick an index subset \(S \subseteq {1,\dots,N}\) with \(\lvert S \rvert=n\), and form the sampled dataset \(D_S = {(x_i,y_i): i\in S}\). This induces its own empirical distribution</p>
+
+\[P_S =\frac1n\sum_{i\in S}\delta_{(x_i,y_i)}\]
+
+<p>So the vague problem of “pick a representative sample” can be stated as the following mathematical objective: choose (S) so that \(P_S\) is close to \(P_D\).</p>
+
+<p>Where do labels come in? Usually, the first constraint that people impose is to preserve the label proportions. If \(\widehat p_y = P_D(Y=y)\) denotes the empirical label frequencies of the full dataset, we would like the sample to satisfy \(P_S(Y=y) \approx \widehat p_y\) for all \(y\in\mathcal Y\). Most of the time we can enforce this approximately by rounding, or exactly by committing to target sample sizes where \(n_y \in \mathbb Z_{\ge 0}\) and \(\sum_{y\in\mathcal Y} n_y = n\), and requiring \(\lvert S\cap I_y \rvert=n_y\), where \(I_y=\{i:y_i=y\}\). This is the simplest way to formalize the idea of “keeping the same label split.”</p>
+
+<p>A small but crucial observation is that this reduces the whole task to the conditional distributions. So, the empirical distribution factorizes as \(P_D(x,y)=P_D(y),P_D(x\mid y)\) and \(P_S(x,y)=P_S(y),P_S(x\mid y)\).</p>
+
+<p>If we force \(P_S(y)=P_D(y)\) (by enforcing the \(n_y\)), then the only remaining question is how close we can make each conditional \(P_S(x\mid y)\) to \(P_D(x\mid y)\). In other words, the “dataset reduction” problem becomes a family of independent problems, one for each label \(y\): inside the class-\(y\) points, choose \(n_y\) rows so that the feature distribution for that class is preserved. Once you solve that for each class, you combine the results and you automatically preserve the global label distribution.</p>
+
+<p>So we’ve reduced the problem to this: for each label \(y\), from the multiset of feature vectors \({x_i: i\in I_y}\) of size \(N_y\), select a subset \(S_y\subseteq I_y\) of size \(n_y\) so that</p>
+
+\[P_{S_y}\approx P_{I_y}
+\quad\text{where}\quad
+P_{I_y}=\frac1{N_y}\sum_{i\in I_y}\delta_{x_i},
+\quad
+P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
+
+<p>Everything now depends on what “\(\approx\)” means. This is the point where there’s a fork in the road, and the roadmap of this post is basically about exploring two particularly enlightening branches toward getting us as close as possible to preserving the label distributions.</p>
+
+<p>One branch is what I’ll call the “questions you want your sample to answer” viewpoint. A dataset is valuable because you ask it questions like what’s the fraction of flights with departure delay exceeding 30 minutes? what’s the distribution of carrier codes? what is the conditional distribution of delay given month and origin airport? If we decide in advance on a large family of such “questions,” then preserving the dataset means that the full dataset and the sample should give nearly the same answers to all questions in that family. Mathematically, these “questions” are test functions \(f\) on \(\mathcal X\), and “having the same answers” means matching expectations:</p>
+
+\[\mathbb E_{P_{S_y}}[f(X)] \approx \mathbb E_{P_{I_y}}[f(X)]
+\quad\text{for all }f\text{ in some function class }\mathcal F\]
+
+<p>The challenge is to choose \(\mathcal F\) so that it is both rich (so that the guarantee we provide is actually ubiquitous and somewhat useful) and tractable (so that we can design an algorithm and prove that it works). My own approach in this post is based on choosing \(\mathcal F\) to be indicator functions of cells in a multiscale partition of the feature space. Briefly, the idea is to build a recursive partition (a tree) of the dataset into cells that correspond to coarse-to-fine “regions” in the feature space, and you ask that the sample preserves the mass of every such region. This produces a discrepancy measure \(d_{\mathcal T}(P_{S_y},P_{I_y})\) for the tree \(\mathcal T\), and then the algorithm’s task is to construct \(S_y\) so that this discrepancy is provably small. The attractive part here is that the statement “every region has almost the right mass” is something you can prove with induction, and it gives a pretty teachable correctness guarantee.</p>
+
+<p>The other branch is to use optimal transport (OT). Here the philosophical question is not “do these two datasets answer my pre-selected family of questions similarly?” but rather “how expensive is it to morph one of the empirical distributions into the other?” Optimal transport formalizes the notion of moving probability mass through a feature space with minimal cost. It produces a distance between distributions (like the Wasserstein distance), which is geometric, in that, if two distributions differ only by a small shift in a continuous feature, OT sees that as small, whereas histogram metrics can see it as large if your bins are not properly designed. OT is therefore a natural conceptual baseline for what it means to preserve “shape” of a distribution. In one dimension it becomes exactly quantiles, and in higher dimensions it becomes computationally harder but still interpretable. In this post I’ll use OT as a teachable interlude, partly because it’s intrinsically beautiful, and partly because it clarifies what any distribution-preserving sampling scheme is trying to approximate. To be honest, my mind immediately went to OT when I first heard this problem, and this exercise gave me the perfect excuse to teach myself the fundamentals of OT.</p>
+
+<p>So the plan here is as follows: first, I’ll explain why this problem is hard in a very concrete sense– hard even before you worry about fancy models– because it looks like a “simple sampling” question but is actually a constrained approximation problem over measures. Then I’ll show a construction that gives a rigorous and explicit guarantee for a meaningful notion of preservation of distributions. Finally, I’ll step back and show how OT offers a second way to view the same goal, with a complete and simple rule/theorem in one dimension and a story for tackling the general case.</p>
+
+<p>At the end, the hope is that you’ll walk away with two things: one “hands on” algorithm you could implement for your own project that comes with a proof of correctness, and one geometric mental model– using optimal transport– that changes how you think about what it means for a sample to be representative.</p>
+
+<h1>Why is This a Hard Problem?</h1>
+
+<p>At first glance, the students’ question sounds like it should have a straightforward answer, as it seems like it would be pretty commonly asked. Sampling while preserving label proportions is a built-in option in many libraries. So why does feature drift happen at all, and why can’t we just fix it by sampling more carefully?</p>
+
+<p>There are three distinct difficulties here, and they show up even before you think about neural networks, fancy objectives, or hyperparameter tuning. They are: (i) the object you’re trying to preserve is infinite-dimensional, (ii) exact preservation quickly becomes a combinatorial optimization problem, and (iii) high-dimensional structure forces a tradeoff between resolution and sample size.</p>
+
+<h2>1. Distribution Preservation is an Infinite-dimensional Constraint</h2>
+
+<p>Fix a label \(y\in\mathcal Y\) and focus only on the class-conditional empirical feature distribution</p>
+
+\[P_{I_y}=\frac1{N_y}\sum_{i\in I_y}\delta_{x_i}\]
+
+<p>and its sampled counterpart</p>
+
+\[P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
+
+<p>What would it mean to “preserve the feature distribution” exactly? The strongest statement would be</p>
+
+\[P_{S_y}=P_{I_y}\]
+
+<p>as measures on \(\mathcal X\). But if \(n_y&lt;N_y\) and the feature vectors are not massively duplicated, this is impossible, as \(P_{S_y}\) has a support size of at most \(n_y\), while \(P_{I_y}\) has support size \(N_y\). So we are forced into an approximation.</p>
+
+<p>Abstractly, a distribution can be thought of as an operator that assigns probabilities to all measurable sets, or equivalently a tool that assigns expectations to all bounded measurable functions. One standard way to make this precise is using an integral probability metric. Given a class of test functions \(\mathcal F\), define</p>
+
+\[d_{\mathcal F}(P,Q)=\sup_{f\in\mathcal F}\left|\mathbb E_P[f(X)]-\mathbb E_Q[f(X)]\right|\]
+
+<p>If \(\mathcal F\) is “too big,” then matching becomes either impossible or sample-inefficient (e.g. choosing \(\mathcal F\) as all bounded measurable functions corresponds essentially to total variation). If \(\mathcal F\) is “too small,” then the guarantee is meaningless, as you can match a few moments and still have a wildly different distribution. So the difficulty is not that we lack distances between distributions, but it’s that the notion of “preserving the distribution” necessarily requires choosing which family of distributional questions you care about.</p>
+
+<p>This is why the path we select in the roadmap section matters. Any solution must choose some structured class \(\mathcal F\) (or some structured metric like Wasserstein distance) that is rich enough to capture what models that we care about but simple enough that we can design algorithms and prove guarantees.</p>
+
+<h2>2. Even Simple Exact Matching Becomes Combinatorial (and can be NP-hard)</h2>
+
+<p>A natural response to the previous section is, “Fine. I’ll just preserve a finite list of feature summaries like means, maybe quantiles, maybe histograms.” This is reasonable in practice, but there this is theoretically problematic. As soon as you impose exact matching constraints under a fixed sample size, you are solving a discrete feasibility problem, and those problems can be representative of classic NP-hard problems.</p>
+
+<p>Here is a clean reduction that captures the essence. Consider the simplest possible setting:</p>
+
+<ul>
+  <li>there is a single label (so ignore stratification)</li>
+  <li>there is a single numerical feature \(x_i\in\mathbb Z\)</li>
+  <li>we want to choose exactly half the points</li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Suppose we demand that the sample mean equals the full-data mean. That is, with \(n=N/2\), we want a subset \(S\subseteq{1,\dots,N}\) with $$</td>
+      <td>S</td>
+      <td>=n$$ such that</td>
+    </tr>
+  </tbody>
+</table>
+
+\[\frac1n\sum_{i\in S}x_i = \frac1N\sum_{i=1}^N x_i\]
+
+<p>Now take an instance of the PARTITION problem: given integers \(a_1,\dots,a_N\) with \(N\) even, decide whether there exists a subset of exactly \(N/2\) of them whose sum is half the total. Construct data points \(x_i=a_i\). Let</p>
+
+\[A=\sum_{i=1}^N a_i\]
+
+<p>Then the full-data mean is \(A/N\). A subset \(S\) of size \(n=N/2\) satisfies the mean constraint iff</p>
+
+\[\frac1n\sum_{i\in S}a_i = \frac AN
+\implies
+\sum_{i\in S}a_i = \frac nN A
+\implies
+\sum_{i\in S}a_i = \frac12 A\]
+
+<p>So deciding whether there exists a half-sample whose mean matches the full mean is exactly PARTITION. In particular, the decision version of this “perfect mean-preserving subsample” problem is NP-complete.</p>
+
+<p>This is a tiny example, but it makes the key point. Once you start demanding that a subset match distributional properties exactly, you are often solving a hard combinatorial selection problem. And since realistic notions of “preserve feature distributions” typically involve matching many summaries simultaneously, exact matching is not only impossible for measure-theoretic reasons (as seen in the previous section), but also computationally intractable even when it is not impossible.</p>
+
+<p>The practical conclusion is that “distribution-preserving sampling” should be seen as an approximation problem with some kind of error control or minimization.</p>
+
+<h2>3. High-dimensional Distributions Force a Resolution vs. Sample-size Tradeoff</h2>
+
+<p>Even if we ignore computational hardness and focus only on approximation, there is a geometric barrier that blocks the way. High-dimensional distributions cannot be preserved at fine resolution without huge sample sizes. This is essentially the curse of dimensionality, but it’s worth seeing it in a specific way.</p>
+
+<p>Imagine discretizing each feature into a small number of bins. Now, suppose, for simplicity, we discretize each of \(d\) numerical features into \(m\) bins (quantiles, for example). If we tried to preserve the full joint histogram over all \(d\) features, we would be working with \(m^d\) cells. Even for modest numbers like \(m=10\) and \(d=20\), this is \(10^{20}\) cells– astronomically many. Most cells are empty even in the full dataset, so the “true” empirical joint histogram is extremely sparse and unstable. A small sample cannot possibly reproduce it reliably.</p>
+
+<p>This is why approaches that try to preserve the full joint distribution directly are doomed except in very low dimensions or enormous sample sizes. The only viable strategy here is to choose a structured approximation to the distribution that avoids an exponential complexity. For example:</p>
+
+<ul>
+  <li>you might preserve all one-dimensional marginals (feature-wise histograms)</li>
+  <li>you might preserve selected pairwise interactions (a small set of correlations or conditional tables)</li>
+  <li>you might preserve masses of cells in a multiscale partition (a tree), which captures coarse structure globally and finer structure locally where data supports it</li>
+  <li>or you might use a geometric metric like Wasserstein distance, which implicitly balances resolution and geometry without committing to a fixed binning</li>
+</ul>
+
+<p>All of these are different ways of acknowledging the same fundamental reality in that distribution preservation is always relative to a choice of resolution (explicitly, as in partitions and histograms). The hard part is choosing a notion of similarity that is both mathematically meaningful and practically aligned with the learning problem further down the pipeline.</p>
+
+<p>This is exactly why the roadmap split into two branches is useful. The multiscale-partition approach makes the resolution explicit and gives clean discrepancy bounds. The optimal transport approach provides an elegant “best possible” story in one dimension, with principled approximations in higher dimensions.</p>
+
+<p>In the next section, I’ll start with the multiscale viewpoint, and I’ll build our approximation algorithm.</p>
+
+<h1>The Target: Preserve Mass on a Multiscale Partition (label conditionally)</h1>
+
+<p>We now need to make the approximation target \(P_{S_y}\approx P_{I_y}\) precise in a way that is both mathematically meaningful and algorithmically tractable.</p>
+
+<p>Let’s fix a finite label set \(\mathcal Y\). For each \(y\in\mathcal Y\) let \(I_y=\{i:y_i=y\}\) and \(N_y=\lvert I_y\rvert\), and choose target sample sizes \(n_y\in\mathbb Z_{\ge 0}\) with \(\sum_{y\in\mathcal Y} n_y=n\). As discussed above, we will construct the sample label conditionally, which means, for each \(y\) we select a subset \(S_y\subseteq I_y\) with \(\lvert S_y\rvert=n_y\), and then return</p>
+
+\[S=\bigcup_{y\in\mathcal Y} S_y\]
+
+<p>This enforces the label proportions exactly:</p>
+
+\[P_S(Y=y)=\frac{\lvert S_y\rvert}{\lvert S\rvert}=\frac{n_y}{n}\]
+
+<p>So here it suffices to focus on a single label \(y\) and suppress it in notation. We now have a finite population \(I\) of size \(N\) and want to select a subset \(S\subseteq I\) of size \(n\) whose empirical feature distribution is close to that of the population.</p>
+
+<p>Instead of trying to compare \(P_S\) and \(P_I\) on all measurable sets, which is too strong, we compare them on a structured family of sets coming from a multiscale partition of feature space. Specifically, we build a binary <em>partition tree</em> \(\mathcal T\) over the indices in \(I\).</p>
+
+<p>A partition tree \(\mathcal T\) consists of nodes \(u\), each associated with a subset \(A_u\subseteq I\), satisfying:</p>
+
+<ol>
+  <li>The root node corresponds to the full class: \(A_{\mathrm{root}}=I\)</li>
+  <li>Every internal node \(u\) has two children \(u_L,u_R\) such that \(A_u = A_{u_L}\sqcup A_{u_R}\) and \(A_{u_L}\cap A_{u_R}=\varnothing\).</li>
+</ol>
+
+<p>Intuitively, each node corresponds to a “cell” in feature space, that is obtained by recursively splitting on numerical thresholds or grouping categorical values. Near the root, cells are coarse. Deeper down, cells are finer. The tree is therefore a multiscale description of the feature distribution.</p>
+
+<p>Given such a tree, we measure how well a subset \(S\) matches the population by comparing the masses of all cells in the tree. For each node \(u\in\mathcal T\) define its population mass \(p_u = \frac{\lvert A_u\rvert}{N}\) and sample mass \(q_u = \frac{\lvert S\cap A_u\rvert}{n}\). The associated discrepancy is</p>
+
+\[d_{\mathcal T}(S) = \max_{u\in\mathcal T} \lvert q_u-p_u\rvert\]
+
+<p>If \(d_{\mathcal T}(S)\) is small, then for every region of feature space represented anywhere in the tree, the fraction of sampled points landing in that region is close to the fraction in the full dataset. This is a checkable notion of “distribution preservation,” and from here, we can support a rigorous proof.</p>
+
+<p>At this point the problem becomes algorithmic: can we construct a subset \(S\) of size \(n\) with provably small \(d_{\mathcal T}(S)\)?</p>
+
+<p>The answer is yes. In the next section I’ll give a multiscale balancing construction (deterministic and randomized variants) that produces this kind of \(S\) with explicit error bounds, and the proofs are short enough to hopefully make the point as clear as possible.</p>
+
+<h2>Multiscale Balanced Rounding on a Tree</h2>
+
+<p>Fix a label \(y\in\mathcal Y\) and suppress notation. So we have a finite population index set \(I\) of size \(N=\lvert I\rvert\) and a partition tree \(\mathcal T\) whose nodes \(u\) correspond to subsets \(A_u\subseteq I\) satisfying</p>
+
+\[\begin{aligned}
+A_{\mathrm{root}} &amp;= I\\
+A_u &amp;= A_{u_L}\sqcup A_{u_R}\ \ \text{for internal nodes }u
+\end{aligned}\]
+
+<p>Our goal is to choose a subset \(S\subseteq I\) with \(\lvert S\rvert=n\) so that, for every node \(u\in\mathcal T\), the sample mass of the cell \(A_u\) is close to the population mass:</p>
+
+\[\begin{aligned}
+p_u &amp;= \frac{\lvert A_u\rvert}{N} \\
+q_u &amp;= \frac{\lvert S\cap A_u\rvert}{n} \\
+d_{\mathcal T}(S) &amp;= \max_{u\in\mathcal T} \lvert q_u-p_u\rvert
+\end{aligned}\]
+
+<p>The key idea is to separate the problem into two steps:</p>
+
+<ol>
+  <li>Allocate integer sample counts to every node of the tree in a way that respects the tree structure and tracks the population proportions</li>
+  <li>Once the leaves know how many points they should contribute, sample that many points from each leaf and take the union</li>
+</ol>
+
+<p>This works because, if the leaf counts are consistent, then every internal node automatically receives the correct count. This is because internal nodes are unions of leaves. So the “distribution preservation” problem reduces to this tree rounding problem.</p>
+
+<hr />
+
+<h3>Preliminaries: Notation for Counts</h3>
+
+<p>For each node \(u\) define the population count</p>
+
+\[N_u = \lvert A_u\rvert\]
+
+<p>We will construct integers \(n_u\) (sample counts) for every node \(u\) such that</p>
+
+\[\begin{aligned}
+n_{\mathrm{root}} &amp;= n\\
+n_u &amp;= n_{u_L}+n_{u_R}\ \ \text{for every internal node }u
+\end{aligned}\]
+
+<p>Once this is done, we will sample exactly \(n_\ell\) indices from each leaf \(\ell\), and define</p>
+
+\[\begin{aligned}
+S &amp;= \bigcup_{\ell\ \text{leaf}} S_\ell\\
+S_\ell &amp;\subseteq A_\ell\\
+\lvert S_\ell\rvert &amp;= n_\ell
+\end{aligned}\]
+
+<p>The following lemma formalizes the “consistency implies exact internal counts” statement.</p>
+
+<p><strong>Lemma (internal node counts are forced by leaf counts).</strong><br />
+Suppose that for every leaf \(\ell\) we have chosen a subset \(S_\ell\subseteq A_\ell\) with \(\lvert S_\ell\rvert=n_\ell\), and define \(S=\bigcup_\ell S_\ell\). Suppose also that the integers \(n_u\) satisfy the additivity constraints \(n_u=n_{u_L}+n_{u_R}\) for all internal nodes and \(n_{\mathrm{root}}=n\). Then for every node \(u\),</p>
+
+\[\lvert S\cap A_u\rvert = n_u\]
+
+<p><em>Proof.</em> Fix a node \(u\). The set \(A_u\) is a disjoint union of the leaf cells under it:</p>
+
+\[A_u = \bigsqcup_{\ell\in\mathrm{Leaves}(u)} A_\ell\]
+
+<p>Since the \(A_\ell\) are disjoint and \(S_\ell\subseteq A_\ell\), we have</p>
+
+\[S\cap A_u
+= \left(\bigcup_{\ell} S_\ell\right)\cap A_u
+= \bigcup_{\ell\in\mathrm{Leaves}(u)} S_\ell\]
+
+<p>and this union is disjoint. Therefore</p>
+
+\[\begin{aligned}
+\lvert S\cap A_u\rvert
+&amp;= \sum_{\ell\in\mathrm{Leaves}(u)} \lvert S_\ell\rvert\\
+&amp;= \sum_{\ell\in\mathrm{Leaves}(u)} n_\ell
+\end{aligned}\]
+
+<p>On the other hand, the additivity constraints imply that the node count \(n_u\) equals the sum of the leaf counts under \(u\) (this is proved by a simple induction down the tree: each internal node’s count is the sum of its children’s counts, so unrolling yields the sum of all descendant leaves). Hence</p>
+
+\[n_u = \sum_{\ell\in\mathrm{Leaves}(u)} n_\ell
+= \lvert S\cap A_u\rvert\]
+
+<p>This holds for every node \(u\). \(\square\)</p>
+
+<p>So all discrepancy guarantees can be proved purely at the level of the integer allocation rule for the counts \(n_u\).</p>
+
+<hr />
+
+<h2>Version A: Deterministic Rounding</h2>
+
+<p>At each internal node \(u\) we want the left child to receive approximately the population fraction</p>
+
+\[\alpha_u = \frac{N_{u_L}}{N_u}\in[0,1]\]
+
+<p>If the parent has sample count \(n_u\), the “ideal” non-integer count for the left child is \(n_u\alpha_u\). Deterministic rounding sets</p>
+
+\[\begin{aligned}
+n_{u_L} &amp;= \operatorname{Round}(n_u\alpha_u)\\
+n_{u_R} &amp;= n_u - n_{u_L}
+\end{aligned}\]
+
+<p>Here \(\operatorname{Round}(\cdot)\) means nearest integer, where ties are broken arbitrarily. By construction, \(n_{u_L}+n_{u_R}=n_u\) exactly at every split, so additivity holds globally.</p>
+
+<p>At leaves we sample:</p>
+
+\[S_\ell \sim \text{UniformWithoutReplacement}(A_\ell, n_\ell)\]
+
+<p>(Notice here that the choice within a leaf can be randomized or deterministic. It does not affect the tree-mass discrepancy, only which specific points we keep.)</p>
+
+<p>A pseudocode description is seen below:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Algorithm: DeterministicTreeBalance(I, T, n)
+Input:  index set I of size N, partition tree T with node sets A_u, target sample size n
+Output: subset S ⊆ I with |S| = n
+
+1. For every node u in T compute N_u = |A_u|
+2. Set n_root = n
+3. For each internal node u in top-down order:
+       alpha_u = N_{u_L} / N_u
+       n_{u_L} = Round(n_u * alpha_u)
+       n_{u_R} = n_u - n_{u_L}
+4. For each leaf ell:
+       Choose S_ell ⊆ A_ell uniformly without replacement with |S_ell| = n_ell
+5. Return S = ⋃_{leaves ell} S_ell
+</code></pre></div></div>
+
+<p>Now we prove the discrepancy bound carefully.</p>
+
+<p><strong>Theorem 1 (deterministic multiscale balance).</strong><br />
+Let \(L\) be the depth of the tree \(\mathcal T\) (maximum root-to-node distance). The subset \(S\) returned by the deterministic algorithm satisfies, for every node \(u\),</p>
+
+\[\left\lvert\frac{\lvert S\cap A_u\rvert}{n} - \frac{\lvert A_u\rvert}{N}\right\rvert
+\le \frac{\mathrm{depth}(u)}{2n}\]
+
+<p>In particular,</p>
+
+\[d_{\mathcal T}(S)\le \frac{L}{2n}\]
+
+<p><em>Proof.</em> By the previous lemma, for every node \(u\) we have \(\lvert S\cap A_u\rvert=n_u\), so it suffices to bound</p>
+
+\[\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert\]
+
+<p>Define the “ideal” real valued target count</p>
+
+\[\mu_u = n\cdot\frac{N_u}{N}\]
+
+<p>and define the allocation error</p>
+
+\[e_u = n_u - \mu_u\]
+
+<p>Then</p>
+
+\[\begin{aligned}
+\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert
+&amp;= \left\lvert\frac{n_u}{n}-\frac{\mu_u}{n}\right\rvert\\
+&amp;= \frac{\lvert n_u-\mu_u\rvert}{n}\\
+&amp;= \frac{\lvert e_u\rvert}{n}
+\end{aligned}\]
+
+<p>So it is enough to prove</p>
+
+\[\lvert e_u\rvert \le \frac{\mathrm{depth}(u)}{2}
+\quad\text{for all nodes }u\]
+
+<p>We prove this by induction on depth.</p>
+
+<p><strong>Base case.</strong> For the root,</p>
+
+\[\begin{aligned}
+n_{\mathrm{root}} &amp;= n\\
+\mu_{\mathrm{root}} &amp;= n\cdot\frac{N_{\mathrm{root}}}{N} = n\cdot\frac{N}{N}=n
+\end{aligned}\]
+
+<p>so</p>
+
+\[e_{\mathrm{root}} = n_{\mathrm{root}}-\mu_{\mathrm{root}} = n-n = 0\]
+
+<p>Since \(\mathrm{depth}(\mathrm{root})=0\), the base case holds.</p>
+
+<p><strong>Inductive step.</strong> Fix an internal node \(u\) and assume</p>
+
+\[\lvert e_u\rvert\le \frac{\mathrm{depth}(u)}{2}\]
+
+<p>Let its children be \(u_L,u_R\) and define \(\alpha_u = N_{u_L}/N_u\). Deterministic rounding gives</p>
+
+\[n_{u_L} = \operatorname{Round}(n_u\alpha_u)\]
+
+<p>Therefore there exists a rounding error term \(\delta_u\) such that</p>
+
+\[n_{u_L} = n_u\alpha_u + \delta_u
+\quad
+\lvert\delta_u\rvert\le \frac12\]
+
+<p>Also,</p>
+
+\[\begin{aligned}
+\mu_{u_L}
+&amp;= n\cdot\frac{N_{u_L}}{N}\\
+&amp;= n\cdot\frac{N_u}{N}\cdot\frac{N_{u_L}}{N_u}\\
+&amp;= \mu_u\alpha_u
+\end{aligned}\]
+
+<p>So the child error is</p>
+
+\[\begin{aligned}
+e_{u_L}
+&amp;= n_{u_L}-\mu_{u_L}\\
+&amp;= (n_u\alpha_u+\delta_u) - (\mu_u\alpha_u)\\
+&amp;= \alpha_u(n_u-\mu_u) + \delta_u\\
+&amp;= \alpha_u e_u + \delta_u
+\end{aligned}\]
+
+<p>Next, taking absolute values and using \(0\le \alpha_u\le 1\), we get:</p>
+
+\[\begin{aligned}
+\lvert e_{u_L}\rvert
+&amp;\le \lvert\alpha_u\rvert\,\lvert e_u\rvert + \lvert\delta_u\rvert\\
+&amp;\le \lvert e_u\rvert + \frac12\\
+&amp;\le \frac{\mathrm{depth}(u)}{2} + \frac12\\
+&amp;= \frac{\mathrm{depth}(u)+1}{2}\\
+&amp;= \frac{\mathrm{depth}(u_L)}{2}
+\end{aligned}\]
+
+<p>For the right child, use \(n_{u_R}=n_u-n_{u_L}\) and \(\mu_{u_R}=\mu_u-\mu_{u_L}=\mu_u(1-\alpha_u)\). Since</p>
+
+\[n_{u_R} = n_u - (n_u\alpha_u+\delta_u) = n_u(1-\alpha_u)-\delta_u,\]
+
+<p>we get</p>
+
+\[\begin{aligned}
+e_{u_R}
+&amp;= n_{u_R}-\mu_{u_R}\\
+&amp;= \bigl(n_u(1-\alpha_u)-\delta_u\bigr) - \mu_u(1-\alpha_u)\\
+&amp;= (1-\alpha_u)(n_u-\mu_u) - \delta_u\\
+&amp;= (1-\alpha_u)e_u - \delta_u
+\end{aligned}\]
+
+<p>and so,</p>
+
+\[\begin{aligned}
+\lvert e_{u_R}\rvert
+&amp;\le \lvert1-\alpha_u\rvert\,\lvert e_u\rvert + \lvert\delta_u\rvert\\
+&amp;\le \lvert e_u\rvert + \frac12\\
+&amp;\le \frac{\mathrm{depth}(u)+1}{2}\\
+&amp;= \frac{\mathrm{depth}(u_R)}{2}
+\end{aligned}\]
+
+<p>Thus the bound holds for both children, completing the induction. Therefore, for every node \(u\),</p>
+
+\[\lvert e_u\rvert\le \frac{\mathrm{depth}(u)}{2},\]
+
+<p>and substituting into \(\left\lvert n_u/n - N_u/N\right\rvert = \lvert e_u\rvert/n\) produces the theorem. \(\square\)</p>
+
+<p>This is a worst-case bound with no probability and no consideration for the “typical case.” Its conceptual limitation is also clear in that the bound grows linearly with depth. That motivates a randomized variant that removes systematic drift and produces a concentration like \(\sqrt{\mathrm{depth}}/n\) for any fixed node.</p>
+
+<hr />
+
+<h2>Version B: Randomized Rounding</h2>
+
+<p>The deterministic algorithm rounds to the nearest integer, which is stable but can accumulate small biases along a path in the tree. Randomized rounding replaces that with an unbiased decision at each of the splits.</p>
+
+<p>Fix an internal node \(u\). Let \(t_u = n_u\alpha_u\) and say</p>
+
+\[t_u = \lfloor t_u\rfloor + \theta_u,
+\quad
+\theta_u \in [0,1)\]
+
+<p>Define</p>
+
+\[n_{u_L} =
+\begin{cases}
+\lfloor t_u\rfloor + 1 &amp; \text{with probability }\theta_u\\
+\lfloor t_u\rfloor &amp; \text{with probability }1-\theta_u
+\end{cases}\]
+
+<p>and \(n_{u_R} = n_u - n_{u_L}\). Everything else is the same.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Algorithm: RandomizedTreeBalance(I, T, n)
+Input:  index set I of size N, partition tree T with node sets A_u, target sample size n
+Output: subset S ⊆ I with |S| = n
+
+1. Compute N_u = |A_u| for all nodes u
+2. Set n_root = n
+3. For each internal node u in top-down order:
+       alpha_u = N_{u_L} / N_u
+       t = n_u * alpha_u
+       theta = t - floor(t)
+       With prob theta set n_{u_L} = floor(t) + 1; otherwise n_{u_L} = floor(t)
+       Set n_{u_R} = n_u - n_{u_L}
+4. For each leaf ell:
+       Choose S_ell ⊆ A_ell uniformly without replacement with |S_ell| = n_ell
+5. Return S = ⋃_{leaves ell} S_ell
+</code></pre></div></div>
+
+<p>We now prove the two key properties (1) unbiasedness and (2) concentration.</p>
+
+<p><strong>Lemma 2 (unbiased node counts).</strong><br />
+For every node \(u\in\mathcal T\), the random count \(n_u = \lvert S\cap A_u\rvert\) satisfies</p>
+
+\[\mathbb E[n_u] = n\cdot \frac{N_u}{N}\]
+
+<p><em>Proof.</em> As above, \(\lvert S\cap A_u\rvert=n_u\) deterministically once the allocation is fixed, so it suffices to prove the statement for the allocation random variables \(n_u\).</p>
+
+<p>We prove by induction on depth. For the root,</p>
+
+\[\mathbb E[n_{\mathrm{root}}] = n = n\cdot\frac{N}{N} = n\cdot\frac{N_{\mathrm{root}}}{N}\]
+
+<p>Assume the claim holds for a node \(u\). Conditional on \(n_u\), define \(t_u=n_u\alpha_u\). By construction,</p>
+
+\[n_{u_L} =
+\begin{cases}
+\lfloor t_u\rfloor + 1 &amp; \text{with probability }\theta_u\\
+\lfloor t_u\rfloor &amp; \text{with probability }1-\theta_u
+\end{cases}\]
+
+<p>and \(\theta_u = t_u-\lfloor t_u\rfloor\). Therefore</p>
+
+\[\begin{aligned}
+\mathbb E[n_{u_L}\mid n_u]
+&amp;= (\lfloor t_u\rfloor + 1)\theta_u + (\lfloor t_u\rfloor)(1-\theta_u)\\
+&amp;= \lfloor t_u\rfloor + \theta_u\\
+&amp;= t_u\\
+&amp;= n_u\alpha_u
+\end{aligned}\]
+
+<p>Taking expectations,</p>
+
+\[\begin{aligned}
+\mathbb E[n_{u_L}]
+&amp;= \mathbb E\big[\mathbb E[n_{u_L}\mid n_u]\big]\\
+&amp;= \mathbb E[n_u\alpha_u]\\
+&amp;= \alpha_u\,\mathbb E[n_u]\\
+&amp;= \frac{N_{u_L}}{N_u}\cdot n\frac{N_u}{N}\\
+&amp;= n\frac{N_{u_L}}{N}
+\end{aligned}\]
+
+<p>For the right child, \(n_{u_R}=n_u-n_{u_L}\), so</p>
+
+\[\mathbb E[n_{u_R}]
+= \mathbb E[n_u]-\mathbb E[n_{u_L}]
+= n\frac{N_u}{N} - n\frac{N_{u_L}}{N}
+= n\frac{N_{u_R}}{N}\]
+
+<p>Thus the claim holds for both children, completing the induction. \(\square\)</p>
+
+<p>So the randomized construction is exactly correct in expectation*for every cell in the multiscale partition. Next we quantify deviations for a fixed node (the cleanest statement), and afterwards one can apply a union bound if one wants a statement holding simultaneously for all nodes.</p>
+
+<p><strong>Theorem 3 (concentration for a fixed node).</strong><br />
+Fix a node \(u\) at depth \(d\). Then for all \(t&gt;0\),</p>
+
+\[\Pr\left(\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert\ge \frac{t}{n}\right)
+\le 2\exp\left(-\frac{t^2}{2d}\right)\]
+
+<p>Equivalently, for any \(\delta\in(0,1)\), with probability at least \(1-\delta\),</p>
+
+\[\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert
+\le \frac{\sqrt{2d\log(2/\delta)}}{n}\]
+
+<p><em>Proof.</em> Let \(v_0,v_1,\dots,v_d\) be the unique path from the root \(v_0\) to the node \(v_d=u\). For each step \(k=1,\dots,d\), let \(\beta_k\in[0,1]\) denote the population fraction of the chosen child along the path (i.e., if \(v_k\) is the left child of \(v_{k-1}\), then \(\beta_k = N_{v_k}/N_{v_{k-1}}\); if it is the right child, \(\beta_k = N_{v_k}/N_{v_{k-1}}\) as well). With this definition we always have \(\frac{N_{v_k}}{N_{v_{k-1}}} = \beta_k\) and thus, \(\frac{N_{v_k}}{N} = \left(\prod_{j=1}^k \beta_j\right)\). Next, define the ideal real valued target counts</p>
+
+\[\mu_k = n\cdot\frac{N_{v_k}}{N}\]
+
+<p>and define the errors</p>
+
+\[e_k = n_{v_k}-\mu_k\]
+
+<p>We will express \(e_d\) as a sum of bounded martingale differences.</p>
+
+<p>At step \(k\), conditional on the past (i.e. on \(n_{v_{k-1}}\)), the algorithm sets</p>
+
+\[n_{v_k} = n_{v_{k-1}}\beta_k + \rho_k\]
+
+<p>where the rounding noise</p>
+
+\[\rho_k = n_{v_k} - n_{v_{k-1}}\beta_k\]
+
+<p>satisfies \(\mathbb E[\rho_k\mid \mathcal F_{k-1}] = 0\) and \(\lvert\rho_k\rvert\le 1\). The expectation is zero because randomized rounding is unbiased. It rounds \(t=n_{v_{k-1}}\beta_k\) up with probability equal to its fractional part. The magnitude bound holds because \(\rho_k\in\{-\theta,1-\theta\}\) for some \(\theta\in[0,1)\).</p>
+
+<p>Also, by definition of \(\mu_k\) and the fact that \(N_{v_k}/N_{v_{k-1}}=\beta_k\),</p>
+
+\[\begin{aligned}
+\mu_k
+&amp;= n\cdot\frac{N_{v_k}}{N}\\
+&amp;= n\cdot\frac{N_{v_{k-1}}}{N}\cdot\frac{N_{v_k}}{N_{v_{k-1}}}\\
+&amp;= \mu_{k-1}\beta_k
+\end{aligned}\]
+
+<p>Subtracting \(\mu_k\) from \(n_{v_k}\) produces</p>
+
+\[\begin{aligned}
+e_k
+&amp;= n_{v_k}-\mu_k\\
+&amp;= \bigl(n_{v_{k-1}}\beta_k+\rho_k\bigr) - \mu_{k-1}\beta_k\\
+&amp;= \beta_k(n_{v_{k-1}}-\mu_{k-1}) + \rho_k\\
+&amp;= \beta_k e_{k-1} + \rho_k
+\end{aligned}\]
+
+<p>Now unroll the recursion. Since \(e_0 = n-\mu_0 = n-n = 0\), repeated substitution gives</p>
+
+\[\begin{aligned}
+e_d
+&amp;= \beta_d e_{d-1} + \rho_d\\
+&amp;= \beta_d(\beta_{d-1} e_{d-2}+\rho_{d-1}) + \rho_d\\
+&amp;= \beta_d\beta_{d-1}e_{d-2} + \beta_d\rho_{d-1} + \rho_d\\
+&amp;\ \ \vdots\\
+&amp;= \sum_{k=1}^d \rho_k \prod_{j=k+1}^d \beta_j
+\end{aligned}\]
+
+<p>Define</p>
+
+\[X_k = \rho_k \prod_{j=k+1}^d \beta_j\]
+
+<p>Then \(e_d = \sum_{k=1}^d X_k\). Moreover, \(\prod_{j=k+1}^d \beta_j\) is measurable with respect to \(\mathcal F_{k-1}\) (it depends only on the fixed tree and the path, not on future randomness), so</p>
+
+\[\mathbb E[X_k\mid \mathcal F_{k-1}]
+= \left(\prod_{j=k+1}^d \beta_j\right)\mathbb E[\rho_k\mid\mathcal F_{k-1}]
+= 0\]
+
+<p>Thus \(X_k\) are martingale differences. Finally, since each \(\beta_j\in[0,1]\) and \(\lvert\rho_k\rvert\le 1\),</p>
+
+\[\lvert X_k\rvert
+\le \lvert\rho_k\rvert\cdot \prod_{j=k+1}^d \lvert\beta_j\rvert
+\le 1\]
+
+<p>Azuma–Hoeffding for martingales with bounded increments now gives, for all \(t&gt;0\),</p>
+
+\[\Pr\left(\lvert e_d\rvert\ge t\right)
+\le 2\exp\left(-\frac{t^2}{2\sum_{k=1}^d 1^2}\right)
+= 2\exp\left(-\frac{t^2}{2d}\right)\]
+
+<p>Finally, observe</p>
+
+\[\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert
+= \left\lvert\frac{n_{v_d}}{n}-\frac{\mu_d}{n}\right\rvert
+= \frac{\lvert e_d\rvert}{n}\]
+
+<p>So</p>
+
+\[\Pr\left(\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert\ge \frac{t}{n}\right)
+= \Pr\left(\lvert e_d\rvert\ge t\right)
+\le 2\exp\left(-\frac{t^2}{2d}\right)\]
+
+<p>which is the first claim. The second follows by setting \(t=\sqrt{2d\log(2/\delta)}\) and rearranging. \(\square\)</p>
+
+<p>This should be the Aha moment! Deterministic rounding produces a worst-case guarantee of order \(\mathrm{depth}(u)/n\), while randomized rounding produces deviations of order \(\sqrt{\mathrm{depth}(u)}/n\) for a fixed node, with the tail bounds.</p>
+
+<hr />
+
+<h1>An Interlude: Why Optimal Transport Shows Up Inevitably</h1>
+
+<p>At this point we have a completely explicit construction where we choose a multiscale partition tree \(\mathcal T\), then build a sample whose mass in every tree cell matches the population mass up to a provable error. In other words, we chose a family of “questions” and forced the sample to answer them almost the same way as the full dataset.</p>
+
+<p>There is, however, a downside to any partition-based notion of similarity. It is coordinate-dependent and bin-dependent. If I shift a continuous feature by a tiny amount, the “shape” of the distribution hasn’t changed much, but a histogram can change a lot if points cross a bin boundary. The tree discrepancy \(d_{\mathcal T}\) is not “wrong,” but it is answers only a particular kind of question.”How much mass lies in each region?” But there is another question you might ask that is more geometric in nature.</p>
+
+<blockquote>
+  <p>If I imagine the full dataset distribution as a pile of sand and the sampled dataset distribution as another pile of sand, how expensive is it to reshape one pile into the other, if moving sand by distance \(r\) costs \(r\)?</p>
+</blockquote>
+
+<p>That question is optimal transport. The conceptual leap is that, instead of choosing a function class \(\mathcal F\) or a partition \(\mathcal T\) up front, we choose a ground metric on feature space (a notion of distance between rows), and we measure distributional mismatch by the minimal cost of moving probability mass through this geometric landscape.</p>
+
+<p>I think this viewpoint is really teachable because it has (i) a clean variational definition, (ii) an exact closed form in one dimension that can be proved, and (iii) a direct algorithmic “coreset” formulation that matches our original downsampling goal.</p>
+
+<h3>Optimal Transport and Wasserstein Distance</h3>
+
+<p>Let \(\mu\) and \(\nu\) be probability measures on a metric space \((\mathcal X, d)\). A <strong>coupling</strong> of \(\mu\) and \(\nu\) is a joint distribution \(\pi\) on \(\mathcal X\times\mathcal X\) whose first marginal is \(\mu\) and second marginal is \(\nu\). The set of all couplings is denoted \(\Pi(\mu,\nu)\).</p>
+
+<p>For \(p\ge 1\), the <strong>Wasserstein-\(p\) distance</strong> is</p>
+
+\[W_p(\mu,\nu) =
+\left(
+\inf_{\pi\in\Pi(\mu,\nu)}
+\int_{\mathcal X\times\mathcal X} d(x,x')^p \, d\pi(x,x')
+\right)^{1/p}\]
+
+<p>For the purposes of this post, the case \(p=1\) is already very informative:</p>
+
+\[W_1(\mu,\nu) =
+\inf_{\pi\in\Pi(\mu,\nu)}
+\int_{\mathcal X\times\mathcal X} d(x,x') \, d\pi(x,x')\]
+
+<p>When \(\mu\) and \(\nu\) are empirical measures, this becomes a finite-dimensional linear program. Specifically, suppose</p>
+
+\[\mu = \sum_{i=1}^N a_i\,\delta_{x_i}
+\quad
+\nu = \sum_{j=1}^m b_j\,\delta_{z_j}\]
+
+<p>where \(a_i\ge 0\), \(b_j\ge 0\), \(\sum_i a_i=1\), \(\sum_j b_j=1\). A coupling is then a nonnegative matrix \(\Pi\in\mathbb R_{\ge 0}^{N\times m}\) whose row/column sums match \(a\) and \(b\):</p>
+
+\[\sum_{j=1}^m \Pi_{ij} = a_i \quad \forall i,
+\quad
+\sum_{i=1}^N \Pi_{ij} = b_j \quad \forall j\]
+
+<p>The transport cost is</p>
+
+\[\sum_{i=1}^N\sum_{j=1}^m \Pi_{ij}\, d(x_i,z_j)\]
+
+<p>so</p>
+
+\[W_1(\mu,\nu)
+=
+\min_{\Pi\ge 0}
+\left\{
+\sum_{i=1}^N\sum_{j=1}^m \Pi_{ij}\, d(x_i,z_j)
+\ :\ 
+\Pi\mathbf 1=a,\ \Pi^\top \mathbf 1=b
+\right\}\]
+
+<p>This is the first important connection to downsampling. OT is naturally a problem of replacing a big empirical measure by a smaller one while keeping them close in the geometric sense.</p>
+
+<h3>OT as a Downsampling Objective and the Wasserstein Coreset Problem</h3>
+
+<p>Return to our dataset distribution</p>
+
+\[P_I = \frac1N\sum_{i\in I}\delta_{x_i}\]
+
+<p>Suppose we want a summary measure supported on only \(n\) points with equal weights:</p>
+
+\[\nu = \frac1n\sum_{k=1}^n \delta_{z_k}\]
+
+<p>If we allow the support points \(z_k\) to be anywhere in \(\mathcal X\), one natural best-summary problem is:</p>
+
+\[\min_{z_1,\dots,z_n\in\mathcal X}
+W_1\left(P_I,\ \frac1n\sum_{k=1}^n\delta_{z_k}\right)\]
+
+<p>If we require that the summary to be a subset of the original points (which is what downsampling refers to), we add the constraint: \(z_k \in \{x_i : i\in I\}\). This becomes a Wasserstein-type of facility location problem: Choose a set of “representative points” so that transporting mass from each original point to representatives is low-cost. And if we also want to enforce label proportions, we do exactly what we did before. Solve this problem separately within each label class, which would produce \(\nu_y\), which would be supported on \(n_y\) points for each class, then union the supports.</p>
+
+<p>At this stage, the definition is clear but it might still feel abstract. I’m going to boil this down to one dimension so that my point becomes clear.</p>
+
+<h2>The One-dimensional Case Where OT Becomes Quantiles</h2>
+
+<p>Assume \(\mathcal X=\mathbb R\) with distance \(d(x,x')=\lvert x-x'\rvert\), and let \(\mu\) be any probability measure on \(\mathbb R\) with CDF \(F\). Let \(\nu\) be any probability measure on \(\mathbb R\) with CDF \(G\).</p>
+
+<p>A foundational fact is that in one dimension, the optimal coupling is the monotone one, and the Wasserstein-1 distance has a closed form:</p>
+
+<blockquote>
+  <p><strong>Theorem 4 (quantile representation of \(W_1\) on \(\mathbb R\)).</strong>
+Let \(F^{-1}\) and \(G^{-1}\) denote the generalized inverse CDFs (quantile functions). Then</p>
+
+\[W_1(\mu,\nu) = \int_0^1 \left\lvert F^{-1}(t)-G^{-1}(t)\right\rvert\,dt\]
+</blockquote>
+
+<p>I’ll prove this because it provides the link between “geometric transport” and “sampling via quantiles,” and it is also the exact statement we will use to design an optimal \(n\)-point approximation.</p>
+
+<h3>Proof of Theorem 4</h3>
+
+<p>Define the quantile functions</p>
+
+\[F^{-1}(t) = \inf\{x\in\mathbb R : F(x)\ge t\}
+\qquad
+G^{-1}(t) = \inf\{x\in\mathbb R : G(x)\ge t\}\]
+
+<p>Let \(U\sim \mathrm{Unif}[0,1]\) and define random variables \(X = F^{-1}(U)\) and \(Y = G^{-1}(U)\).</p>
+
+<p><strong>Step 1: \(X\sim\mu\) and \(Y\sim\nu\).</strong><br />
+We show \(\mathbb P(X\le x)=F(x)\). Indeed,</p>
+
+\[\begin{aligned}
+\mathbb P(X\le x)
+&amp;= \mathbb P\bigl(F^{-1}(U)\le x\bigr)\\
+&amp;= \mathbb P\left(U \le F(x)\right)
+\end{aligned}\]
+
+<p>where the last step is a standard property of generalized inverses: \(F^{-1}(u)\le x\) iff \(u\le F(x)\). Since \(U\) is uniform,</p>
+
+\[\mathbb P(U\le F(x)) = F(x)\]
+
+<p>Thus \(X\) has CDF \(F\), so \(X\sim\mu\). The same argument gives \(Y\sim\nu\).</p>
+
+<p>Therefore, the joint law of \((X,Y)\) defines a coupling \(\pi\) of \(\mu\) and \(\nu\).</p>
+
+<p><strong>Step 2: the induced transport cost equals the integral.</strong><br />
+By definition of \((X,Y)\),</p>
+
+\[\begin{aligned}
+\mathbb E\left[\lvert X-Y\rvert\right]
+&amp;= \mathbb E\left[\left\lvert F^{-1}(U)-G^{-1}(U)\right\rvert\right]\\
+&amp;= \int_0^1 \left\lvert F^{-1}(t)-G^{-1}(t)\right\rvert\,dt
+\end{aligned}\]
+
+<p>So we have produced a coupling with cost equal to the RHS, and therefore</p>
+
+\[W_1(\mu,\nu)\le \int_0^1 \left\lvert F^{-1}(t)-G^{-1}(t)\right\rvert\,dt\]
+
+<p><strong>Step 3: optimality of monotone coupling.</strong><br />
+Let \(\pi\) be any coupling of \(\mu\) and \(\nu\), and let \((X,Y)\sim\pi\). Consider the function class of 1-Lipschitz functions \(\varphi:\mathbb R\to\mathbb R\), i.e.</p>
+
+\[\lvert\varphi(x)-\varphi(x')\rvert\le \lvert x-x'\rvert\]
+
+<p>For any such \(\varphi\),</p>
+
+\[\begin{aligned}
+\mathbb E[\varphi(X)]-\mathbb E[\varphi(Y)]
+&amp;= \mathbb E[\varphi(X)-\varphi(Y)]\\
+&amp;\le \mathbb E\left[\lvert\varphi(X)-\varphi(Y)\rvert\right]\\
+&amp;\le \mathbb E\left[\lvert X-Y\rvert\right]
+\end{aligned}\]
+
+<p>Taking the supremum over all 1-Lipschitz \(\varphi\) produces</p>
+
+\[\sup_{\mathrm{Lip}(\varphi)\le 1} \left(\mathbb E_\mu[\varphi]-\mathbb E_\nu[\varphi]\right)
+\le \mathbb E_\pi\left[\lvert X-Y\rvert\right]\]
+
+<p>Since this holds for every coupling \(\pi\),</p>
+
+\[\sup_{\mathrm{Lip}(\varphi)\le 1} \left(\mathbb E_\mu[\varphi]-\mathbb E_\nu[\varphi]\right)
+\le W_1(\mu,\nu)\]
+
+<p>Now, in one dimension, one can verify that</p>
+
+\[\sup_{\mathrm{Lip}(\varphi)\le 1} \left(\mathbb E_\mu[\varphi]-\mathbb E_\nu[\varphi]\right)
+=
+\int_0^1 \left\lvert F^{-1}(t)-G^{-1}(t)\right\rvert\,dt\]
+
+<p>Combining with the upper bound from Step 2 gives equality, proving the theorem. \(\square\)</p>
+
+<h2>The quantile coreset is optimal for 1D \(W_1\)</h2>
+
+<p>Now we use Theorem 4 to solve the downsampling problem in 1D, fully. First, fix \(n\ge 1\). Consider the class of measures supported on exactly \(n\) points with equal weights:</p>
+
+\[\nu = \frac1n\sum_{k=1}^n \delta_{z_k}\]
+
+<p>Such a \(\nu\) has a quantile function that is a step function: if we order the support \(z_{(1)}\le \cdots\le z_{(n)}\), then</p>
+
+\[G^{-1}(t) = z_{(k)}\qquad\text{for }t\in\left(\frac{k-1}{n},\frac{k}{n}\right]\]
+
+<p>Plugging this into Theorem 4 provides us with</p>
+
+\[\begin{aligned}
+W_1(\mu,\nu)
+&amp;= \int_0^1 \left\lvert F^{-1}(t)-G^{-1}(t)\right\rvert\,dt\\
+&amp;= \sum_{k=1}^n \int_{(k-1)/n}^{k/n} \left\lvert F^{-1}(t)-z_{(k)}\right\rvert\,dt
+\end{aligned}\]
+
+<p>Crucially, the RHS separates across intervals, so the minimization over \(z_{(k)}\) decouples.</p>
+
+<blockquote>
+  <p><strong>Lemma 5 (best constant on an interval is a median).</strong>
+Let \(g:[a,b]\to\mathbb R\) be integrable. Define</p>
+
+\[\Phi(z)=\int_a^b \lvert g(t)-z\rvert\,dt\]
+
+  <p>Then any minimizer of \(\Phi(z)\) is a median of the pushforward distribution of \(g(t)\) under uniform measure on \([a,b]\). In particular, if \(g\) is monotone, a minimizer is \(g((a+b)/2)\).</p>
+</blockquote>
+
+<p><em>Proof.</em> Fix \(z\) and consider the derivative of \(\Phi\) where it exists. For any \(z\) that is not equal to a value attained by \(g(t)\) on a set of positive measure, we can differentiate under the integral sign:</p>
+
+\[\begin{aligned}
+\Phi(z)
+&amp;= \int_a^b \lvert g(t)-z\rvert\,dt\\
+&amp;= \int_{g(t)\ge z} (g(t)-z)\,dt + \int_{g(t)&lt;z} (z-g(t))\,dt
+\end{aligned}\]
+
+<p>Differentiating with respect to \(z\) gives</p>
+
+\[\begin{aligned}
+\Phi'(z)
+&amp;= \int_{g(t)\ge z} (-1)\,dt + \int_{g(t)&lt;z} (1)\,dt\\
+&amp;= \lambda(\{t: g(t)&lt;z\}) - \lambda(\{t: g(t)\ge z\})
+\end{aligned}\]
+
+<p>where \(\lambda\) denotes the Lebesgue measure on \([a,b]\). A minimizer must satisfy \(0\in \partial \Phi(z)\), equivalently that the measure of the set where \(g(t)\le z\) is at least half and the measure where \(g(t)\ge z\) is at least half. This is exactly the median condition. If \(g\) is monotone, then the median is attained at the midpoint \(t=(a+b)/2\). \(\square\)</p>
+
+<p>Apply this lemma with \(g(t)=F^{-1}(t)\) on each interval \(((k-1)/n,k/n]\). Since \(F^{-1}\) is monotone nondecreasing, the optimal choice on that interval is the midpoint quantile:</p>
+
+\[z_{(k)}^\star = F^{-1}\left(\frac{(k-1)/n + k/n}{2}\right) = F^{-1}\left(\frac{2k-1}{2n}\right)\]
+
+<p>We have proved:</p>
+
+<blockquote>
+  <p><strong>Theorem 6 (optimal 1D OT coreset via quantiles).</strong>
+Let \(\mu\) be a probability measure on \(\mathbb R\) with CDF \(F\). Among all measures of the form \(\nu=\frac1n\sum_{k=1}^n\delta_{z_k}\), the minimizer of \(W_1(\mu,\nu)\) is achieved by taking</p>
+
+\[z_k^\star = F^{-1}\left(\frac{2k-1}{2n}\right),\qquad k=1,\dots,n\]
+</blockquote>
+
+<p><em>Proof.</em> Combine the quantile representation in Theorem 4, the interval decomposition above, and Lemma 5 applied on each interval. Each term is minimized by the midpoint quantile, and so the sum is minimized. \(\square\)</p>
+
+<p>This result is both rigorous and pedagogically pretty nice. In one dimension, the best downsampling in Wasserstein-1 is essentially equivalent to keeping evenly spaced quantiles.</p>
+
+<p>And it explains, why OT feels like the right notion of distribution preservation for continuous features. Shifting all points by a small amount changes the Wasserstein distance by that small amount.</p>
+
+<h2>From the Theorem to an Algorithm (in the 1D case)</h2>
+
+<p>If you have data points \(x_1,\dots,x_N\in\mathbb R\) and you want an \(n\)-point OT coreset with equal weights, you can implement Theorem 6 directly using order statistics.</p>
+
+<p>Let \(x_{(1)}\le \cdots\le x_{(N)}\) be the sorted data. The empirical CDF has quantile function</p>
+
+\[F_N^{-1}(t)=x_{(\lceil Nt\rceil)}\]
+
+<p>So the OT-optimal equal weight summary points are</p>
+
+\[z_k = x_{\left(\left\lceil N\cdot \frac{2k-1}{2n}\right\rceil\right)},\qquad k=1,\dots,n\]
+
+<p>A simple implementation is:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Algorithm: 1D-OT-Quantile-Coreset(x[1..N], n)
+1. Sort x to obtain x_(1) &lt;= ... &lt;= x_(N)
+2. For k = 1..n:
+       idx = ceil( N * (2k - 1) / (2n) )
+       z_k = x_(idx)
+3. Return {z_1, ..., z_n}
+</code></pre></div></div>
+
+<p>This gives an exact minimizer of \(W_1(P_I,\nu)\) among all equal weight \(n\)-point measures supported on the real line, where \(P_I\) is the empirical distribution of the data.</p>
+
+<h2>What about Higher Dimensions?</h2>
+
+<p>In \(d&gt;1\), the same objective</p>
+
+\[\min_{\nu:\ \lvert\mathrm{supp}(\nu)\rvert=n} W_1(P_I,\nu)\]
+
+<p>is still meaningful, but no longer has a simple quantile formula. Nonetheless, the OT viewpoint remains valuable for three reasons:</p>
+
+<ol>
+  <li>It gives a coordinate free notion of distributional similarity</li>
+  <li>It directly rewards summaries that preserve the geometry and clustering structure in feature space</li>
+  <li>It connects to a large algorithmic toolbox of methods from linear programming, entropic regularization, and OT-inspired clustering/medoid selection</li>
+</ol>
+
+<p>A common practical restriction is to insist that \(\nu\) is supported on a subset of the observed points (true downsampling), and to take equal weights. Then we are choosing representative points that minimize the transport cost from the full empirical distribution. This is related in spirit to facility location and \(k\)-medoids, but with the framework of optimal transport</p>
+
+<p>For the purposes of this post, the key conceptual takeaway is that multiscale tree construction preserved distribution by matching masses on a chosen hierarchy of regions. OT preserves distribution by minimizing the geometric cost of moving mass. They are two different “languages” for the same core objective which is to replace a huge dataset by a smaller one without changing what a learner would perceive as the underlying world.</p>
+
+<p>Finally, to fold OT back into our original supervised setting, we can apply OT label conditionally. For each \(y\in\mathcal Y\), compute an OT based summary of the empirical conditional distribution</p>
+
+\[P_{I_y}=\frac1{N_y}\sum_{i\in I_y}\delta_{x_i}\]
+
+<p>using \(n_y\) points, then union the supports across \(y\). This enforces the label proportions exactly while using OT to preserve the features of each class-conditional feature distribution.</p>
+
+<p>In the next section, I’ll connect this OT lens back to the multiscale tree lens more explicitly. One can view Wasserstein distance as controlling discrepancies against 1-Lipschitz test functions, while tree discrepancy controls discrepancies against indicator functions of tree cells. That comparison is a clear way to understand what each method preserves and why they complement each other.</p>
+
+<h2>A Brief Connection between Two Distances and Two Question Sets</h2>
+
+<p>The multiscale tree sampler and optimal transport are best thought of as answering the same meta question with different choices of “what counts as evidence that two distributions differ.”</p>
+
+<p>Fix a label \(y\) and suppress it in notation. We are comparing the empirical measures</p>
+
+\[P_I=\frac1N\sum_{i\in I}\delta_{x_i},
+\quad
+P_S=\frac1n\sum_{i\in S}\delta_{x_i}\]
+
+<p>The tree discrepancy tied to a partition tree \(\mathcal T\) is</p>
+
+\[d_{\mathcal T}(S)
+=\max_{u\in\mathcal T}\left\lvert\frac{\lvert S\cap A_u\rvert}{n}-\frac{\lvert A_u\rvert}{N}\right\rvert\]
+
+<p>But each node set \(A_u\) is really just an indicator query. Define</p>
+
+\[f_u(x)=\mathbf 1\{x\in\mathcal C_u\}\]
+
+<p>where \(\mathcal C_u\subseteq\mathcal X\) is the corresponding region of feature space. Then</p>
+
+\[\begin{aligned}
+\mathbb E_{P_S}[f_u(X)]
+&amp;=\frac1n\sum_{i\in S}\mathbf 1\{x_i\in\mathcal C_u\}
+=\frac{\lvert S\cap A_u\rvert}{n}\\
+\mathbb E_{P_I}[f_u(X)]
+&amp;=\frac1N\sum_{i\in I}\mathbf 1\{x_i\in\mathcal C_u\}
+=\frac{\lvert A_u\rvert}{N}
+\end{aligned}\]
+
+<p>So, exactly,</p>
+
+\[d_{\mathcal T}(S)
+=
+\max_{u\in\mathcal T}\left\lvert\mathbb E_{P_S}[f_u(X)]-\mathbb E_{P_I}[f_u(X)]\right\rvert\]
+
+<p>In words, this means that tree balancing controls discrepancies against a large, multiscale family of indicator functions (cell membership queries).</p>
+
+<p>Optimal transport controls a different family. For \(W_1\) on a metric space \((\mathcal X,d)\), the Kantorovich–Rubinstein duality says</p>
+
+\[W_1(P_I,P_S)
+=
+\sup_{\mathrm{Lip}(f)\le 1}\left\lvert\mathbb E_{P_I}[f(X)]-\mathbb E_{P_S}[f(X)]\right\rvert\]
+
+<p>so, OT controls discrepancies against all 1-Lipschitz functions.</p>
+
+<p>One small proposition makes the guarantee for our tree-based method clear.</p>
+
+<blockquote>
+  <p><strong>Proposition (tree discrepancy controls piecewise-constant observables).</strong>
+Let \(\mathcal T\) be a partition tree with leaf set \(\mathcal L\). Suppose a function \(g:\mathcal X\to\mathbb R\) is constant on leaves, i.e. there exist constants \(c_\ell\) such that \(g(x)=c_\ell\) whenever \(x\in\mathcal C_\ell\). Then</p>
+
+\[\left\lvert\mathbb E_{P_S}[g(X)]-\mathbb E_{P_I}[g(X)]\right\rvert
+\le
+\left(\max_{\ell\in\mathcal L}\left\lvert\frac{\lvert S\cap A_\ell\rvert}{n}-\frac{\lvert A_\ell\rvert}{N}\right\rvert\right)
+\sum_{\ell\in\mathcal L}\lvert c_\ell\rvert\]
+</blockquote>
+
+<p><em>Proof.</em> Since \(g\) is leaf-piecewise-constant,</p>
+
+\[g(x)=\sum_{\ell\in\mathcal L} c_\ell\,\mathbf 1\{x\in\mathcal C_\ell\}\]
+
+<p>Therefore</p>
+
+\[\begin{aligned}
+\mathbb E_{P_S}[g(X)]-\mathbb E_{P_I}[g(X)]
+&amp;=\sum_{\ell\in\mathcal L} c_\ell\left(\mathbb E_{P_S}[\mathbf 1\{X\in\mathcal C_\ell\}] - \mathbb E_{P_I}[\mathbf 1\{X\in\mathcal C_\ell\}]\right)\\
+&amp;=\sum_{\ell\in\mathcal L} c_\ell\left(\frac{\lvert S\cap A_\ell\rvert}{n}-\frac{\lvert A_\ell\rvert}{N}\right)
+\end{aligned}\]
+
+<p>Taking absolute values and applying the triangle inequality,</p>
+
+\[\begin{aligned}
+\left\lvert\mathbb E_{P_S}[g(X)]-\mathbb E_{P_I}[g(X)]\right\rvert
+&amp;\le \sum_{\ell\in\mathcal L} \lvert c_\ell\rvert\left\lvert\frac{\lvert S\cap A_\ell\rvert}{n}-\frac{\lvert A_\ell\rvert}{N}\right\rvert\\
+&amp;\le \left(\max_{\ell\in\mathcal L}\left\lvert\frac{\lvert S\cap A_\ell\rvert}{n}-\frac{\lvert A_\ell\rvert}{N}\right\rvert\right)\sum_{\ell\in\mathcal L}\lvert c_\ell\rvert
+\end{aligned}\]
+
+\[\square\]
+
+<p>This is the simplest statement of what the guarantee buys you. If your model or a piece of it behaves like a piecewise-constant function on your chosen multiscale partition, then the tree balancing forces its empirical averages to be stable under downsampling. OT, on the other hand, controls all averages of 1-Lipschitz functions, and so, it is naturally robust to small geometric perturbations.</p>
+
+<h1>Conclusion</h1>
+
+<p>One of the things I’ve come to appreciate the most about teaching is how often genuinely difficult problems can pop up disguised as mundane ones. Here, it was simply the case that a laptop couldn’t handle a dataset, which I suppose, is a pretty common problem (as complexity theory has been around for a while). But, when the problem was first posed to me in office hours, I truly did think a straightforward solution could exist somewhere in the documentation of Sci-kit Learn. This problem– and these kinds of problems in general– sound like logistical issues until you try to make them precise. And then, you realize you’ve been handed a real mathematical question that can only really be tackled using makeshift techniques and approximation tools. That shift in perspective is, to me, the main reward and most fascinating part of problem solving. It’s a reminder that there are technical problems that can show up all over the place yet remain relatively hidden. They show up wherever someone is trying to do something simple and quickly discover that the simplicity actually covers hidden structure that is much more complex.</p>
+
+<p>In this post I dove into one such problem. The multiscale tree construction gave a checkable notion of what it means to preserve a dataset, and it gave an provably-correct algorithm that actually produces such samples. Optimal transport offered a different lens that dependend more on the geometry of distributions. In one dimension it turned an abstract idea toward specifics, leveraging quantiles.</p>
+
+<p>But the real point here is broader than the downsampling problem. If you’re lucky, you’ll keep running into problems like this that are practical, slightly annoying, but amazingly elegant once you pause long enough to chalk out the problem. You don’t need to solve them perfectly on the first pass. You just need to take a stab, write down a definition that you believe in, and see the power that mathematics and modeling gives to you.</p>
+
+  </div>
+
+  
+
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Arnab Sircar - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="https://a-sircar1.github.io/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
