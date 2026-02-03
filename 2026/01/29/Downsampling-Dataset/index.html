@@ -448,7 +448,7 @@
 
 <p>So the vague problem of “pick a representative sample” can be stated as the following mathematical objective: choose (S) so that \(P_S\) is close to \(P_D\).</p>
 
-<p>Where do labels come in? Usually, the first constraint that people impose is to preserve the label proportions. If \(\widehat p_y = P_D(Y=y)\) denotes the empirical label frequencies of the full dataset, we would like the sample to satisfy \(P_S(Y=y) \approx \widehat p_y\) for all \(y\in\mathcal Y\). Most of the time we can enforce this approximately by rounding, or exactly by committing to target sample sizes where \(n_y \in \mathbb Z_{\ge 0}\) and \(\sum_{y\in\mathcal Y} n_y = n\), and requiring \(\lvert S\cap I_y \rvert=n_y\), where \(I_y=\{i:y_i=y\}\). This is the simplest way to formalize the idea of “keeping the same label split.”</p>
+<p>Where do labels come in? Usually, the first constraint that people impose is to preserve the label proportions. If \(\widehat p_y = P_D(Y=y)\) denotes the empirical label frequencies of the full dataset, we would like the sample to satisfy \(P_S(Y=y) \approx \widehat p_y\) for all \(y\in\mathcal Y\). Most of the time we can enforce this approximately by rounding, or by committing to target sample sizes where \(n_y \in \mathbb Z_{\ge 0}\) and \(\sum_{y\in\mathcal Y} n_y = n\), and requiring \(\lvert S\cap I_y \rvert=n_y\), where \(I_y=\{i:y_i=y\}\). This is the simplest way to formalize the idea of “keeping the same label split.”</p>
 
 <p>A small but crucial observation is that this reduces the whole task to the conditional distributions. So, the empirical distribution factorizes as \(P_D(x,y)=P_D(y),P_D(x\mid y)\) and \(P_S(x,y)=P_S(y),P_S(x\mid y)\).</p>
 
@@ -471,7 +471,7 @@ P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
 
 <p>The challenge is to choose \(\mathcal F\) so that it is both rich (so that the guarantee we provide is actually ubiquitous and somewhat useful) and tractable (so that we can design an algorithm and prove that it works). My own approach in this post is based on choosing \(\mathcal F\) to be indicator functions of cells in a multiscale partition of the feature space. Briefly, the idea is to build a recursive partition (a tree) of the dataset into cells that correspond to coarse-to-fine “regions” in the feature space, and you ask that the sample preserves the mass of every such region. This produces a discrepancy measure \(d_{\mathcal T}(P_{S_y},P_{I_y})\) for the tree \(\mathcal T\), and then the algorithm’s task is to construct \(S_y\) so that this discrepancy is provably small. The attractive part here is that the statement “every region has almost the right mass” is something you can prove with induction, and it gives a pretty teachable correctness guarantee.</p>
 
-<p>The other branch is to use optimal transport (OT). Here the philosophical question is not “do these two datasets answer my pre-selected family of questions similarly?” but rather “how expensive is it to morph one of the empirical distributions into the other?” Optimal transport formalizes the notion of moving probability mass through a feature space with minimal cost. It produces a distance between distributions (like the Wasserstein distance), which is geometric, in that, if two distributions differ only by a small shift in a continuous feature, OT sees that as small, whereas histogram metrics can see it as large if your bins are not properly designed. OT is therefore a natural conceptual baseline for what it means to preserve “shape” of a distribution. In one dimension it becomes exactly quantiles, and in higher dimensions it becomes computationally harder but still interpretable. In this post I’ll use OT as a teachable interlude, partly because it’s intrinsically beautiful, and partly because it clarifies what any distribution-preserving sampling scheme is trying to approximate. To be honest, my mind immediately went to OT when I first heard this problem, and this exercise gave me the perfect excuse to teach myself the fundamentals of OT.</p>
+<p>The other branch is to use optimal transport (OT). Here the philosophical question is not “do these two datasets answer my pre-selected family of questions similarly?” but rather “how expensive is it to morph one of the empirical distributions into the other?” Optimal transport formalizes the notion of moving probability mass through a feature space with minimal cost. It produces a distance between distributions (like the Wasserstein distance), which is geometric, in that, if two distributions differ only by a small shift in a continuous feature, OT sees that as small, whereas histogram metrics can see it as large if your bins are not properly designed. OT is therefore a natural conceptual baseline for what it means to preserve “shape” of a distribution. In one dimension it becomes quantiles, and in higher dimensions it becomes computationally harder but still interpretable. In this post I’ll use OT as a teachable interlude, partly because it’s intrinsically beautiful, and partly because it clarifies what any distribution-preserving sampling scheme is trying to approximate. To be honest, my mind immediately went to OT when I first heard this problem, and this exercise gave me the perfect excuse to teach myself the fundamentals of OT.</p>
 
 <p>So the plan here is as follows: first, I’ll explain why this problem is hard in a very concrete sense– hard even before you worry about fancy models– because it looks like a “simple sampling” question but is actually a constrained approximation problem over measures. Then I’ll show a construction that gives a rigorous and explicit guarantee for a meaningful notion of preservation of distributions. Finally, I’ll step back and show how OT offers a second way to view the same goal, with a complete and simple rule/theorem in one dimension and a story for tackling the general case.</p>
 
@@ -493,7 +493,7 @@ P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
 
 \[P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
 
-<p>What would it mean to “preserve the feature distribution” exactly? The strongest statement would be</p>
+<p>What would it mean to preserve the feature distribution? The strongest statement would be</p>
 
 \[P_{S_y}=P_{I_y}\]
 
@@ -516,14 +516,14 @@ P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
 <ul>
   <li>there is a single label (so ignore stratification)</li>
   <li>there is a single numerical feature \(x_i\in\mathbb Z\)</li>
-  <li>we want to choose exactly half the points</li>
+  <li>we want to choose half the points</li>
 </ul>
 
 <p>Suppose we demand that the sample mean equals the full-data mean. That is, with \(n=N/2\), we want a subset \(S\subseteq{1,\dots,N}\) with \(\|S\|=n\) such that</p>
 
 \[\frac1n\sum_{i\in S}x_i = \frac1N\sum_{i=1}^N x_i\]
 
-<p>Now take an instance of the PARTITION problem: given integers \(a_1,\dots,a_N\) with \(N\) even, decide whether there exists a subset of exactly \(N/2\) of them whose sum is half the total. Construct data points \(x_i=a_i\). Let</p>
+<p>Now take an instance of the PARTITION problem: given integers \(a_1,\dots,a_N\) with \(N\) even, decide whether there exists a subset of \(N/2\) of them whose sum is half the total. Construct data points \(x_i=a_i\). Let</p>
 
 \[A=\sum_{i=1}^N a_i\]
 
@@ -535,9 +535,9 @@ P_{S_y}=\frac1{n_y}\sum_{i\in S_y}\delta_{x_i}\]
 \implies
 \sum_{i\in S}a_i = \frac12 A\]
 
-<p>So deciding whether there exists a half-sample whose mean matches the full mean is exactly PARTITION. In particular, the decision version of this “perfect mean-preserving subsample” problem is NP-complete.</p>
+<p>So deciding whether there exists a half-sample whose mean matches the full mean is PARTITION. In particular, the decision version of this “perfect mean-preserving subsample” problem is NP-complete.</p>
 
-<p>This is a tiny example, but it makes the key point. Once you start demanding that a subset match distributional properties exactly, you are often solving a hard combinatorial selection problem. And since realistic notions of “preserve feature distributions” typically involve matching many summaries simultaneously, exact matching is not only impossible for measure-theoretic reasons (as seen in the previous section), but also computationally intractable even when it is not impossible.</p>
+<p>This is a tiny example, but it makes the key point. Once you start demanding that a subset match distributional properties, you are often solving a hard combinatorial selection problem. And since realistic notions of “preserve feature distributions” typically involve matching many summaries simultaneously, exact matching is not only impossible for measure-theoretic reasons (as seen in the previous section), but also computationally intractable even when it is not impossible.</p>
 
 <p>The practical conclusion is that “distribution-preserving sampling” should be seen as an approximation problem with some kind of error control or minimization.</p>
 
@@ -937,7 +937,7 @@ For every node \(u\in\mathcal T\), the random count \(n_u = \lvert S\cap A_u\rve
 
 <p>Thus the claim holds for both children, completing the induction. \(\square\)</p>
 
-<p>So the randomized construction is exactly correct in expectation*for every cell in the multiscale partition. Next we quantify deviations for a fixed node (the cleanest statement), and afterwards one can apply a union bound if one wants a statement holding simultaneously for all nodes.</p>
+<p>So the randomized construction is exactly correct in expectation for every cell in the multiscale partition. Next we quantify deviations for a fixed node, and afterwards we can apply a union bound if we want a statement holding simultaneously for all nodes.</p>
 
 <p><strong>Theorem 3 (concentration for a fixed node).</strong><br />
 Let us fix a node \(u\) at depth \(d\). Then for all \(t&gt;0\),</p>
@@ -1209,7 +1209,7 @@ Let \(\pi\) be any coupling of \(\mu\) and \(\nu\), and let \((X,Y)\sim\pi\). Co
 
 <h2>The quantile coreset is optimal for 1D \(W_1\)</h2>
 
-<p>Now we use Theorem 4 to solve the downsampling problem in 1D, fully. First, fix \(n\ge 1\). Consider the class of measures supported on exactly \(n\) points with equal weights:</p>
+<p>Now we use Theorem 4 to solve the downsampling problem in 1D, fully. First, fix \(n\ge 1\). Consider the class of measures supported on \(n\) points with equal weights:</p>
 
 \[\nu = \frac1n\sum_{k=1}^n \delta_{z_k}\]
 
@@ -1252,7 +1252,7 @@ Let \(g:[a,b]\to\mathbb R\) be integrable. Define</p>
 &amp;= \lambda(\{t: g(t)&lt;z\}) - \lambda(\{t: g(t)\ge z\})
 \end{aligned}\]
 
-<p>where \(\lambda\) denotes the Lebesgue measure on \([a,b]\). A minimizer must satisfy \(0\in \partial \Phi(z)\), equivalently that the measure of the set where \(g(t)\le z\) is at least half and the measure where \(g(t)\ge z\) is at least half. This is exactly the median condition. If \(g\) is monotone, then the median is attained at the midpoint \(t=(a+b)/2\). \(\square\)</p>
+<p>where \(\lambda\) denotes the Lebesgue measure on \([a,b]\). A minimizer must satisfy \(0\in \partial \Phi(z)\), equivalently that the measure of the set where \(g(t)\le z\) is at least half and the measure where \(g(t)\ge z\) is at least half. This is the median condition. If \(g\) is monotone, then the median is attained at the midpoint \(t=(a+b)/2\). \(\square\)</p>
 
 <p>Apply this lemma with \(g(t)=F^{-1}(t)\) on each interval \(((k-1)/n,k/n]\). Since \(F^{-1}\) is monotone nondecreasing, the optimal choice on that interval is the midpoint quantile:</p>
 
@@ -1319,7 +1319,7 @@ Let \(\mu\) be a probability measure on \(\mathbb R\) with the CDF \(F\). Across
 
 \[P_{I_y}=\frac1{N_y}\sum_{i\in I_y}\delta_{x_i}\]
 
-<p>using \(n_y\) points, then union the supports across \(y\). This enforces the label proportions exactly while using OT to preserve the features of each class-conditional feature distribution.</p>
+<p>using \(n_y\) points, then union the supports across \(y\). This enforces the label proportions while using OT to preserve the features of each class-conditional feature distribution.</p>
 
 <p>In the next section, I’ll connect this OT idea back to the multiscale tree idea a bit more concretely. One can view Wasserstein distance as controlling discrepancies against 1-Lipschitz test functions, while tree discrepancy controls discrepancies against indicator functions of tree cells. That comparison is a clear way to understand what each method preserves and why they complement each other.</p>
 
