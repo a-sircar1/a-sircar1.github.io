@@ -721,7 +721,7 @@ Output: subset S ⊆ I with |S| = n
 <p>Now we prove the discrepancy bound carefully.</p>
 
 <p><strong>Theorem 1 (deterministic multiscale balance).</strong><br />
-Let \(L\) be the depth of the tree \(\mathcal T\) (maximum root-to-node distance). The subset \(S\) returned by the deterministic algorithm satisfies, for every node \(u\),</p>
+Let \(L\) be the depth of the tree \(\mathcal T\) (the maximum root-to-node distance). The subset \(S\) that is produced by the deterministic algorithm satisfies, for every node \(u\),</p>
 
 \[\left\lvert\frac{\lvert S\cap A_u\rvert}{n} - \frac{\lvert A_u\rvert}{N}\right\rvert
 \le \frac{\mathrm{depth}(u)}{2n}\]
@@ -940,12 +940,12 @@ For every node \(u\in\mathcal T\), the random count \(n_u = \lvert S\cap A_u\rve
 <p>So the randomized construction is exactly correct in expectation*for every cell in the multiscale partition. Next we quantify deviations for a fixed node (the cleanest statement), and afterwards one can apply a union bound if one wants a statement holding simultaneously for all nodes.</p>
 
 <p><strong>Theorem 3 (concentration for a fixed node).</strong><br />
-Fix a node \(u\) at depth \(d\). Then for all \(t&gt;0\),</p>
+Let us fix a node \(u\) at depth \(d\). Then for all \(t&gt;0\),</p>
 
 \[\Pr\left(\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert\ge \frac{t}{n}\right)
 \le 2\exp\left(-\frac{t^2}{2d}\right)\]
 
-<p>Equivalently, for any \(\delta\in(0,1)\), with probability at least \(1-\delta\),</p>
+<p>Equivalently, we can say for any \(\delta\in(0,1)\), with probability at least \(1-\delta\),</p>
 
 \[\left\lvert\frac{n_u}{n}-\frac{N_u}{N}\right\rvert
 \le \frac{\sqrt{2d\log(2/\delta)}}{n}\]
@@ -1128,20 +1128,20 @@ W_1\left(P_I,\ \frac1n\sum_{k=1}^n\delta_{z_k}\right)\]
 
 <blockquote>
   <p><strong>Theorem 4 (quantile representation of \(W_1\) on \(\mathbb R\)).</strong>
-Let \(F^{-1}\) and \(G^{-1}\) denote the generalized inverse CDFs (quantile functions). Then</p>
+Let \(F^{-1}\) and \(G^{-1}\) denote the generalized inverse CDFs. Then</p>
 
 \[W_1(\mu,\nu) = \int_0^1 \left\lvert F^{-1}(t)-G^{-1}(t)\right\rvert\,dt\]
 </blockquote>
 
-<p>I’ll prove this because it provides the link between “geometric transport” and “sampling via quantiles,” and it is also the exact statement we will use to design an optimal \(n\)-point approximation.</p>
+<p>I’ll prove this because it provides us with the link between the geometric quality of transport and the notion of “sampling via quantiles,” and it is also the statement we will use to design an optimal \(n\)-point approximation.</p>
 
 <h3>Proof of Theorem 4</h3>
 
 <p>Define the quantile functions</p>
 
-\[F^{-1}(t) = \inf\{x\in\mathbb R : F(x)\ge t\}
-\qquad
-G^{-1}(t) = \inf\{x\in\mathbb R : G(x)\ge t\}\]
+\[F^{-1}(t) = \inf\{x\in\mathbb R : F(x)\ge t\}\]
+
+\[G^{-1}(t) = \inf\{x\in\mathbb R : G(x)\ge t\}\]
 
 <p>Let \(U\sim \mathrm{Unif}[0,1]\) and define random variables \(X = F^{-1}(U)\) and \(Y = G^{-1}(U)\).</p>
 
@@ -1262,9 +1262,9 @@ Let \(g:[a,b]\to\mathbb R\) be integrable. Define</p>
 
 <blockquote>
   <p><strong>Theorem 6 (optimal 1D OT coreset via quantiles).</strong>
-Let \(\mu\) be a probability measure on \(\mathbb R\) with CDF \(F\). Among all measures of the form \(\nu=\frac1n\sum_{k=1}^n\delta_{z_k}\), the minimizer of \(W_1(\mu,\nu)\) is achieved by taking</p>
+Let \(\mu\) be a probability measure on \(\mathbb R\) with the CDF \(F\). Across all of the measures of the form \(\nu=\frac1n\sum_{k=1}^n\delta_{z_k}\), the minimizer of \(W_1(\mu,\nu)\) is achieved by taking</p>
 
-\[z_k^\star = F^{-1}\left(\frac{2k-1}{2n}\right),\qquad k=1,\dots,n\]
+\[z_k^\star = F^{-1}\left(\frac{2k-1}{2n}\right),\quad k=1,\dots,n\]
 </blockquote>
 
 <p><em>Proof.</em> Combine the quantile representation in Theorem 4, the interval decomposition above, and Lemma 5 applied on each interval. Each term is minimized by the midpoint quantile, and so the sum is minimized. \(\square\)</p>
@@ -1283,7 +1283,7 @@ Let \(\mu\) be a probability measure on \(\mathbb R\) with CDF \(F\). Among all 
 
 <p>So the OT-optimal equal weight summary points are</p>
 
-\[z_k = x_{\left(\left\lceil N\cdot \frac{2k-1}{2n}\right\rceil\right)},\qquad k=1,\dots,n\]
+\[z_k = x_{\left(\left\lceil N\cdot \frac{2k-1}{2n}\right\rceil\right)},\quad k=1,\dots,n\]
 
 <p>A simple implementation is:</p>
 
@@ -1412,6 +1412,9 @@ Let \(\mathcal T\) be a partition tree with leaf set \(\mathcal L\). Suppose a f
 <p>In this post I dove into one such problem. The multiscale tree construction gave a checkable notion of what it means to preserve a dataset, and it gave an provably-correct algorithm that actually produces such samples. Optimal transport offered a different lens that dependend more on the geometry of distributions. In one dimension it turned an abstract idea toward specifics, leveraging quantiles.</p>
 
 <p>But the real point here is broader than the downsampling problem. If you’re lucky, you’ll keep running into problems like this that are practical, slightly annoying, but amazingly elegant once you pause long enough to chalk out the problem. You don’t need to solve them perfectly on the first pass. You just need to take a stab, write down a definition that you believe in, and see the power that mathematics and modeling gives to you.</p>
+
+<h1>Recommended Readings / Inspiring Works</h1>
+
 
   </div>
 
