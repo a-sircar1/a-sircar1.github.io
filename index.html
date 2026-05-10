@@ -580,6 +580,30 @@
       setTimeout(updateSceneFromScroll, 120);
     }
 
+    var emailLink = document.getElementById('contact-email-link');
+    if (emailLink) {
+      var emailCodes = [97, 115, 105, 114, 99, 97, 114, 64, 117, 112, 101, 110, 110, 46, 101, 100, 117];
+      var revealEmail = function () {
+        if (emailLink.dataset.ready === '1') return;
+        var email = String.fromCharCode.apply(null, emailCodes);
+        emailLink.textContent = email;
+        emailLink.setAttribute('href', 'mailto:' + email);
+        emailLink.dataset.ready = '1';
+      };
+      emailLink.addEventListener('click', function (event) {
+        if (emailLink.dataset.ready !== '1') {
+          event.preventDefault();
+          revealEmail();
+        }
+      });
+      emailLink.addEventListener('keydown', function (event) {
+        if ((event.key === 'Enter' || event.key === ' ') && emailLink.dataset.ready !== '1') {
+          event.preventDefault();
+          revealEmail();
+        }
+      });
+    }
+
     if (sweepCanvas && sweepCtx) {
       resizeSweep();
       drawOceanSweep();
@@ -670,7 +694,7 @@
       <div class="wrapper">
         <section id="typed-intro" class="typed-intro card">
           <p class="typed-line typed-fade">
-            I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science.
+            I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and generally, how people make decisions.
           </p>
           <p class="typed-line typed-fade typed-fade-delayed">
             I currently focus on illiquid asset valuation and private markets research, advised by <a class="typed-link" href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a> in Wharton's Finance department.
@@ -970,6 +994,14 @@
 <section id="about-jump" class="card about-jump reveal-on-scroll">
   <h2>About</h2>
   <p>Background, interests, and ways to connect.</p>
+  <p class="about-contact-row">
+    <span class="about-contact-label">Email</span>
+    <a id="contact-email-link" class="about-contact-link" href="#" rel="nofollow noopener">Reveal email</a>
+  </p>
+  <p class="about-contact-row">
+    <span class="about-contact-label">LinkedIn</span>
+    <a class="about-contact-link" href="https://www.linkedin.com/in/arnab-sircar-464b89242/" target="_blank" rel="noopener">linkedin.com/in/arnab-sircar-464b89242</a>
+  </p>
   <p><a href="/about/">Read the full about page →</a></p>
 </section>
 

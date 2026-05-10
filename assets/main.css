@@ -1044,6 +1044,27 @@ details.proof-box[open],
   text-decoration: underline;
 }
 
+.about-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin-bottom: 0.45rem;
+}
+
+.about-contact-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #54657f;
+  font-weight: 650;
+}
+
+.about-contact-link {
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+
 .content-shell {
   position: relative;
   padding-top: 0.4rem;
