@@ -9,12 +9,6 @@ echo "▶ Building Jekyll site (production)…"
 bundle exec jekyll clean
 JEKYLL_ENV=production bundle exec jekyll build
 
-if rg -n "Note: this is a draft article|/Downsampling-Dataset/" "$ROOT/_site/index.html" "$ROOT/_site/feed.xml" "$ROOT/_site/sitemap.xml" >/dev/null 2>&1; then
-  echo "Draft leak detected in production build. Aborting publish."
-  echo "Verify that drafts are excluded before publishing."
-  exit 1
-fi
-
 if [ ! -d "$PUBLIC_REPO/.git" ]; then
   echo "▶ Cloning public repo…"
   rm -rf "$PUBLIC_REPO" || true

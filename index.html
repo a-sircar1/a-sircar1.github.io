@@ -372,40 +372,6 @@
     });
   });
 </script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var root = document.getElementById('layout-root');
-    if (!root) return;
-
-    var buttons = document.querySelectorAll('.layout-btn');
-    var key = 'homeLayoutMode';
-    var allowed = { editorial: true, grid: true, minimal: true };
-
-    function setMode(mode) {
-      if (!allowed[mode]) return;
-      root.classList.remove('layout-editorial', 'layout-grid', 'layout-minimal');
-      root.classList.add('layout-' + mode);
-      buttons.forEach(function (btn) {
-        var active = btn.getAttribute('data-layout') === mode;
-        btn.classList.toggle('is-active', active);
-      });
-      try { localStorage.setItem(key, mode); } catch (_) {}
-    }
-
-    var saved = null;
-    try { saved = localStorage.getItem(key); } catch (_) {}
-    setMode(allowed[saved] ? saved : 'editorial');
-
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        setMode(btn.getAttribute('data-layout'));
-      });
-    });
-  });
-</script>
-
-
-
     
     
 
@@ -440,14 +406,20 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <div class="layout-switcher" aria-label="Homepage layout switcher">
-          <span class="layout-switcher-label">Layout</span>
-          <button class="layout-btn is-active" data-layout="editorial" type="button">Editorial</button>
-          <button class="layout-btn" data-layout="grid" type="button">Grid</button>
-          <button class="layout-btn" data-layout="minimal" type="button">Minimal</button>
-        </div>
+        <section id="top" class="landing-gate">
+  <p class="landing-kicker">Arnab Sircar</p>
+  <h1 class="landing-headline">Models, markets, and machine intelligence.</h1>
+  <p class="landing-subhead">
+    Essays and research on AI economics, financial systems, and statistical machine learning.
+  </p>
+  <div class="landing-actions">
+    <a href="#main-content">Enter site</a>
+    <a href="/archives/">Read writing</a>
+  </div>
+  <div class="landing-orb" aria-hidden="true"></div>
+</section>
 
-        <div id="top" class="hero hero-epic">
+<section class="hero hero-epic" id="main-content">
   <div class="hero-text">
     <h1 class="page-heading">I write about AI economics, financial systems, and statistical machine learning.</h1>
 
@@ -483,25 +455,29 @@
       <p class="hero-signal-meta">Current mode: research + writing + build.</p>
     </div>
   </div>
-</div>
-
-<div id="layout-root" class="home-grid layout-editorial">
-<!-- News / Recent Updates -->
-<section id="news" class="card news-updates block-investigations">
-  <h2>Current Investigations</h2>
-  <ul class="news-list">
-      <li>Building models for illiquid asset pricing and valuation in private markets.</li>
-      <li>Writing essays on AI capacity economics and compute market structure.</li>
-      <li>Developing technical notes that connect theory to deployable methods.</li>
-  </ul>
 </section>
 
-<hr class="section-divider" />
-
 <!-- Recent Blog Posts -->
-<section class="card recent-posts block-writing">
+<section class="card recent-posts">
   <h2>Recent Writing</h2>
   <ul class="post-list">
+      <li class="recent-post-item">
+        <h4 class="recent-post-title">
+          <a class="recent-post-link" href="/2026/01/29/Downsampling-Dataset/">Hard Problems in Disguise: Distribution-Preserving Subsampling via Multiscale Trees, and a Brief Introduction to Optimal Transport</a>
+        </h4>
+        <p class="recent-post-excerpt">
+          A technical essay on distribution-preserving subsampling, multiscale partition methods, and optimal transport intuition.
+        </p>
+        <p class="recent-post-meta">
+          January 29, 2026
+          
+            &bullet;
+            <a href="/categories/statistics">
+              statistics
+            </a>
+          
+        </p>
+      </li>
       <li class="recent-post-item">
         <h4 class="recent-post-title">
           <a class="recent-post-link" href="/2025/12/23/AI-Firms/">The Economics of AI Inference Capacity</a>
@@ -545,7 +521,7 @@
 </section>
 
 <!-- Research / Projects / Other Extended Works -->
-<section id="research" class="card research-section block-research">
+<section id="research" class="card research-section">
   <h2>Research / Projects / Other Extended Works</h2>
   <p><em>Full papers available upon request</em></p>
 
@@ -767,7 +743,6 @@
     </details>
   </article>
 </section>
-</div>
 
       </div>
     </main>

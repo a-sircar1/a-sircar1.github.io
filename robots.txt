@@ -1,5 +1,4 @@
 User-agent: *
 Disallow:
-Disallow: /2026/01/29/Downsampling-Dataset/
 
 Sitemap: https://a-sircar1.github.io/sitemap.xml

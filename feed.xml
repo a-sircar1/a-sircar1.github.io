@@ -12,6 +12,15 @@
   </author>
 
   <entry>
+    <title type="html">Hard Problems in Disguise: Distribution-Preserving Subsampling via Multiscale Trees, and a Brief Introduction to Optimal Transport</title>
+    <link href="https://a-sircar1.github.io/2026/01/29/Downsampling-Dataset/" rel="alternate" type="text/html" />
+    <published>2026-01-29T06:10:56+00:00</published>
+    <updated>2026-01-29T06:10:56+00:00</updated>
+    <id>https://a-sircar1.github.io/2026/01/29/Downsampling-Dataset/</id>
+    <summary type="html">A deep dive into distribution-preserving subsampling via multiscale tree discrepancy and optimal transport geometry.</summary>
+  </entry>
+
+  <entry>
     <title type="html">The Economics of AI Inference Capacity</title>
     <link href="https://a-sircar1.github.io/2025/12/23/AI-Firms/" rel="alternate" type="text/html" />
     <published>2025-12-23T06:10:56+00:00</published>
