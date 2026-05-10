@@ -588,8 +588,8 @@ pre > code {
 }
 
 /**
- * Operator-Scholar refresh
- * Subtle futurist accents while staying editorial.
+ * Visual refresh
+ * Editorial foundation with subtle futurist accents.
  */
 :root {
   --bg: #f5f7fb;
@@ -788,9 +788,177 @@ details.proof-box[open],
   font-size: 0.75em;
 }
 
+.home-visual .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(245, 247, 251, 0.82);
+}
+
+.home-visual .layout-switcher {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.home-visual .layout-switcher-label {
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #4c5e7f;
+  font-weight: 700;
+}
+
+.home-visual .layout-btn {
+  border: 1px solid rgba(33, 74, 171, 0.23);
+  background: rgba(255, 255, 255, 0.84);
+  color: #13337a;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 0.86em;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-visual .layout-btn.is-active {
+  color: white;
+  border-color: #1c47b8;
+  background: linear-gradient(120deg, #2f5fe0, #0f2f7f);
+  box-shadow: 0 0 0 3px rgba(47, 95, 224, 0.2);
+}
+
+.home-visual .hero {
+  position: relative;
+  border: 1px solid rgba(30, 63, 139, 0.2);
+  border-radius: 24px;
+  padding: 28px;
+  background:
+    linear-gradient(130deg, rgba(255, 255, 255, 0.95), rgba(237, 244, 255, 0.92)),
+    radial-gradient(circle at 100% 0%, rgba(41, 89, 216, 0.2), transparent 45%);
+  box-shadow: 0 20px 48px rgba(10, 24, 53, 0.12);
+}
+
+.home-visual .hero::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  right: -50px;
+  top: -80px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(78, 129, 255, 0.25), rgba(78, 129, 255, 0));
+  pointer-events: none;
+}
+
+.home-visual .hero .page-heading {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  margin-bottom: 18px;
+  letter-spacing: -0.03em;
+}
+
+.home-visual .hero-photo-stack {
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-visual .hero-photo-stack img {
+  max-width: 300px;
+}
+
+.home-visual .hero-signal {
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid rgba(36, 73, 158, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 12px 14px;
+}
+
+.home-visual .hero-signal h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+
+.home-visual .hero-signal p {
+  margin: 0 0 6px;
+  color: #344866;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.home-visual .hero-signal-meta {
+  color: #1a3778 !important;
+  font-weight: 600;
+}
+
+.home-visual .home-grid {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.home-visual .block-investigations { grid-area: investigations; }
+.home-visual .block-writing { grid-area: writing; }
+.home-visual .block-research { grid-area: research; }
+
+.home-visual .layout-editorial {
+  grid-template-columns: 1fr 1.5fr;
+  grid-template-areas:
+    "investigations writing"
+    "research research";
+}
+
+.home-visual .layout-grid {
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "writing investigations"
+    "research research";
+}
+
+.home-visual .layout-minimal {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "writing"
+    "investigations"
+    "research";
+}
+
+.home-visual .card {
+  margin-bottom: 0;
+}
+
+.home-visual .block-writing .recent-post-title {
+  font-size: 1.12rem;
+}
+
+.home-visual .block-writing .recent-post-item {
+  padding: 10px 2px;
+}
+
+.home-visual .research-section h2 {
+  margin-bottom: 6px;
+}
+
 @media screen and (max-width: 800px) {
   .post-title {
     font-size: 40px;
+  }
+
+  .home-visual .layout-editorial,
+  .home-visual .layout-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "writing"
+      "investigations"
+      "research";
+  }
+
+  .home-visual .hero {
+    padding: 20px;
   }
 }
 /*# sourceMappingURL=main.css.map */

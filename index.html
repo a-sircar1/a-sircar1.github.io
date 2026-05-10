@@ -372,6 +372,37 @@
     });
   });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var root = document.getElementById('layout-root');
+    if (!root) return;
+
+    var buttons = document.querySelectorAll('.layout-btn');
+    var key = 'homeLayoutMode';
+    var allowed = { editorial: true, grid: true, minimal: true };
+
+    function setMode(mode) {
+      if (!allowed[mode]) return;
+      root.classList.remove('layout-editorial', 'layout-grid', 'layout-minimal');
+      root.classList.add('layout-' + mode);
+      buttons.forEach(function (btn) {
+        var active = btn.getAttribute('data-layout') === mode;
+        btn.classList.toggle('is-active', active);
+      });
+      try { localStorage.setItem(key, mode); } catch (_) {}
+    }
+
+    var saved = null;
+    try { saved = localStorage.getItem(key); } catch (_) {}
+    setMode(allowed[saved] ? saved : 'editorial');
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setMode(btn.getAttribute('data-layout'));
+      });
+    });
+  });
+</script>
 
 
 
@@ -381,7 +412,7 @@
   
   
 
-  <body>
+  <body class="home-visual">
 
     <header class="site-header">
 
@@ -409,9 +440,15 @@
 
     <main class="page-content" aria-label="Content">
       <div class="wrapper">
-        <div id="top" class="hero">
+        <div class="layout-switcher" aria-label="Homepage layout switcher">
+          <span class="layout-switcher-label">Layout</span>
+          <button class="layout-btn is-active" data-layout="editorial" type="button">Editorial</button>
+          <button class="layout-btn" data-layout="grid" type="button">Grid</button>
+          <button class="layout-btn" data-layout="minimal" type="button">Minimal</button>
+        </div>
+
+        <div id="top" class="hero hero-epic">
   <div class="hero-text">
-    <p class="section-title-eyebrow">Operator-Scholar</p>
     <h1 class="page-heading">I write about AI economics, financial systems, and statistical machine learning.</h1>
 
     <p>
@@ -438,13 +475,19 @@
     </ul>
   </div>
 
-  <div class="hero-photo">
+  <div class="hero-photo hero-photo-stack">
     <img src="/assets/img/ASircar.jpeg" alt="Arnab Sircar" />
+    <div class="hero-signal">
+      <h3>Active Tracks</h3>
+      <p>Private markets, AI capacity economics, and robust modeling.</p>
+      <p class="hero-signal-meta">Current mode: research + writing + build.</p>
+    </div>
   </div>
 </div>
 
+<div id="layout-root" class="home-grid layout-editorial">
 <!-- News / Recent Updates -->
-<section id="news" class="card news-updates">
+<section id="news" class="card news-updates block-investigations">
   <h2>Current Investigations</h2>
   <ul class="news-list">
       <li>Building models for illiquid asset pricing and valuation in private markets.</li>
@@ -456,7 +499,7 @@
 <hr class="section-divider" />
 
 <!-- Recent Blog Posts -->
-<section class="card recent-posts">
+<section class="card recent-posts block-writing">
   <h2>Recent Writing</h2>
   <ul class="post-list">
       <li class="recent-post-item">
@@ -497,12 +540,12 @@
   </ul>
 
   <p class="more-posts">
-    <a href="/archives/">View all posts in the blog →</a>
+    <a href="/archives/">View all writing →</a>
   </p>
 </section>
 
 <!-- Research / Projects / Other Extended Works -->
-<section id="research" class="card research-section">
+<section id="research" class="card research-section block-research">
   <h2>Research / Projects / Other Extended Works</h2>
   <p><em>Full papers available upon request</em></p>
 
@@ -724,6 +767,7 @@
     </details>
   </article>
 </section>
+</div>
 
       </div>
     </main>
