@@ -371,11 +371,11 @@
 </script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var canvas = document.getElementById('network-canvas');
+    var canvas = document.getElementById('bg-network-canvas');
     if (canvas) {
       var ctx = canvas.getContext('2d');
       var nodes = [];
-      var count = 44;
+      var count = 96;
 
       function resizeCanvas() {
         var dpr = window.devicePixelRatio || 1;
@@ -392,16 +392,16 @@
           nodes.push({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
-            vx: (Math.random() - 0.5) * 0.35,
-            vy: (Math.random() - 0.5) * 0.35
+            vx: (Math.random() - 0.5) * 0.24,
+            vy: (Math.random() - 0.5) * 0.24
           });
         }
       }
 
       function tick() {
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        ctx.fillStyle = 'rgba(16, 20, 28, 0.68)';
-        ctx.strokeStyle = 'rgba(28, 42, 66, 0.22)';
+        ctx.fillStyle = 'rgba(18, 25, 37, 0.58)';
+        ctx.strokeStyle = 'rgba(37, 58, 94, 0.2)';
 
         for (var i = 0; i < nodes.length; i++) {
           var a = nodes[i];
@@ -415,8 +415,8 @@
             var dx = a.x - b.x;
             var dy = a.y - b.y;
             var d = Math.sqrt(dx * dx + dy * dy);
-            if (d < 170) {
-              ctx.globalAlpha = 1 - d / 170;
+            if (d < 230) {
+              ctx.globalAlpha = 1 - d / 230;
               ctx.beginPath();
               ctx.moveTo(a.x, a.y);
               ctx.lineTo(b.x, b.y);
@@ -429,7 +429,7 @@
         for (var k = 0; k < nodes.length; k++) {
           var n = nodes[k];
           ctx.beginPath();
-          ctx.arc(n.x, n.y, 1.4, 0, Math.PI * 2);
+          ctx.arc(n.x, n.y, 1.25, 0, Math.PI * 2);
           ctx.fill();
         }
         requestAnimationFrame(tick);
@@ -442,6 +442,13 @@
         resizeCanvas();
         initNodes();
       });
+
+      window.addEventListener('scroll', function () {
+        var y = window.scrollY || 0;
+        var opacity = Math.max(0.34, 1 - y / 1700);
+        canvas.style.opacity = String(opacity);
+        canvas.style.transform = 'translateY(' + (-y * 0.09) + 'px)';
+      }, { passive: true });
     }
 
     function typeLine(el, done) {
@@ -460,6 +467,25 @@
       step();
     }
 
+    function typeLineWithLink(el, done) {
+      var chunks = el.querySelectorAll('.typed-chunk');
+      var link = el.querySelector('.typed-link');
+      if (chunks.length < 2 || !link) {
+        if (done) done();
+        return;
+      }
+      chunks[0].textContent = '';
+      chunks[1].textContent = '';
+      link.style.opacity = '0';
+
+      typeLine(chunks[0], function () {
+        link.style.opacity = '1';
+        typeLine(chunks[1], function () {
+          if (done) done();
+        });
+      });
+    }
+
     var typedStarted = false;
     var typedSection = document.getElementById('typed-intro');
     if (typedSection) {
@@ -471,10 +497,18 @@
             var idx = 0;
             function runNext() {
               if (idx >= typedLines.length) return;
-              typeLine(typedLines[idx], function () {
-                idx += 1;
-                runNext();
-              });
+              var line = typedLines[idx];
+              if (line.classList.contains('typed-line-with-link')) {
+                typeLineWithLink(line, function () {
+                  idx += 1;
+                  runNext();
+                });
+              } else {
+                typeLine(line, function () {
+                  idx += 1;
+                  runNext();
+                });
+              }
             }
             runNext();
             observer.disconnect();
@@ -503,6 +537,8 @@
   
 
   <body class="home-cinematic">
+
+    <canvas id="bg-network-canvas" aria-hidden="true"></canvas>
 
     <header class="site-header">
 
@@ -535,13 +571,14 @@
           <a href="#research">Research / Projects</a>
           <a href="#about-jump">About</a>
         </nav>
-        <canvas id="network-canvas" aria-hidden="true"></canvas>
         <div class="landing-name">Arnab Sircar</div>
       </section>
 
       <section id="typed-intro" class="typed-intro wrapper reveal-on-scroll">
         <p class="typed-line" data-text="I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science."></p>
-        <p class="typed-line" data-text="I currently focus on illiquid asset valuation and private markets research, advised by Chris Geczy in Wharton's Finance department."></p>
+        <p class="typed-line typed-line-with-link">
+          <span class="typed-chunk" data-text="I currently focus on illiquid asset valuation and private markets research, advised by "></span><a class="typed-link" href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a><span class="typed-chunk" data-text=" in Wharton's Finance department."></span>
+        </p>
       </section>
 
       <div class="wrapper content-shell">
