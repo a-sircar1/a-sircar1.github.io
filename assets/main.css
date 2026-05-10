@@ -947,20 +947,27 @@ details.proof-box[open],
 
 .typed-intro {
   padding-top: 2.8rem;
-  padding-bottom: 1.2rem;
-  background: transparent;
+  padding-bottom: 1.6rem;
+  background: rgba(252, 254, 255, 0.86);
+  border: 1px solid rgba(165, 183, 212, 0.34);
+  border-radius: 14px;
+  box-shadow: 0 16px 30px rgba(24, 42, 70, 0.08);
   min-height: 9.5rem;
   position: relative;
   z-index: 3;
+  max-width: 880px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .typed-line {
-  margin: 0 0 0.85rem;
-  max-width: 78ch;
-  color: #2e3d59;
+  margin: 0 auto 0.95rem;
+  max-width: 74ch;
+  color: #273957;
   font-size: 1.08rem;
   line-height: 1.65;
   min-height: 1.65em;
+  font-weight: 560;
 }
 
 .typed-fade {
@@ -983,7 +990,7 @@ details.proof-box[open],
 .typed-line .typed-link {
   color: #1f4c93;
   text-decoration: none;
-  border-bottom: 1px solid rgba(31, 76, 147, 0.32);
+  border-bottom: 1px solid rgba(31, 76, 147, 0.46);
   transition: opacity 220ms ease;
 }
 
@@ -1221,6 +1228,13 @@ details.proof-box[open],
 
   .typed-line {
     font-size: 1rem;
+  }
+
+  .typed-intro {
+    border-radius: 12px;
+    padding-top: 2.2rem;
+    padding-bottom: 1.25rem;
+    text-align: left;
   }
 
   .ocean-sweep {
