@@ -587,4 +587,210 @@ pre > code {
   color: #727272;
 }
 
+/**
+ * Operator-Scholar refresh
+ * Subtle futurist accents while staying editorial.
+ */
+:root {
+  --bg: #f5f7fb;
+  --surface: rgba(255, 255, 255, 0.84);
+  --surface-border: rgba(38, 58, 90, 0.14);
+  --text: #0d1a2b;
+  --muted: #5a677a;
+  --heading: #0a1222;
+  --brand: #2959d8;
+  --brand-soft: #5f86f6;
+  --brand-glow: rgba(41, 89, 216, 0.18);
+}
+
+body {
+  font: 400 17px/1.72 "Inter", "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(95, 134, 246, 0.14), transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(41, 89, 216, 0.07), transparent 35%),
+    var(--bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--brand);
+}
+
+a:hover {
+  color: #0c245f;
+}
+
+.wrapper {
+  max-width: 900px;
+}
+
+.site-header {
+  min-height: 72px;
+  border-bottom: 1px solid rgba(20, 40, 78, 0.12);
+  backdrop-filter: blur(5px);
+}
+
+.site-title {
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 72px;
+}
+
+.site-nav {
+  line-height: 72px;
+}
+
+.site-nav .page-link {
+  color: var(--text);
+  font-weight: 500;
+  opacity: 0.92;
+}
+
+.site-nav .page-link:hover {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.page-content {
+  padding-top: 42px;
+  padding-bottom: 46px;
+}
+
+.hero-text p {
+  color: var(--muted);
+  max-width: 64ch;
+}
+
+.hero-photo img {
+  border: 1px solid rgba(48, 83, 156, 0.28) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 42px rgba(12, 30, 66, 0.2);
+}
+
+.card,
+.toc-wrap,
+details.proof-box[open],
+.pagination {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(7, 24, 56, 0.06);
+}
+
+.section-divider {
+  border-top-color: rgba(30, 56, 101, 0.18);
+}
+
+.page-heading {
+  font-size: 37px;
+  margin-bottom: 16px;
+}
+
+.post-title {
+  font-size: 50px;
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+
+.post-meta {
+  color: var(--muted);
+}
+
+.post-content p,
+.post-content li {
+  color: #1f2a3b;
+}
+
+.post-content h2,
+.post-content h3 {
+  margin-top: 28px;
+}
+
+.post-archives .post-link {
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.post-archives > li:not(:last-child) {
+  border-bottom: 1px solid rgba(21, 48, 93, 0.11);
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+
+.site-footer {
+  border-top: 1px solid rgba(20, 40, 78, 0.12);
+  color: var(--muted);
+}
+
+.focus-list,
+.quick-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.focus-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.focus-list li {
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(41, 89, 216, 0.18);
+  background: rgba(41, 89, 216, 0.08);
+  color: #1a356d;
+  font-size: 0.85em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.quick-links a {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(41, 89, 216, 0.28);
+  background: white;
+  color: #16326d;
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.quick-links a:hover {
+  background: #f1f5ff;
+  box-shadow: 0 0 0 3px var(--brand-glow);
+  text-decoration: none;
+}
+
+.section-title-eyebrow {
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #4b5f80;
+  font-weight: 600;
+  font-size: 0.75em;
+}
+
+@media screen and (max-width: 800px) {
+  .post-title {
+    font-size: 40px;
+  }
+}
 /*# sourceMappingURL=main.css.map */

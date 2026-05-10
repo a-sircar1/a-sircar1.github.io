@@ -4,6 +4,12 @@ set -euo pipefail
 bundle exec jekyll clean
 JEKYLL_ENV=production bundle exec jekyll build
 
+if rg -n "Note: this is a draft article|/Downsampling-Dataset/" "_site/index.html" "_site/feed.xml" "_site/sitemap.xml" >/dev/null 2>&1; then
+  echo "Draft leak detected in production build. Aborting publish."
+  echo "Verify that drafts are excluded before publishing."
+  exit 1
+fi
+
 PUBLIC_REPO="../a-sircar1.github.io"
 REMOTE_URL="https://github.com/a-sircar1/a-sircar1.github.io.git"
 
