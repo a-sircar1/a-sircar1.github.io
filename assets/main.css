@@ -889,52 +889,47 @@ details.proof-box[open],
 
 .mosaic-cluster {
   position: absolute;
-  right: clamp(1.1rem, 6vw, 5.8rem);
-  top: clamp(4rem, 18vh, 12rem);
-  width: min(44vw, 500px);
-  height: min(56vh, 470px);
+  right: clamp(0.8rem, 5.3vw, 5.4rem);
+  top: clamp(4.4rem, 17vh, 11.6rem);
+  width: min(46vw, 560px);
+  height: min(57vh, 500px);
   z-index: 2;
   pointer-events: none;
-  transform-style: preserve-3d;
-  perspective: 900px;
-  opacity: 0.98;
-  transition: opacity 360ms linear, transform 380ms ease-out;
+  opacity: 0.97;
+  transition: opacity 360ms linear, transform 420ms ease-out;
+  filter: saturate(1.05) contrast(1.03);
+  border-radius: 22px;
+  overflow: hidden;
 }
 
-.mosaic-cluster .tile {
+.mosaic-cluster::before {
+  content: "";
   position: absolute;
-  --tz: 40px;
-  --r0: 0deg;
-  --r1: 4deg;
-  border: 1px solid rgba(49, 72, 110, 0.25);
-  border-radius: 16px;
-  box-shadow:
-    0 18px 32px rgba(18, 27, 41, 0.16),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.38);
-  backdrop-filter: blur(1px);
+  inset: -6% -8% -10% -8%;
   background:
-    linear-gradient(145deg, rgba(247, 250, 255, 0.84), rgba(206, 217, 238, 0.42)),
-    repeating-linear-gradient(75deg, rgba(28, 45, 71, 0.06) 0 2px, rgba(245, 248, 255, 0.05) 2px 8px);
-  animation: mosaic-float 9.5s ease-in-out infinite;
+    radial-gradient(circle at 28% 22%, rgba(232, 244, 255, 0.76), rgba(159, 201, 240, 0.2) 52%, rgba(68, 109, 169, 0.02) 72%),
+    radial-gradient(circle at 72% 58%, rgba(138, 189, 236, 0.34), rgba(89, 140, 206, 0.08) 60%, rgba(55, 89, 142, 0.02) 84%);
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 
-.mosaic-cluster .t1 { width: 32%; height: 28%; left: 7%;  top: 8%;  --tz: 38px; --r0: -7deg; --r1: -2deg; animation-delay: -1.6s; }
-.mosaic-cluster .t2 { width: 38%; height: 24%; left: 46%; top: 4%;  --tz: 60px; --r0: 6deg;  --r1: 2deg;  animation-delay: -3.1s; }
-.mosaic-cluster .t3 { width: 24%; height: 20%; left: 0;   top: 38%; --tz: 22px; --r0: -3deg; --r1: 1deg;  animation-delay: -4.5s; }
-.mosaic-cluster .t4 { width: 33%; height: 31%; left: 27%; top: 29%; --tz: 84px; --r0: 5deg;  --r1: 1deg;  animation-delay: -2.3s; }
-.mosaic-cluster .t5 { width: 30%; height: 24%; left: 63%; top: 31%; --tz: 48px; --r0: -8deg; --r1: -2deg; animation-delay: -5.2s; }
-.mosaic-cluster .t6 { width: 28%; height: 22%; left: 10%; top: 66%; --tz: 34px; --r0: 7deg;  --r1: 3deg;  animation-delay: -0.8s; }
-.mosaic-cluster .t7 { width: 35%; height: 25%; left: 40%; top: 60%; --tz: 68px; --r0: -4deg; --r1: 0deg;  animation-delay: -6.2s; }
-.mosaic-cluster .t8 { width: 20%; height: 17%; left: 77%; top: 57%; --tz: 28px; --r0: 8deg;  --r1: 4deg;  animation-delay: -2.9s; }
-.mosaic-cluster .t9 { width: 22%; height: 18%; left: 70%; top: 76%; --tz: 50px; --r0: -6deg; --r1: -1deg; animation-delay: -4.1s; }
+#ocean-mosaic-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.96;
+}
 
-@keyframes mosaic-float {
-  0%, 100% {
-    transform: translateY(0) translateZ(var(--tz)) rotate(var(--r0));
-  }
-  50% {
-    transform: translateY(-12px) translateZ(calc(var(--tz) + 16px)) rotate(var(--r1));
-  }
+.mosaic-cluster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(130deg, rgba(246, 251, 255, 0.16), rgba(132, 182, 236, 0.05) 42%, rgba(70, 126, 201, 0.14) 72%, rgba(34, 67, 119, 0.06));
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .landing-name {
@@ -993,15 +988,19 @@ details.proof-box[open],
 
 .typed-fade {
   opacity: 0;
-  transition: opacity 700ms ease;
+  transform: translateY(13px);
+  filter: blur(5px);
+  transition: opacity 900ms ease, transform 900ms ease, filter 900ms ease;
 }
 
 .typed-fade.typed-fade-delayed {
-  transition-delay: 220ms;
+  transition-delay: 280ms;
 }
 
-#typed-intro.is-visible .typed-fade {
+#typed-intro.intro-visible .typed-fade {
   opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 .typed-line .typed-link {
@@ -1040,10 +1039,6 @@ details.proof-box[open],
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 650ms ease, transform 650ms ease;
-}
-
-#typed-intro.reveal-on-scroll {
-  transform: none;
 }
 
 .reveal-on-scroll.is-visible {
@@ -1252,11 +1247,11 @@ details.proof-box[open],
   }
 
   .mosaic-cluster {
-    width: min(64vw, 320px);
-    height: min(42vh, 260px);
-    top: clamp(8rem, 20vh, 10.5rem);
+    width: min(68vw, 360px);
+    height: min(44vh, 280px);
+    top: clamp(8rem, 19vh, 10.2rem);
     right: 0.6rem;
-    opacity: 0.8;
+    opacity: 0.82;
   }
 
   .home-visual .landing-gate {

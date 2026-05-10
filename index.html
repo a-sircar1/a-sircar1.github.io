@@ -373,6 +373,13 @@
   document.addEventListener('DOMContentLoaded', function () {
     var canvas = document.getElementById('bg-network-canvas');
     var mosaic = document.querySelector('.mosaic-cluster');
+    var mosaicCanvas = document.getElementById('ocean-mosaic-canvas');
+    var mosaicCtx = mosaicCanvas ? mosaicCanvas.getContext('2d') : null;
+    var mosaicW = 0;
+    var mosaicH = 0;
+    var mosaicTime = 0;
+    var mosaicScatter = 0;
+    var mosaicScroll = 0;
     if (canvas) {
       var ctx = canvas.getContext('2d');
       var nodes = [];
@@ -446,18 +453,137 @@
 
       window.addEventListener('scroll', function () {
         var y = window.scrollY || 0;
+        mosaicScroll = y;
         var opacity = Math.max(0.34, 1 - y / 1700);
         canvas.style.opacity = String(opacity);
         canvas.style.transform = 'translateY(' + (-y * 0.09) + 'px)';
         if (mosaic) {
-          var drift = Math.min(220, y * 0.28);
-          var rotate = Math.min(14, y * 0.012);
-          var fade = Math.max(0, 1 - y / 760);
+          var drift = Math.min(250, y * 0.32);
+          var rotate = Math.min(11, y * 0.009);
+          var fade = Math.max(0, 1 - y / 820);
+          mosaicScatter = Math.min(1, y / 640);
           mosaic.style.opacity = String(fade);
           mosaic.style.transform =
-            'translate3d(' + (drift * 0.52) + 'px,' + (-drift * 0.28) + 'px,0) rotate(' + rotate + 'deg) scale(' + (1 - Math.min(0.14, y / 2200)) + ')';
+            'translate3d(' + (drift * 0.44) + 'px,' + (-drift * 0.26) + 'px,0) rotate(' + rotate + 'deg) scale(' + (1 - Math.min(0.12, y / 2400)) + ')';
         }
       }, { passive: true });
+    }
+
+    function resizeMosaic() {
+      if (!mosaic || !mosaicCanvas || !mosaicCtx) return;
+      var rect = mosaic.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      var width = Math.max(1, Math.floor(rect.width));
+      var height = Math.max(1, Math.floor(rect.height));
+      mosaicW = width;
+      mosaicH = height;
+      mosaicCanvas.width = Math.floor(width * dpr);
+      mosaicCanvas.height = Math.floor(height * dpr);
+      mosaicCanvas.style.width = width + 'px';
+      mosaicCanvas.style.height = height + 'px';
+      mosaicCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function blendColor(c1, c2, t) {
+      var r = Math.round(lerp(c1[0], c2[0], t));
+      var g = Math.round(lerp(c1[1], c2[1], t));
+      var b = Math.round(lerp(c1[2], c2[2], t));
+      return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+    }
+
+    function drawMosaicWave() {
+      if (!mosaic || !mosaicCanvas || !mosaicCtx || !mosaicW || !mosaicH) {
+        requestAnimationFrame(drawMosaicWave);
+        return;
+      }
+      mosaicTime += 0.014;
+      mosaicCtx.clearRect(0, 0, mosaicW, mosaicH);
+
+      var baseA = [206, 223, 247];
+      var baseB = [153, 193, 233];
+      var baseC = [78, 131, 198];
+      var cellBase = Math.max(7, Math.round(mosaicW / 45));
+      var cols = Math.ceil(mosaicW / cellBase);
+      var rows = Math.ceil(mosaicH / cellBase);
+
+      for (var y = 0; y < rows; y++) {
+        for (var x = 0; x < cols; x++) {
+          var px = x * cellBase;
+          var py = y * cellBase;
+          var nx = x / Math.max(1, cols - 1);
+          var ny = y / Math.max(1, rows - 1);
+
+          var waveBand = 0.52 + 0.22 * Math.sin(nx * 7.5 + mosaicTime * 1.9) + 0.1 * Math.cos(nx * 3.3 + mosaicTime * 0.8);
+          var crest = Math.exp(-Math.pow((ny - waveBand) * 6.1, 2));
+          var flow = 0.28 + 0.72 * crest;
+          var hueBlend = 0.52 + 0.48 * Math.sin((nx + ny * 0.4) * 4.9 + mosaicTime * 1.2);
+
+          var cMid = blendColor(baseA, baseB, hueBlend * 0.76);
+          var cDeep = blendColor(baseB, baseC, Math.min(1, flow * 0.92));
+          var alpha = Math.min(0.9, 0.24 + flow * 0.56) * (1 - mosaicScatter * 0.58);
+
+          var scatterX = (Math.sin((x + y) * 0.8 + mosaicTime * 6.4) * 8 + Math.cos(y * 1.3 + mosaicTime * 4.3) * 6) * mosaicScatter;
+          var scatterY = (Math.cos((x - y) * 0.63 + mosaicTime * 5.2) * 9 + Math.sin(x * 1.2 + mosaicTime * 3.2) * 5) * mosaicScatter;
+          var sizeJitter = 1 + 0.45 * Math.sin((x * 0.7 + y * 0.9) + mosaicTime * 2.4) * (1 - mosaicScatter * 0.35);
+          var tile = cellBase * sizeJitter;
+
+          mosaicCtx.globalAlpha = alpha;
+          mosaicCtx.fillStyle = cMid;
+          mosaicCtx.fillRect(px + scatterX, py + scatterY, tile, tile);
+
+          mosaicCtx.globalAlpha = Math.max(0.04, alpha * 0.46);
+          mosaicCtx.fillStyle = cDeep;
+          mosaicCtx.fillRect(px + scatterX + tile * 0.12, py + scatterY + tile * 0.12, tile * 0.76, tile * 0.76);
+        }
+      }
+
+      // A translucent flowing ridge to keep the wave cohesive.
+      mosaicCtx.globalAlpha = Math.max(0.18, 0.42 - mosaicScatter * 0.18);
+      var ridge = mosaicCtx.createLinearGradient(0, mosaicH * 0.15, mosaicW, mosaicH * 0.78);
+      ridge.addColorStop(0, 'rgba(225, 240, 255, 0.04)');
+      ridge.addColorStop(0.35, 'rgba(180, 214, 248, 0.34)');
+      ridge.addColorStop(0.68, 'rgba(112, 165, 224, 0.22)');
+      ridge.addColorStop(1, 'rgba(75, 126, 192, 0.08)');
+      mosaicCtx.fillStyle = ridge;
+      mosaicCtx.beginPath();
+      mosaicCtx.moveTo(0, mosaicH * (0.53 + Math.sin(mosaicTime) * 0.03));
+      for (var i = 0; i <= mosaicW; i += 14) {
+        var ny2 = 0.55 + 0.16 * Math.sin((i / mosaicW) * 7.8 + mosaicTime * 1.6) + 0.06 * Math.cos((i / mosaicW) * 3.2 + mosaicTime * 0.9);
+        mosaicCtx.lineTo(i, mosaicH * ny2);
+      }
+      mosaicCtx.lineTo(mosaicW, mosaicH);
+      mosaicCtx.lineTo(0, mosaicH);
+      mosaicCtx.closePath();
+      mosaicCtx.fill();
+
+      requestAnimationFrame(drawMosaicWave);
+    }
+
+    if (mosaicCanvas && mosaicCtx) {
+      resizeMosaic();
+      drawMosaicWave();
+      window.addEventListener('resize', resizeMosaic);
+    }
+
+    var typedIntro = document.getElementById('typed-intro');
+    if (typedIntro) {
+      var introObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                typedIntro.classList.add('intro-visible');
+              });
+            });
+            introObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.45 });
+      introObserver.observe(typedIntro);
     }
 
     var revealItems = document.querySelectorAll('.reveal-on-scroll');
@@ -514,20 +640,12 @@
           <a href="#about-jump">About</a>
         </nav>
         <div class="mosaic-cluster" aria-hidden="true">
-          <span class="tile t1"></span>
-          <span class="tile t2"></span>
-          <span class="tile t3"></span>
-          <span class="tile t4"></span>
-          <span class="tile t5"></span>
-          <span class="tile t6"></span>
-          <span class="tile t7"></span>
-          <span class="tile t8"></span>
-          <span class="tile t9"></span>
+          <canvas id="ocean-mosaic-canvas"></canvas>
         </div>
         <div class="landing-name">Arnab Sircar</div>
       </section>
 
-      <section id="typed-intro" class="typed-intro wrapper reveal-on-scroll">
+      <section id="typed-intro" class="typed-intro wrapper">
         <p class="typed-line typed-fade">
           I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science.
         </p>
