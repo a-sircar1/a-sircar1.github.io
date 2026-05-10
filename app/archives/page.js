@@ -20,7 +20,7 @@ export default function ArchivesPage() {
         <ul className="post-list archive-list">
           {posts.map((post) => (
             <li key={post.slug}>
-              <a href={post.href} target="_blank" rel="noopener noreferrer">
+              <a href={post.href}>
                 <h3>{post.title}</h3>
               </a>
               <span>

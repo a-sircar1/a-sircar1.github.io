@@ -2,6 +2,8 @@ import FloatingTabs from "@/components/FloatingTabs";
 import { intro, navTabs, posts, research, siteMeta } from "@/data/siteContent";
 
 export default function HomePage() {
+  const recentPosts = posts.slice(0, 3);
+
   return (
     <main className="site-shell">
       <FloatingTabs tabs={navTabs} />
@@ -20,9 +22,9 @@ export default function HomePage() {
       <section className="panel" id="recent-writing">
         <h2>Recent Writing</h2>
         <ul className="post-list">
-          {posts.map((post) => (
+          {recentPosts.map((post) => (
             <li key={post.slug}>
-              <a href={post.href} target="_blank" rel="noopener noreferrer">
+              <a href={post.href}>
                 <h3>{post.title}</h3>
               </a>
               <p>{post.excerpt}</p>
@@ -33,8 +35,24 @@ export default function HomePage() {
           ))}
         </ul>
         <p className="panel-link">
-          <a href="/archives">View writing index →</a>
+          <a href="#writing-index">View full writing index ↓</a>
         </p>
+      </section>
+
+      <section className="panel" id="writing-index">
+        <h2>Writing Index</h2>
+        <ul className="post-list archive-list">
+          {posts.map((post) => (
+            <li key={`${post.slug}-archive`}>
+              <a href={post.href}>
+                <h3>{post.title}</h3>
+              </a>
+              <span>
+                {post.date} · {post.category}
+              </span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="panel" id="research">
@@ -47,6 +65,17 @@ export default function HomePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="panel" id="about-jump">
+        <h2>About</h2>
+        <p>
+          I enjoy building rigorous frameworks, writing clear arguments, and connecting
+          theory with real market behavior.
+        </p>
+        <p className="panel-link">
+          <a href="/about">Read full profile →</a>
+        </p>
       </section>
     </main>
   );
