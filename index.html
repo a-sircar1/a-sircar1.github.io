@@ -380,6 +380,8 @@
     var sweepTime = 0;
     var sweepProgress = 0;
     var introRevealed = false;
+    var typedIntro = document.getElementById('typed-intro');
+    var floatingTabs = document.querySelector('.floating-min-tabs');
     if (canvas) {
       var ctx = canvas.getContext('2d');
       var nodes = [];
@@ -558,7 +560,6 @@
       if (sweep) {
         sweep.style.opacity = String(Math.max(0, 1 - Math.max(0, sweepProgress - 0.86) * 6.8));
       }
-      var typedIntro = document.getElementById('typed-intro');
       if (typedIntro && !introRevealed) {
         var introTop = typedIntro.getBoundingClientRect().top;
         if (introTop <= window.innerHeight * 0.86) {
@@ -566,9 +567,15 @@
           typedIntro.classList.add('intro-visible');
         }
       }
+      if (floatingTabs && typedIntro) {
+        var sideMode = typedIntro.getBoundingClientRect().top <= 0;
+        floatingTabs.classList.toggle('is-side', sideMode);
+        if (!sideMode) {
+          floatingTabs.classList.remove('is-open');
+        }
+      }
     }
 
-    var typedIntro = document.getElementById('typed-intro');
     if (typedIntro) {
       setTimeout(updateSceneFromScroll, 120);
     }
@@ -580,6 +587,25 @@
     }
     window.addEventListener('scroll', updateSceneFromScroll, { passive: true });
     window.addEventListener('resize', updateSceneFromScroll);
+    window.addEventListener('mousemove', function (event) {
+      if (!floatingTabs || !floatingTabs.classList.contains('is-side')) return;
+      var nearRightEdge = event.clientX >= window.innerWidth - 190;
+      floatingTabs.classList.toggle('is-open', nearRightEdge);
+    }, { passive: true });
+    if (floatingTabs) {
+      floatingTabs.addEventListener('mouseenter', function () {
+        if (floatingTabs.classList.contains('is-side')) floatingTabs.classList.add('is-open');
+      });
+      floatingTabs.addEventListener('mouseleave', function () {
+        if (floatingTabs.classList.contains('is-side')) floatingTabs.classList.remove('is-open');
+      });
+      floatingTabs.addEventListener('focusin', function () {
+        if (floatingTabs.classList.contains('is-side')) floatingTabs.classList.add('is-open');
+      });
+      floatingTabs.addEventListener('focusout', function () {
+        if (floatingTabs.classList.contains('is-side')) floatingTabs.classList.remove('is-open');
+      });
+    }
     updateSceneFromScroll();
 
     var revealItems = document.querySelectorAll('.reveal-on-scroll');
@@ -641,14 +667,16 @@
         <div class="landing-name">Arnab Sircar</div>
       </section>
 
-      <section id="typed-intro" class="typed-intro wrapper card">
-        <p class="typed-line typed-fade">
-          I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science.
-        </p>
-        <p class="typed-line typed-fade typed-fade-delayed">
-          I currently focus on illiquid asset valuation and private markets research, advised by <a class="typed-link" href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a> in Wharton's Finance department.
-        </p>
-      </section>
+      <div class="wrapper">
+        <section id="typed-intro" class="typed-intro card">
+          <p class="typed-line typed-fade">
+            I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science.
+          </p>
+          <p class="typed-line typed-fade typed-fade-delayed">
+            I currently focus on illiquid asset valuation and private markets research, advised by <a class="typed-link" href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a> in Wharton's Finance department.
+          </p>
+        </section>
+      </div>
 
       <div class="wrapper content-shell">
 
