@@ -369,13 +369,140 @@
     });
   });
 </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var canvas = document.getElementById('network-canvas');
+    if (canvas) {
+      var ctx = canvas.getContext('2d');
+      var nodes = [];
+      var count = 44;
+
+      function resizeCanvas() {
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function initNodes() {
+        nodes = [];
+        for (var i = 0; i < count; i++) {
+          nodes.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35
+          });
+        }
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        ctx.fillStyle = 'rgba(16, 20, 28, 0.68)';
+        ctx.strokeStyle = 'rgba(28, 42, 66, 0.22)';
+
+        for (var i = 0; i < nodes.length; i++) {
+          var a = nodes[i];
+          a.x += a.vx;
+          a.y += a.vy;
+          if (a.x < 0 || a.x > window.innerWidth) a.vx *= -1;
+          if (a.y < 0 || a.y > window.innerHeight) a.vy *= -1;
+
+          for (var j = i + 1; j < nodes.length; j++) {
+            var b = nodes[j];
+            var dx = a.x - b.x;
+            var dy = a.y - b.y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 170) {
+              ctx.globalAlpha = 1 - d / 170;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        ctx.globalAlpha = 1;
+        for (var k = 0; k < nodes.length; k++) {
+          var n = nodes[k];
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 1.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        requestAnimationFrame(tick);
+      }
+
+      resizeCanvas();
+      initNodes();
+      tick();
+      window.addEventListener('resize', function () {
+        resizeCanvas();
+        initNodes();
+      });
+    }
+
+    function typeLine(el, done) {
+      var text = el.getAttribute('data-text') || '';
+      var i = 0;
+      el.textContent = '';
+      function step() {
+        if (i <= text.length) {
+          el.textContent = text.slice(0, i);
+          i += 1;
+          setTimeout(step, 14);
+        } else if (done) {
+          done();
+        }
+      }
+      step();
+    }
+
+    var typedStarted = false;
+    var typedSection = document.getElementById('typed-intro');
+    if (typedSection) {
+      var typedLines = Array.prototype.slice.call(typedSection.querySelectorAll('.typed-line'));
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !typedStarted) {
+            typedStarted = true;
+            var idx = 0;
+            function runNext() {
+              if (idx >= typedLines.length) return;
+              typeLine(typedLines[idx], function () {
+                idx += 1;
+                runNext();
+              });
+            }
+            runNext();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.4 });
+      observer.observe(typedSection);
+    }
+
+    var revealItems = document.querySelectorAll('.reveal-on-scroll');
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+    revealItems.forEach(function (el) { revealObserver.observe(el); });
+  });
+</script>
     
     
 
   
   
 
-  <body>
+  <body class="home-cinematic">
 
     <header class="site-header">
 
@@ -402,27 +529,25 @@
 
 
     <main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <section id="top" class="card modern-hero">
-  <p class="hero-kicker">Arnab Sircar</p>
-  <h1 class="page-heading">Essays and research on AI economics, financial systems, and statistical machine learning.</h1>
-  <p class="hero-lead">
-    I am a student at the University of Pennsylvania studying mathematical economics and computer science. My work centers on rigorous models that stay honest to market structure and implementation constraints.
-  </p>
-  <p class="hero-lead">
-    I currently focus on illiquid asset valuation and private markets research, advised by <a href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a> in Wharton's Finance department.
-  </p>
-  <nav class="section-tabs-inline" aria-label="Primary sections">
-    <a href="#recent-writing">Recent Writing</a>
-    <a href="#research">Research / Projects</a>
-    <a href="#about-jump">About</a>
-  </nav>
-</section>
+      <section id="top" class="landing-full">
+        <nav class="floating-min-tabs" aria-label="Primary sections">
+          <a href="#recent-writing">Recent Writing</a>
+          <a href="#research">Research / Projects</a>
+          <a href="#about-jump">About</a>
+        </nav>
+        <canvas id="network-canvas" aria-hidden="true"></canvas>
+        <div class="landing-name">Arnab Sircar</div>
+      </section>
 
-<hr class="section-divider" />
+      <section id="typed-intro" class="typed-intro wrapper reveal-on-scroll">
+        <p class="typed-line" data-text="I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science."></p>
+        <p class="typed-line" data-text="I currently focus on illiquid asset valuation and private markets research, advised by Chris Geczy in Wharton's Finance department."></p>
+      </section>
+
+      <div class="wrapper content-shell">
 
 <!-- Recent Blog Posts -->
-<section id="recent-writing" class="card recent-posts">
+<section id="recent-writing" class="card recent-posts reveal-on-scroll">
   <h2>Recent Writing</h2>
   <ul class="post-list">
       <li class="recent-post-item">
@@ -485,7 +610,7 @@
 </section>
 
 <!-- Research / Projects / Other Extended Works -->
-<section id="research" class="card research-section">
+<section id="research" class="card research-section reveal-on-scroll">
   <h2>Research / Projects / Other Extended Works</h2>
   <p><em>Full papers available upon request</em></p>
 
@@ -708,7 +833,7 @@
   </article>
 </section>
 
-<section id="about-jump" class="card about-jump">
+<section id="about-jump" class="card about-jump reveal-on-scroll">
   <h2>About</h2>
   <p>Background, interests, and ways to connect.</p>
   <p><a href="/about/">Read the full about page →</a></p>

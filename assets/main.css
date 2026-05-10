@@ -857,6 +857,108 @@ details.proof-box[open],
   color: #f3f7ff;
 }
 
+.home-cinematic .site-header {
+  display: none;
+}
+
+.home-cinematic .page-content {
+  padding: 0;
+}
+
+.landing-full {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 0%, #eff4ff 0%, #e5ebf8 45%, #dde5f6 100%);
+}
+
+#network-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.landing-name {
+  position: absolute;
+  top: clamp(2.8rem, 8vh, 5.2rem);
+  left: clamp(1.1rem, 5vw, 4.6rem);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: clamp(3rem, 10vw, 8.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #0f1829;
+  z-index: 2;
+}
+
+.floating-min-tabs {
+  position: fixed;
+  top: 1.05rem;
+  right: 1.1rem;
+  z-index: 6;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.floating-min-tabs a {
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #21365f;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(41, 72, 136, 0.26);
+  border-radius: 999px;
+  padding: 0.44rem 0.64rem;
+}
+
+.floating-min-tabs a:hover {
+  background: #203764;
+  color: #f5f9ff;
+}
+
+.typed-intro {
+  padding-top: 2.4rem;
+  padding-bottom: 1.2rem;
+}
+
+.typed-line {
+  margin: 0 0 0.85rem;
+  max-width: 78ch;
+  color: #2e3d59;
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.content-shell {
+  position: relative;
+  padding-top: 2.4rem;
+}
+
+.content-shell::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(226, 233, 248, 0), rgba(226, 233, 248, 0.88));
+  pointer-events: none;
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 650ms ease, transform 650ms ease;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .home-visual .site-header {
   display: none;
 }
@@ -1041,6 +1143,20 @@ details.proof-box[open],
 @media screen and (max-width: 800px) {
   .post-title {
     font-size: 40px;
+  }
+
+  .floating-min-tabs {
+    top: auto;
+    right: auto;
+    left: 50%;
+    bottom: 0.8rem;
+    transform: translateX(-50%);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .typed-line {
+    font-size: 1rem;
   }
 
   .home-visual .landing-gate {
