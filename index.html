@@ -372,6 +372,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var canvas = document.getElementById('bg-network-canvas');
+    var mosaic = document.querySelector('.mosaic-cluster');
     if (canvas) {
       var ctx = canvas.getContext('2d');
       var nodes = [];
@@ -448,74 +449,15 @@
         var opacity = Math.max(0.34, 1 - y / 1700);
         canvas.style.opacity = String(opacity);
         canvas.style.transform = 'translateY(' + (-y * 0.09) + 'px)';
-      }, { passive: true });
-    }
-
-    function typeLine(el, done) {
-      var text = el.getAttribute('data-text') || '';
-      var i = 0;
-      el.textContent = '';
-      function step() {
-        if (i <= text.length) {
-          el.textContent = text.slice(0, i);
-          i += 1;
-          setTimeout(step, 14);
-        } else if (done) {
-          done();
+        if (mosaic) {
+          var drift = Math.min(220, y * 0.28);
+          var rotate = Math.min(14, y * 0.012);
+          var fade = Math.max(0, 1 - y / 760);
+          mosaic.style.opacity = String(fade);
+          mosaic.style.transform =
+            'translate3d(' + (drift * 0.52) + 'px,' + (-drift * 0.28) + 'px,0) rotate(' + rotate + 'deg) scale(' + (1 - Math.min(0.14, y / 2200)) + ')';
         }
-      }
-      step();
-    }
-
-    function typeLineWithLink(el, done) {
-      var chunks = el.querySelectorAll('.typed-chunk');
-      var link = el.querySelector('.typed-link');
-      if (chunks.length < 2 || !link) {
-        if (done) done();
-        return;
-      }
-      chunks[0].textContent = '';
-      chunks[1].textContent = '';
-      link.style.opacity = '0';
-
-      typeLine(chunks[0], function () {
-        link.style.opacity = '1';
-        typeLine(chunks[1], function () {
-          if (done) done();
-        });
-      });
-    }
-
-    var typedStarted = false;
-    var typedSection = document.getElementById('typed-intro');
-    if (typedSection) {
-      var typedLines = Array.prototype.slice.call(typedSection.querySelectorAll('.typed-line'));
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting && !typedStarted) {
-            typedStarted = true;
-            var idx = 0;
-            function runNext() {
-              if (idx >= typedLines.length) return;
-              var line = typedLines[idx];
-              if (line.classList.contains('typed-line-with-link')) {
-                typeLineWithLink(line, function () {
-                  idx += 1;
-                  runNext();
-                });
-              } else {
-                typeLine(line, function () {
-                  idx += 1;
-                  runNext();
-                });
-              }
-            }
-            runNext();
-            observer.disconnect();
-          }
-        });
-      }, { threshold: 0.4 });
-      observer.observe(typedSection);
+      }, { passive: true });
     }
 
     var revealItems = document.querySelectorAll('.reveal-on-scroll');
@@ -571,13 +513,26 @@
           <a href="#research">Research / Projects</a>
           <a href="#about-jump">About</a>
         </nav>
+        <div class="mosaic-cluster" aria-hidden="true">
+          <span class="tile t1"></span>
+          <span class="tile t2"></span>
+          <span class="tile t3"></span>
+          <span class="tile t4"></span>
+          <span class="tile t5"></span>
+          <span class="tile t6"></span>
+          <span class="tile t7"></span>
+          <span class="tile t8"></span>
+          <span class="tile t9"></span>
+        </div>
         <div class="landing-name">Arnab Sircar</div>
       </section>
 
       <section id="typed-intro" class="typed-intro wrapper reveal-on-scroll">
-        <p class="typed-line" data-text="I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science."></p>
-        <p class="typed-line typed-line-with-link">
-          <span class="typed-chunk" data-text="I currently focus on illiquid asset valuation and private markets research, advised by "></span><a class="typed-link" href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a><span class="typed-chunk" data-text=" in Wharton's Finance department."></span>
+        <p class="typed-line typed-fade">
+          I am a student at the University of Pennsylvania studying mathematical economics and computer science. I'm interested in finance, statistical machine learning, complexity science, and decision science.
+        </p>
+        <p class="typed-line typed-fade typed-fade-delayed">
+          I currently focus on illiquid asset valuation and private markets research, advised by <a class="typed-link" href="https://www.christophergeczy.com/" target="_blank" rel="noopener">Chris Geczy</a> in Wharton's Finance department.
         </p>
       </section>
 
